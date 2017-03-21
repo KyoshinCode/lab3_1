@@ -75,7 +75,6 @@ public class BookKeeperTest {
         invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         verify(taxPolicy, times(2)).calculateTax(productData.getType(),money);
-        //assertThat(invoice.getItems().size(), is(1));
     }
 
 }
