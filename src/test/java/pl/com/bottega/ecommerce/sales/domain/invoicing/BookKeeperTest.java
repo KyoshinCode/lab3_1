@@ -7,7 +7,12 @@ import org.junit.Test;
 public class BookKeeperTest {
 
 	@Test
-	public void test() {
+	public void testInvoiceRequestWithOneItemShouldReturnInvoiceWithOneLine() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testInvoiceRequestWithTwoItemsShouldInvokeCalculateTaxTwoTimes() {
 		fail("Not yet implemented");
 	}
 
