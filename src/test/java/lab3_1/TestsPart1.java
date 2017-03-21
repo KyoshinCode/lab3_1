@@ -47,5 +47,30 @@ public class TestsPart1 {
 
 		Assert.assertThat(result.getItems().size(), Matchers.equalTo(1));
 	}
+	
+	@Test
+	public void testCase2() {
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		ClientData client = mock(ClientData.class);
+
+		InvoiceRequest invoiceRequest = new InvoiceRequest(client);
+
+		Money money = new Money(5);
+		Date date = new Date(0);
+
+		ProductData pData = new ProductData(Id.generate(), money, "test", ProductType.STANDARD, date);
+		RequestItem item = new RequestItem(pData, 1, money);
+		invoiceRequest.add(item);
+		invoiceRequest.add(item);
+		
+		Tax tax = new Tax(money, "test");
+
+		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
+
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class));
+	}
 
 }
