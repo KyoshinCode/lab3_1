@@ -88,4 +88,15 @@ public class BookKeeperTest {
 		verify(taxPolicy, times(2)).calculateTax(any(ProductType.class), any(Money.class));
 	}
 
+	@Test
+	public void issuanceWithNoItemsCallsCalculateTaxZeroTimes() throws Exception {
+		// given
+
+		// when
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		// then
+		verify(taxPolicy, times(0)).calculateTax(any(ProductType.class), any(Money.class));
+	}
+
 }
