@@ -22,7 +22,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
-public class Tests_3_1 {
+public class Tests_3_1_1 {
 	
 	public TaxPolicy taxPolicy;
 	public ProductData productData;
