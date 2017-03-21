@@ -51,7 +51,6 @@ public class BookKeeperTest {
         Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         assertThat(invoice.getItems().size(), is (1));
-
     }
 
     @Test
@@ -64,9 +63,20 @@ public class BookKeeperTest {
         invoiceRequest.add(new RequestItem(productData, 1, money));
         invoiceRequest.add(new RequestItem(productData, 2, money));
 
-        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         verify(taxPolicy, times(2)).calculateTax(productData.getType(), money);
+    }
 
+    @Test
+    public void test_NoPosition() throws Exception {
+        InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Napoleon"));
+        Money money = new Money(20, "USD");
+        ProductData productData = new ProductData(Id.generate(), money, "sukienka", ProductType.STANDARD, new Date());
+        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(34.1, "USD"), "Tajna operacja"));
+
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        assertThat(invoice.getItems().size(), is(0));
     }
 }
