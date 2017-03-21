@@ -28,8 +28,8 @@ public class Tests_3_1 {
 		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class),
 				Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mocking"));
-		RequestItem requestItem = new RequestItem(new ProductData(Id.generate(), new Money(123.45), "Tomato", ProductType.FOOD,
-				new Date()), 1, new Money(10.25));	
+		ProductData productData = new ProductData(Id.generate(), new Money(123.45), "Tomato", ProductType.FOOD, new Date());
+		RequestItem requestItem = new RequestItem(productData, 1, new Money(10.25));	
 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
 		InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "wujeksado"));
 		invoiceRequest.add(requestItem);
