@@ -25,7 +25,7 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 public class BookKeeperTests {
 
 	@Test
-	public void testIssuance() {
+	public void testCase1() {
 		// Mocking
 		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mocking"));
@@ -40,6 +40,25 @@ public class BookKeeperTests {
 		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);		
 		
 		assertThat(invoice.getItems().size(), is(equalTo(1)));
+	}
+	
+	@Test
+	public void testCase2() {
+		// Mocking
+		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
+		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mocking"));
+		// Generating data
+		RequestItem requestItem = new RequestItem(new ProductData(Id.generate(), new Money(123.45), "Pomidorek", ProductType.FOOD,
+				new Date()), 1, new Money(10.25));
+		ClientData clientData = new ClientData(Id.generate(),"Zawadzki");		
+		
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+		invoiceRequest.add(requestItem);
+		invoiceRequest.add(requestItem);		
+		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);		
+		
+		Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class));
 	}
 
 }
