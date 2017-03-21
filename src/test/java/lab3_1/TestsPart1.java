@@ -6,6 +6,7 @@ import java.sql.Date;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -23,54 +24,57 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 public class TestsPart1 {
+	TaxPolicy taxPolicy;
+	ClientData client;
+	InvoiceRequest invoiceRequest;
+	Money money;
+	Date date;
+	ProductData pData;
+	RequestItem item;
+	Tax tax;
+	BookKeeper bookKeeper;
+
+	@Before
+	public void setup() {
+		taxPolicy = mock(TaxPolicy.class);
+		client = mock(ClientData.class);
+
+		invoiceRequest = new InvoiceRequest(client);
+
+		money = new Money(5);
+		date = new Date(0);
+
+		pData = new ProductData(Id.generate(), money, "test", ProductType.STANDARD, date);
+		item = new RequestItem(pData, 1, money);
+
+
+		tax = new Tax(money, "test");
+
+		bookKeeper = new BookKeeper(new InvoiceFactory());
+	}
 
 	@Test
 	public void testCase1() {
-		TaxPolicy taxPolicy = mock(TaxPolicy.class);
-		ClientData client = mock(ClientData.class);
-
-		InvoiceRequest invoiceRequest = new InvoiceRequest(client);
-
-		Money money = new Money(5);
-		Date date = new Date(0);
-
-		ProductData pData = new ProductData(Id.generate(), money, "test", ProductType.STANDARD, date);
-		RequestItem item = new RequestItem(pData, 1, money);
 		invoiceRequest.add(item);
-
-		Tax tax = new Tax(money, "test");
-
+		
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
 
-		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
 		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
 		Assert.assertThat(result.getItems().size(), Matchers.equalTo(1));
 	}
-	
+
 	@Test
 	public void testCase2() {
-		TaxPolicy taxPolicy = mock(TaxPolicy.class);
-		ClientData client = mock(ClientData.class);
-
-		InvoiceRequest invoiceRequest = new InvoiceRequest(client);
-
-		Money money = new Money(5);
-		Date date = new Date(0);
-
-		ProductData pData = new ProductData(Id.generate(), money, "test", ProductType.STANDARD, date);
-		RequestItem item = new RequestItem(pData, 1, money);
 		invoiceRequest.add(item);
 		invoiceRequest.add(item);
 		
-		Tax tax = new Tax(money, "test");
-
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
 
-		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
 		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
-		Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class));
+		Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class),
+				Mockito.any(Money.class));
 	}
 
 }
