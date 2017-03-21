@@ -17,6 +17,8 @@ import java.util.Date;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -49,7 +51,6 @@ public class BookKeeperTest {
         money = new Money(25,"PLN");
         productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
 
-
         when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
 
         invoiceRequest.add(new RequestItem(productData, 1, money));
@@ -57,7 +58,24 @@ public class BookKeeperTest {
         invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         assertThat(invoice.getItems().size(), is(1));
+    }
 
+    @Test
+    public void demandInvoiceWithTwoPositionCallCalculateTaxMethodTwice()   {
+
+        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Name"));
+        money = new Money(100,"PLN");
+        productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
+
+        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
+
+        invoiceRequest.add(new RequestItem(productData, 1, money));
+        invoiceRequest.add(new RequestItem(productData, 1, money));
+
+        invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        verify(taxPolicy, times(2)).calculateTax(productData.getType(),money);
+        //assertThat(invoice.getItems().size(), is(1));
     }
 
 }
