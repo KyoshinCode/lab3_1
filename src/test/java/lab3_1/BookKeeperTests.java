@@ -55,7 +55,7 @@ public class BookKeeperTests {
 	}
 	
 	@Test
-	public void testIssuanceNumOfMethodCalls2() {		
+	public void testIssuanceNumOfMethodCalls2() {
 		invoiceRequest.add(requestItem);
 		invoiceRequest.add(requestItem);		
 		bookKeeper.issuance(invoiceRequest, taxPolicy);		
@@ -68,6 +68,13 @@ public class BookKeeperTests {
 		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);		
 		
 		assertThat(invoice.getItems().size(), is(equalTo(0)));
+	}
+	
+	@Test
+	public void testIssuanceNumOfMethodCalls0() {
+		bookKeeper.issuance(invoiceRequest, taxPolicy);		
+		
+		Mockito.verify(taxPolicy, Mockito.times(0)).calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class));
 	}
 
 }
