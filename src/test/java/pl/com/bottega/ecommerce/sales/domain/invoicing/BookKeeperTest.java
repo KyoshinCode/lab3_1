@@ -88,5 +88,19 @@ public class BookKeeperTest {
         verify(taxPolicy, times(0)).calculateTax(productData.getType(),money);
     }
 
+    @Test
+    public void demandInvoiceReturnInvoiceClientDataOnInvoice()  {
+
+        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Name"));
+        money = new Money(25,"PLN");
+        productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
+
+        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
+
+        invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        assertThat(invoice.getClient().getName(), is("Name"));
+    }
+
 
 }
