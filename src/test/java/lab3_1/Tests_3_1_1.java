@@ -29,16 +29,18 @@ public class Tests_3_1_1 {
 	public RequestItem requestItem;
 	public BookKeeper bookKeeper;
 	public InvoiceRequest invoiceRequest;
+	public ClientData clientData;
 	
 	@Before
 	public void setupTests() {
 		taxPolicy = Mockito.mock(TaxPolicy.class);
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class),
 				Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mocking"));
+		clientData = new ClientData(Id.generate(), "wujeksado");
 		productData = new ProductData(Id.generate(), new Money(123.45), "Tomato", ProductType.FOOD, new Date());
 		requestItem = new RequestItem(productData, 1, new Money(10.25));	
 		bookKeeper = new BookKeeper(new InvoiceFactory());
-		invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "wujeksado"));
+		invoiceRequest = new InvoiceRequest(clientData);
 	}
 	
 	@Test
@@ -55,5 +57,11 @@ public class Tests_3_1_1 {
 		bookKeeper.issuance(invoiceRequest, taxPolicy);
 		Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class),
 				Mockito.any(Money.class));
+	}
+	
+	@Test
+	public void clientDataRetainsCorrectValues() {
+		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getAggregateId(), is(equalTo(clientData.getAggregateId())));
+		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getName(), is(equalTo(clientData.getName())));
 	}
 }
