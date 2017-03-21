@@ -3,6 +3,7 @@ package lab3_1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.util.Date;
 
@@ -81,6 +82,12 @@ public class BookKeeperTests {
 		ClientData clientDataResult = bookKeeper.issuance(invoiceRequest, taxPolicy).getClient();
 		assertThat(clientDataResult.getAggregateId(), is(equalTo(clientData.getAggregateId())));
 		assertThat(clientDataResult.getName(), is(equalTo(clientData.getName())));
+	}
+	@Test
+	public void testInvoiceFactory() {
+		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+		assertThat(invoice, instanceOf(Invoice.class));
+		
 	}
 
 }
