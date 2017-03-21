@@ -8,13 +8,10 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
-import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
-
 import java.util.Date;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
@@ -42,7 +39,6 @@ public class BookKeeperTest {
     public void beforeRun() throws Exception    {
         bookKeeper = new BookKeeper(new InvoiceFactory());
     }
-
 
     @Test
     public void demandInvoiceWithOnePositionReturnInvoiceWithOnePosition()  {
@@ -72,9 +68,25 @@ public class BookKeeperTest {
         invoiceRequest.add(new RequestItem(productData, 1, money));
         invoiceRequest.add(new RequestItem(productData, 1, money));
 
-        invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         verify(taxPolicy, times(2)).calculateTax(productData.getType(),money);
     }
+
+    @Test
+    public void demandInvoiceWithZeroPositionReturnInvoiceWithZeroPositionAndNotCallCalculateTaxMethod()  {
+
+        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Name"));
+        money = new Money(25,"PLN");
+        productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
+
+        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
+
+        invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        assertThat(invoice.getItems().size(), is(0));
+        verify(taxPolicy, times(0)).calculateTax(productData.getType(),money);
+    }
+
 
 }
