@@ -29,11 +29,11 @@ public class ProductData {
 	private String name;
 	
 	private Date snapshotDate;
-		
+
 	private ProductType type;
 
 	
-	ProductData(Id productId, Money price, String name, ProductType type, 
+	ProductData(Id productId, Money price, String name, ProductType type,
 			Date snapshotDate) {
 		this.productId = productId;
 		this.price = price;

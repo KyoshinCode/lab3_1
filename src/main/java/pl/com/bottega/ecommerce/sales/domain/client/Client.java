@@ -7,7 +7,7 @@ import pl.com.bottega.ecommerce.sales.domain.payment.PaymentFactory;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 public class Client extends BaseAggregateRoot{
-private String name;
+	private String name;
 	
 	
 	private PaymentFactory paymentFactory;
