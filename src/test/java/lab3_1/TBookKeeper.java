@@ -23,7 +23,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
-public class TestsPart1 {
+public class TBookKeeper {
 	TaxPolicy taxPolicy;
 	ClientData client;
 	InvoiceRequest invoiceRequest;
@@ -53,7 +53,7 @@ public class TestsPart1 {
 	}
 
 	@Test
-	public void testCase1() {
+	public void testCaseForState() {
 		invoiceRequest.add(item);
 
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
@@ -64,7 +64,7 @@ public class TestsPart1 {
 	}
 
 	@Test
-	public void testCase2() {
+	public void testCaseForBehaviour() {
 		invoiceRequest.add(item);
 		invoiceRequest.add(item);
 
@@ -76,4 +76,9 @@ public class TestsPart1 {
 				Mockito.any(Money.class));
 	}
 
+	@Test
+	public void testCaseForState2() {
+		
+	}
+	
 }
