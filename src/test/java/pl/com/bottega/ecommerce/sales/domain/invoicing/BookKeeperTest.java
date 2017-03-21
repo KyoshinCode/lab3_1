@@ -14,8 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by 195086 on 21.03.2017.
@@ -54,5 +53,28 @@ public class BookKeeperTest {
 		// then
 		assertThat(result.getItems().size(), is(equalTo(1)));
     }
+
+	@Test
+	public void issuanceWithTwoItemsCallsCalculateTaxTwice() throws Exception {
+		// given
+		RequestItem item1 = new RequestItem(
+				new ProductData(Id.generate(), new Money(200), "Kilbasa",
+						ProductType.FOOD, new Date()),
+				1, new Money(200)
+		);
+		RequestItem item2 = new RequestItem(
+				new ProductData(Id.generate(), new Money(200), "Szynka",
+						ProductType.FOOD, new Date()),
+				1, new Money(200)
+		);
+
+		// when
+		invoiceRequest.add(item1);
+		invoiceRequest.add(item2);
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		// then
+		verify(taxPolicy, times(2)).calculateTax(any(ProductType.class), any(Money.class));
+	}
 
 }
