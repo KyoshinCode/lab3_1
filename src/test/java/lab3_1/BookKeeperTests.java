@@ -75,6 +75,12 @@ public class BookKeeperTests {
 		bookKeeper.issuance(invoiceRequest, taxPolicy);		
 		
 		Mockito.verify(taxPolicy, Mockito.times(0)).calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class));
+	}	
+	@Test
+	public void testClientData() {
+		ClientData clientDataResult = bookKeeper.issuance(invoiceRequest, taxPolicy).getClient();
+		assertThat(clientDataResult.getAggregateId(), is(equalTo(clientData.getAggregateId())));
+		assertThat(clientDataResult.getName(), is(equalTo(clientData.getName())));
 	}
 
 }
