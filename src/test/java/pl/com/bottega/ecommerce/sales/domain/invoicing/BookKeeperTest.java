@@ -17,6 +17,8 @@ import java.util.Date;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -49,6 +51,22 @@ public class BookKeeperTest {
         Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         assertThat(invoice.getItems().size(), is (1));
+
+    }
+
+    @Test
+    public void test_TwoPositions() throws Exception {
+        InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Karol"));
+        Money money = new Money(150);
+        ProductData productData = new ProductData(Id.generate(), money, "podklad", ProductType.DRUG, new Date());
+        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(120), "Fikcyjna pozycja"));
+
+        invoiceRequest.add(new RequestItem(productData, 1, money));
+        invoiceRequest.add(new RequestItem(productData, 2, money));
+
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        verify(taxPolicy, times(2)).calculateTax(productData.getType(), money);
 
     }
 }
