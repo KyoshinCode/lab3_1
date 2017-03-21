@@ -10,7 +10,10 @@ import org.mockito.junit.MockitoRule;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+
+import java.util.Date;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -30,9 +33,6 @@ public class BookKeeperTest {
     @Mock
     private TaxPolicy policy;
 
-    @Mock
-    private ProductData dummyData;
-
     @Before
     public void setUp() throws Exception {
         keeper = new BookKeeper(new InvoiceFactory());
@@ -41,6 +41,9 @@ public class BookKeeperTest {
     @Test
     public void testIssuance_OneInvoice() throws Exception {
         Money cost = new Money(100);
+
+        ProductData dummyData = new ProductData(Id.generate(), new Money(10), "stuff", ProductType.STANDARD, new Date());
+
         when(policy.calculateTax(dummyData.getType(), cost)).thenReturn(new Tax(new Money(20), "DummyTax"));
         InvoiceRequest request = new InvoiceRequest(new ClientData(Id.generate(), "John Doe"));
         request.add(new RequestItem(dummyData, 1, cost));
