@@ -72,8 +72,20 @@ public class BookKeeperTest {
         keeper.issuance(request, policy);
 
         verify(policy, times(2)).calculateTax(ProductType.STANDARD, money);
+    }
 
+    @Test
+    public void testIssuance_CorrectTax() throws Exception {
+        Money money = new Money(10);
+        Tax tax = new Tax(new Money(2.5), "FakeTax");
 
+        InvoiceRequest request = new InvoiceRequest(new ClientData(Id.generate(), "John Kowalski"));
+        request.add(new RequestItem(new ProductData(Id.generate(), new Money(15), "stuff", ProductType.DRUG, new Date()) , 2, money));
 
+        when(policy.calculateTax(ProductType.DRUG, money)).thenReturn(tax);
+
+        Invoice invoice = keeper.issuance(request, policy);
+
+        assertThat(invoice.getItems().get(0).getTax(), is(equalTo(tax)));
     }
 }
