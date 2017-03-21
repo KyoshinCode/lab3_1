@@ -47,7 +47,6 @@ public class TestsPart1 {
 		pData = new ProductData(Id.generate(), money, "test", ProductType.STANDARD, date);
 		item = new RequestItem(pData, 1, money);
 
-
 		tax = new Tax(money, "test");
 
 		bookKeeper = new BookKeeper(new InvoiceFactory());
@@ -56,7 +55,7 @@ public class TestsPart1 {
 	@Test
 	public void testCase1() {
 		invoiceRequest.add(item);
-		
+
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
 
 		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
@@ -68,7 +67,7 @@ public class TestsPart1 {
 	public void testCase2() {
 		invoiceRequest.add(item);
 		invoiceRequest.add(item);
-		
+
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
 
 		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
