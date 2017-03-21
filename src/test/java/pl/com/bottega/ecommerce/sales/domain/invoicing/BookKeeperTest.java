@@ -79,4 +79,19 @@ public class BookKeeperTest {
 
         assertThat(invoice.getItems().size(), is(0));
     }
+
+    @Mock
+    private InvoiceFactory invoiceFactory;
+
+    @Test
+    public void test_InvoiceFactoryCreate() throws Exception {
+        bookKeeper = new BookKeeper(invoiceFactory);
+        ClientData clientData = new ClientData(Id.generate(), "Aleksandra");
+        InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+        when(invoiceFactory.create(clientData)).thenReturn(new Invoice(Id.generate(), clientData));
+
+        bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        verify(invoiceFactory, times(1)).create(clientData);
+    }
 }
