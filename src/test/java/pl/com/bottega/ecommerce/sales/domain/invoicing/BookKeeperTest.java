@@ -55,6 +55,17 @@ public class BookKeeperTest {
     }
 
 	@Test
+	public void issuanceWithNoItemsReturnsEmptyInvoice() throws Exception {
+		// given
+
+		// when
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		// then
+		assertThat(result.getItems().size(), is(equalTo(0)));
+	}
+
+	@Test
 	public void issuanceWithTwoItemsCallsCalculateTaxTwice() throws Exception {
 		// given
 		RequestItem item1 = new RequestItem(
