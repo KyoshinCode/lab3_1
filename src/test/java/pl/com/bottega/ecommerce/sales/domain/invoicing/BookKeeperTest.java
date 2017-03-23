@@ -28,30 +28,36 @@ public class BookKeeperTest {
     private Money money;
     private ProductData productData;
     private Invoice invoice;
+    private ClientData clientData;
 
     @Mock
-    private TaxPolicy taxPolicy;
+    private TaxPolicy mockTaxPolicy;
+
+    @Mock
+    InvoiceFactory mockInvoiceFactory;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Before
     public void beforeRun() throws Exception    {
+
         bookKeeper = new BookKeeper(new InvoiceFactory());
+        clientData = (new ClientData(Id.generate(), "Name"));
+        invoiceRequest = new InvoiceRequest(clientData);
+        money = new Money(25,"PLN");
+        productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
+
     }
 
     @Test
     public void demandInvoiceWithOnePositionReturnInvoiceWithOnePosition()  {
 
-        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Name"));
-        money = new Money(25,"PLN");
-        productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
-
-        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
+        when(mockTaxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
 
         invoiceRequest.add(new RequestItem(productData, 1, money));
 
-        invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        invoice = bookKeeper.issuance(invoiceRequest, mockTaxPolicy);
 
         assertThat(invoice.getItems().size(), is(1));
     }
@@ -59,48 +65,39 @@ public class BookKeeperTest {
     @Test
     public void demandInvoiceWithTwoPositionCallCalculateTaxMethodTwice()   {
 
-        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Name"));
-        money = new Money(100,"PLN");
-        productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
-
-        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
+        when(mockTaxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
 
         invoiceRequest.add(new RequestItem(productData, 1, money));
         invoiceRequest.add(new RequestItem(productData, 1, money));
 
-        bookKeeper.issuance(invoiceRequest, taxPolicy);
+        bookKeeper.issuance(invoiceRequest, mockTaxPolicy);
 
-        verify(taxPolicy, times(2)).calculateTax(productData.getType(),money);
+        verify(mockTaxPolicy, times(2)).calculateTax(productData.getType(),money);
     }
 
     @Test
     public void demandInvoiceWithZeroPositionReturnInvoiceWithZeroPositionAndNotCallCalculateTaxMethod()  {
 
-        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Name"));
-        money = new Money(25,"PLN");
-        productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
+        when(mockTaxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
 
-        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
-
-        invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        invoice = bookKeeper.issuance(invoiceRequest, mockTaxPolicy);
 
         assertThat(invoice.getItems().size(), is(0));
-        verify(taxPolicy, times(0)).calculateTax(productData.getType(),money);
+        verify(mockTaxPolicy, times(0)).calculateTax(productData.getType(),money);
     }
 
     @Test
-    public void demandInvoiceReturnInvoiceClientDataOnInvoice()  {
+    public void demandInvoiceReturnClientDataOnInvoiceAndCallCreateOnce()  {
 
-        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Name"));
-        money = new Money(25,"PLN");
+        bookKeeper = new BookKeeper(mockInvoiceFactory);
+
         productData = new ProductData(Id.generate(), money, "productName", ProductType.DRUG, new Date());
 
-        when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Invalid tax"));
+        when(mockInvoiceFactory.create(clientData)).thenReturn(new Invoice(Id.generate(), clientData));
 
-        invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        invoice = bookKeeper.issuance(invoiceRequest, mockTaxPolicy);
 
+        verify(mockInvoiceFactory, times(1)).create(clientData);
         assertThat(invoice.getClient().getName(), is("Name"));
     }
-
-
 }
