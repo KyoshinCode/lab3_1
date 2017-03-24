@@ -69,7 +69,7 @@ public class BookKeeperTest {
 	public void issuanceWithTwoItemsCallsCalculateTaxTwice() throws Exception {
 		// given
 		RequestItem item1 = new RequestItem(
-				new ProductData(Id.generate(), new Money(200), "Kilbasa",
+				new ProductData(Id.generate(), new Money(200), "Kielbasa",
 						ProductType.FOOD, new Date()),
 				1, new Money(200)
 		);
@@ -97,6 +97,27 @@ public class BookKeeperTest {
 
 		// then
 		verify(taxPolicy, times(0)).calculateTax(any(ProductType.class), any(Money.class));
+	}
+
+	@Test
+	public void issuanceReturnsCorrectItemsInInvoice() throws Exception {
+		// given
+
+		ProductData product = new ProductData(Id.generate(), new Money(200), "Kielbasa",
+				ProductType.FOOD, new Date());
+		int quantity = 2;
+		Money money = new Money(200);
+
+		RequestItem item1 = new RequestItem(product, quantity, money);
+
+		// when
+		invoiceRequest.add(item1);
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		// then
+		assertThat(result.getItems().get(0).getProduct(), is(equalTo(product)));
+		assertThat(result.getItems().get(0).getQuantity(), equalTo(quantity));
+		assertThat(result.getItems().get(0).getNet(), is(equalTo(money)));
 	}
 
 }
