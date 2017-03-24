@@ -120,4 +120,28 @@ public class BookKeeperTest {
 		assertThat(result.getItems().get(0).getNet(), is(equalTo(money)));
 	}
 
+	@Test
+	public void issuanceWithTwoItemsCallsGetItemsOnce() throws Exception {
+		// given
+		InvoiceRequest invoiceRequestSpy = spy(invoiceRequest);
+		RequestItem item1 = new RequestItem(
+				new ProductData(Id.generate(), new Money(200), "Kielbasa",
+						ProductType.FOOD, new Date()),
+				1, new Money(200)
+		);
+		RequestItem item2 = new RequestItem(
+				new ProductData(Id.generate(), new Money(200), "Szynka",
+						ProductType.FOOD, new Date()),
+				1, new Money(200)
+		);
+
+		// when
+		invoiceRequestSpy.add(item1);
+		invoiceRequestSpy.add(item2);
+		Invoice result = bookKeeper.issuance(invoiceRequestSpy, taxPolicy);
+
+		// then
+		verify(invoiceRequestSpy, times(1)).getItems();
+	}
+
 }
