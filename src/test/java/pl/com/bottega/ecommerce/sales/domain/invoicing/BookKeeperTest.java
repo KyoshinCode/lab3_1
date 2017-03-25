@@ -80,4 +80,19 @@ public class BookKeeperTest {
         Invoice result = bookKeeper.issuance(invoiceRequest, spy);
         verify(spy, times(2)).calculateTax(productData.getType(),requestItem.getTotalCost());
     }
+
+    @Test
+    public void issueInvoice_NoPositions_callCountForTaxPolicy(){
+
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+        TaxPolicy taxPolicy = new TaxPolicy() {
+            @Override
+            public Tax calculateTax(ProductType productType, Money net) {
+                return new Tax(new Money(0), "no tax");
+            }
+        };
+        TaxPolicy spy = spy(taxPolicy);
+        Invoice result = bookKeeper.issuance(invoiceRequest, spy);
+        verify(spy, times(0)).calculateTax(productData.getType(),requestItem.getTotalCost());
+    }
 }
