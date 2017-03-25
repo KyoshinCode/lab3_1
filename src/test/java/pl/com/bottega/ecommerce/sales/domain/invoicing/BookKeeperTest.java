@@ -85,4 +85,18 @@ public class BookKeeperTest {
         Invoice invoice = bookKeeper.issuance(invoiceRequest, spyTax);
         verify(spyTax, times(2)).calculateTax(productData.getType(), requestItem.getTotalCost());
     }
+
+    @Test
+    public void issuanceTestWithoutAnyPosition(){
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+        TaxPolicy taxPolicy = new TaxPolicy() {
+            @Override
+            public Tax calculateTax(ProductType productType, Money net) {
+                return new Tax(new Money(10), "TAX");
+            }
+        };
+
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        Assert.assertThat(invoice.getItems().size(), is(equalTo(0)));
+    }
 }
