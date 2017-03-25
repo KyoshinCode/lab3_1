@@ -46,7 +46,7 @@ public class BookKeeperTest {
     }
 
     @Test
-    public void issueInvoice_twoPositions_checkPositionsAmountOnInvoice() {
+    public void issueInvoice_onePosition_checkPositionsAmountOnInvoice() {
 
         requestItems.add(requestItem);
 
@@ -95,4 +95,22 @@ public class BookKeeperTest {
         Invoice result = bookKeeper.issuance(invoiceRequest, spy);
         verify(spy, times(0)).calculateTax(productData.getType(),requestItem.getTotalCost());
     }
+
+    @Test public void issueInvoice_NoPositions_checkPositionsAmountOnInvoice() {
+
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+        TaxPolicy taxPolicy = new TaxPolicy() {
+            @Override
+            public Tax calculateTax(ProductType productType, Money net) {
+                return new Tax(new Money(0), "no tax");
+            }
+        };
+
+        Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        Assert.assertThat(result.getItems().size(), is(equalTo(0)));
+
+
+    }
+
+
 }
