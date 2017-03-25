@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by Piotrek on 25.03.2017.
@@ -25,6 +28,7 @@ public class BookKeeperTest {
     private InvoiceRequest invoiceRequest;
     private RequestItem requestItem;
     private ArrayList<RequestItem> requestItemArrayList;
+    private ProductData productData;
 
     @Before
     public void setUp() throws Exception{
@@ -32,7 +36,7 @@ public class BookKeeperTest {
         Mockito.when(invoiceRequest.getClientData()).thenReturn(new ClientData(Id.generate(), "TEST_USER"));
         requestItemArrayList = new ArrayList<>();
 
-        ProductData productData = Mockito.mock(ProductData.class);
+        productData = Mockito.mock(ProductData.class);
         Mockito.when(productData.getType()).thenReturn(ProductType.STANDARD);
 
         requestItem = Mockito.mock(RequestItem.class);
@@ -62,5 +66,23 @@ public class BookKeeperTest {
 
         Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
         Assert.assertThat(invoice.getItems().size(), is(equalTo(1)));
+    }
+
+    @Test
+    public void issuanceTestWithTwoPositions(){
+        requestItemArrayList.add(requestItem);
+        requestItemArrayList.add(requestItem);
+
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+        TaxPolicy taxPolicy = new TaxPolicy() {
+            @Override
+            public Tax calculateTax(ProductType productType, Money net) {
+                return new Tax(new Money(10), "TAX");
+            }
+        };
+
+        TaxPolicy spyTax = spy(taxPolicy);
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, spyTax);
+        verify(spyTax, times(2)).calculateTax(productData.getType(), requestItem.getTotalCost());
     }
 }
