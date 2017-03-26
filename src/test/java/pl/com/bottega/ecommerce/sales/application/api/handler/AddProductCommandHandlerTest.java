@@ -20,6 +20,7 @@ import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 import pl.com.bottega.ecommerce.system.application.SystemUser;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -100,5 +101,18 @@ public class AddProductCommandHandlerTest {
         handler.handle(command);
 
         verify(suggestionService, times(1)).suggestEquivalent(product, client);
+    }
+
+    @Test
+    public void testHandle_CheckProductAddedToReservation() throws Exception {
+        Reservation reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "dummy")).opened().build();
+        Product product = new ProductBuilder().withAggregateId(command.getProductId()).build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        handler.handle(command);
+
+        assertThat(reservation.contains(product), is(true));
     }
 }
