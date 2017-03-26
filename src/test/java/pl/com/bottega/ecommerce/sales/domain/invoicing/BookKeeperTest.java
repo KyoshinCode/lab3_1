@@ -23,8 +23,6 @@ import static org.mockito.Mockito.*;
 public class BookKeeperTest {
 
     private final ClientData ANY_CLIENT_DATA = new ClientData(Id.generate(), "anyName");
-    private final InvoiceRequest INVOICE_REQUEST_WITH_ONE_ELEMENT = new InvoiceRequest(ANY_CLIENT_DATA);
-    private final InvoiceRequest INVOICE_REQUEST_WITH_TWO_ELEMENTS = new InvoiceRequest(ANY_CLIENT_DATA);
     private final Money ANY_MONEY = new Money(0);
     private final ProductData ANY_PRODUCT_DATA = new ProductData(Id.generate(), ANY_MONEY, "name", ProductType.FOOD, new Date());
     private final RequestItem ANY_REQUEST_ITEM = new RequestItem(ANY_PRODUCT_DATA,0,ANY_MONEY);
@@ -32,6 +30,7 @@ public class BookKeeperTest {
     @Test
     public void shouldReturnInvoiceWithOneItem() throws Exception {
         //given
+        final InvoiceRequest INVOICE_REQUEST_WITH_ONE_ELEMENT = new InvoiceRequest(ANY_CLIENT_DATA);
         INVOICE_REQUEST_WITH_ONE_ELEMENT.add(ANY_REQUEST_ITEM);
 
         InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
@@ -54,6 +53,7 @@ public class BookKeeperTest {
     @Test
     public void shouldCallCalculateTaxTwice() throws Exception {
         //given
+        final InvoiceRequest INVOICE_REQUEST_WITH_TWO_ELEMENTS = new InvoiceRequest(ANY_CLIENT_DATA);
         INVOICE_REQUEST_WITH_TWO_ELEMENTS.add(ANY_REQUEST_ITEM);
         INVOICE_REQUEST_WITH_TWO_ELEMENTS.add(ANY_REQUEST_ITEM);
 
