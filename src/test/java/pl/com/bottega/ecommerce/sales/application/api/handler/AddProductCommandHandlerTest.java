@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoRule;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
+import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
@@ -17,6 +18,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
+import pl.com.bottega.ecommerce.system.application.SystemUser;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +36,6 @@ public class AddProductCommandHandlerTest {
     private SuggestionService suggestionService;
     @Mock
     private ClientRepository clientRepository;
-    @Mock
     private SystemContext systemContext;
 
     @Rule
@@ -47,6 +48,7 @@ public class AddProductCommandHandlerTest {
     @Before
     public void setUp() throws Exception {
         handler = new AddProductCommandHandler();
+        systemContext = new SystemContext();
         Whitebox.setInternalState(handler, "reservationRepository", reservationRepository);
         Whitebox.setInternalState(handler, "productRepository", productRepository);
         Whitebox.setInternalState(handler, "suggestionService", suggestionService);
@@ -80,5 +82,23 @@ public class AddProductCommandHandlerTest {
         handler.handle(command);
 
         verify(clientRepository, never()).load(reservation.getClientData().getAggregateId());
+    }
+
+    @Test
+    public void testHandle_CheckSuggestionServiceCalledWhenProductUnavailable() throws Exception {
+        Reservation reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "dummy")).opened().build();
+        Product product = new ProductBuilder().withAggregateId(command.getProductId()).unavailable().build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        Client client = new Client();
+
+        when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(new ProductBuilder().build());
+
+        handler.handle(command);
+
+        verify(suggestionService, times(1)).suggestEquivalent(product, client);
     }
 }
