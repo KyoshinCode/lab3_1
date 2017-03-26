@@ -95,4 +95,26 @@ public class BookKeeperTest {
         //then
         assertThat(resultInvoice.getItems().get(0), samePropertyValuesAs(EXPECTED_LINE_INVOICE));
     }
+
+    @Test
+    public void shouldCallCreateMethodFromInvoiceFactory() throws Exception {
+        //given
+        InvoiceRequest invoiceRequest = new InvoiceRequest(ANY_CLIENT_DATA);
+        invoiceRequest.add(ANY_REQUEST_ITEM);
+
+        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
+        when(mockInvoiceFactory.create(ANY_CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), ANY_CLIENT_DATA));
+
+        BookKeeper bookKeeper = new BookKeeper(mockInvoiceFactory);
+        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
+        Tax tax = new Tax(ANY_MONEY, "anyDescription");
+
+        when(mockTaxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
+
+        //when
+        bookKeeper.issuance(invoiceRequest, mockTaxPolicy);
+
+        //then
+        verify(mockInvoiceFactory,times(1)).create(Mockito.any(ClientData.class));
+    }
 }
