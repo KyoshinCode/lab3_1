@@ -53,7 +53,7 @@ public class BookKeeperTest {
     }
 
     @Test
-    public void issuanceTestWithOnlyOneItem(){
+    public void issuanceTestWithOnlyOneItem() throws Exception{
         requestItemArrayList.add(requestItem);
 
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
@@ -69,7 +69,7 @@ public class BookKeeperTest {
     }
 
     @Test
-    public void issuanceTestWithTwoPositions(){
+    public void issuanceTestWithTwoPositions() throws Exception{
         requestItemArrayList.add(requestItem);
         requestItemArrayList.add(requestItem);
 
@@ -87,7 +87,7 @@ public class BookKeeperTest {
     }
 
     @Test
-    public void issuanceTestWithoutAnyPosition(){
+    public void issuanceTestWithoutAnyPosition() throws Exception{
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
         TaxPolicy taxPolicy = new TaxPolicy() {
             @Override
@@ -101,7 +101,7 @@ public class BookKeeperTest {
     }
 
     @Test
-    public void issuanceTestWithThreePosition(){
+    public void issuanceTestWithThreePosition() throws Exception{
         requestItemArrayList.add(requestItem);
         requestItemArrayList.add(requestItem);
         requestItemArrayList.add(requestItem);
