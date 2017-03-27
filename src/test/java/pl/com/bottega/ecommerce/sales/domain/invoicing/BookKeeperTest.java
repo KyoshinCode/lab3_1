@@ -75,8 +75,13 @@ public class BookKeeperTest {
 		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
 		
 		when(mockedRequest.getItems()).thenReturn(Arrays.asList(item,item));
-		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(0.7),"Tax"));	
+		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(0.7),"Tax"));
 		
+		// when
+		Invoice invoice = bookKeeper.issuance(mockedRequest, mockedTaxPolicy);
+				
+		//then
+		Assert.assertThat(invoice.getNet(), is(equalTo(item.getTotalCost().add(item.getTotalCost()))));
 	}
 	
 }
