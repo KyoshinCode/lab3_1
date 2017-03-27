@@ -66,7 +66,7 @@ public class BookKeeperTest {
 	}
 	
 	@Test
-	public void testInvoiceRequestWithTwoItemsShouldReturnInvoiceWithNetBeingSumOfThoseItemTotalCosts() {
+	public void testInvoiceRequestWithTwoItemsShouldReturnInvoiceWithNetBeingSumOfThoseItemsTotalCosts() {
 		
 		// given
 		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
