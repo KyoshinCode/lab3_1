@@ -15,6 +15,7 @@ import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.BookKeeper;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Invoice;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceFactory;
+import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceLine;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceRequest;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
@@ -77,8 +78,16 @@ public class TBookKeeper {
 	}
 
 	@Test
-	public void testCaseForState2() {
+	public void issuanceMethodDoesntChangeRequestItemsProperties() {
+		invoiceRequest.add(item);
 
+		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
+
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		InvoiceLine invoiceLine = new InvoiceLine(pData, 1, money, tax);
+		
+		Assert.assertThat(result.getItems().get(0), Matchers.samePropertyValuesAs(invoiceLine));
 	}
 
 }
