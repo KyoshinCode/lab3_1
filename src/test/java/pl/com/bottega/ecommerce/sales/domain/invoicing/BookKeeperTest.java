@@ -38,6 +38,11 @@ public class BookKeeperTest {
 		when(mockedRequest.getItems()).thenReturn(Arrays.asList(item));
 		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(0.7),"Tax"));
 		
+		// when
+		Invoice invoice = bookKeeper.issuance(mockedRequest, mockedTaxPolicy);
+		
+		//then
+		Assert.assertThat(invoice.getItems().size(), is(equalTo(1)));
 	}
 	
 	@Test
