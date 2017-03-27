@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -13,32 +15,28 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
+import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
+import pl.com.bottega.ecommerce.sharedkernel.Money;
+
 public class BookKeeperTest {
 	
 	@Test
 	public void testInvoiceRequestWithOneItemShouldReturnInvoiceWithOneLine() {
 		
+		// given
 		InvoiceFactory factory = new InvoiceFactory();
 		BookKeeper bookKeeper = new BookKeeper(factory);
 		
-		InvoiceRequest request = mock(InvoiceRequest.class);
-		RequestItem item = mock(RequestItem.class);
-		request.add(item);
-		List<RequestItem> items = new ArrayList<RequestItem>();
-		items.add(item);
-		System.out.println(request);
-		when(request.getItems()).thenReturn(items);
+		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
+		RequestItem item = new RequestItem(productData, 3, new Money(16));
+		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
+		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
 		
-		System.out.println(items);
-		
-		TaxPolicy taxPolicy = mock(TaxPolicy.class);
-		System.out.println(taxPolicy);
-		
-		//Invoice invoice = bookKeeper.issuance(request, taxPolicy);
-		Invoice invoice = mock(Invoice.class);
-		//when(invoice.getItems()).thenReturn(value)
-		Assert.assertThat(invoice.getItems().size(), is(equalTo(1)));
-		
+		when(mockedRequest.getItems()).thenReturn(Arrays.asList(item));
+		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(0.7),"Tax"));
 		
 	}
 	
