@@ -38,9 +38,8 @@ public class TBookKeeper {
 	@Before
 	public void setup() {
 		taxPolicy = mock(TaxPolicy.class);
-		client = mock(ClientData.class);
 
-		invoiceRequest = new InvoiceRequest(client);
+		invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Tester Jack"));
 
 		money = new Money(5);
 		date = new Date(0);
@@ -90,4 +89,16 @@ public class TBookKeeper {
 		Assert.assertThat(result.getItems().get(0), Matchers.samePropertyValuesAs(invoiceLine));
 	}
 
+	@Test
+	public void issuanceMethodCallsInvoiceFactoryOnce() {
+		InvoiceFactory factory = mock(InvoiceFactory.class);
+		Invoice invoice = new Invoice(Id.generate(), new ClientData(Id.generate(), "Tester"));
+
+		Mockito.when(factory.create(Mockito.any(ClientData.class))).thenReturn(invoice);
+		
+		BookKeeper keeper = new BookKeeper(factory);
+		keeper.issuance(invoiceRequest, taxPolicy);
+		
+		Mockito.verify(factory, Mockito.times(1)).create(Mockito.any(ClientData.class));
+	}
 }
