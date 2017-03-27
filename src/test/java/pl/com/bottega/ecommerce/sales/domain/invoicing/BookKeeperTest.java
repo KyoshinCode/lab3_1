@@ -29,7 +29,7 @@ public class BookKeeperTest {
 	}
 	
 	@Test
-	public void testInvoiceRequestWithOneItemShouldReturnInvoiceWithOneLine() {
+	public void testIssuanceShouldReturnInvoiceWithOneLineWhenRequestHasOneItem() {
 		
 		// given
 		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
@@ -48,7 +48,7 @@ public class BookKeeperTest {
 	}
 	
 	@Test
-	public void testInvoiceRequestWithTwoItemsShouldInvokeCalculateTaxTwoTimes() {
+	public void testIssuanceShouldInvokeCalculateTaxTwoTimesWhenRequestHasTwoItems() {
 
 		// given
 		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
@@ -67,7 +67,7 @@ public class BookKeeperTest {
 	}
 	
 	@Test
-	public void testInvoiceRequestWithTwoItemsShouldReturnInvoiceWithNetBeingSumOfThoseItemsTotalCosts() {
+	public void testIssuanceShouldReturnInvoiceWithNetBeingSumOfTwoItemsTotalCostsWhenRequestHasTwoItems() {
 		
 		// given
 		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
@@ -97,13 +97,12 @@ public class BookKeeperTest {
 		when(mockedRequest.getItems()).thenReturn(Arrays.asList(item));
 		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(0.7),"Tax"));
 		
-		ArgumentCaptor<ProductType> parameterOne = ArgumentCaptor.forClass(ProductType.class);
-		ArgumentCaptor<Money> parameterTwo = ArgumentCaptor.forClass(Money.class);
-		
 		// when
 		Invoice invoice = bookKeeper.issuance(mockedRequest, mockedTaxPolicy);
 				
 		//then
+		ArgumentCaptor<ProductType> parameterOne = ArgumentCaptor.forClass(ProductType.class);
+		ArgumentCaptor<Money> parameterTwo = ArgumentCaptor.forClass(Money.class);
 		verify(mockedTaxPolicy).calculateTax(parameterOne.capture(),parameterTwo.capture());
 		Assert.assertThat(ProductType.FOOD, is(equalTo(parameterOne.getValue())));
 		Assert.assertThat(new Money(16), is(equalTo(parameterTwo.getValue())));
