@@ -64,5 +64,10 @@ public class BookKeeperTest {
 		//then
 		verify(mockedTaxPolicy, times(2)).calculateTax(ProductType.FOOD, item.getTotalCost());
 	}
-
+	
+	@Test
+	public void testInvoiceRequestWithTwoItemsShouldReturnInvoiceWithNetBeingSumOfThoseItemTotalCosts() {
+		
+	}
+	
 }
