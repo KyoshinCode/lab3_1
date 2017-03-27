@@ -86,7 +86,7 @@ public class BookKeeperTest {
 	}
 	
 	@Test
-	public void testInvoiceRequestShouldInvokeCalculateTaxWithTwoCorrectParameters() {
+	public void testIssuanceShouldInvokeCalculateTaxWithTwoCorrectParameters() {
 		
 		// given
 		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
