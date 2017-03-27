@@ -47,6 +47,23 @@ public class BookKeeperTest {
 
     @Test
     public void callCalculateTaxTwice() {
+        INVOICE_REQUEST_WITH_TWO_ELEMENT.add(REQUEST_ITEM);
+        INVOICE_REQUEST_WITH_TWO_ELEMENT.add(REQUEST_ITEM);
+        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
+        when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
+
+        BookKeeper bookKeeper = new BookKeeper(mockInvoiceFactory);
+        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
+        Tax tax = new Tax(MONEY, "description");
+        when(mockTaxPolicy.calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class))).thenReturn(tax);
+
+        bookKeeper.issuance(INVOICE_REQUEST_WITH_TWO_ELEMENT,mockTaxPolicy);
+
+        verify(mockTaxPolicy,times(2)).calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class));
+    }
+
+    @Test
+    public void callCreateFromInvoiceFactoryOnce() {
         InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
         when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
 
