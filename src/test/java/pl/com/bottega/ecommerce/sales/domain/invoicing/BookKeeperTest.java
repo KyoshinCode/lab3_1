@@ -20,8 +20,13 @@ public class BookKeeperTest {
 	private RequestItem requestItem = new RequestItem(productData, 0, new Money(100));
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void invoiceWithOneItemTest() {
+		
+	}
+	
+	@Test
+	public void invoiceWithTwoItemsCallCalculateTaxTwoTimesTest() {
+		
 	}
 
 }
