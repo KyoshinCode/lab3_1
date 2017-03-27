@@ -1,4 +1,5 @@
 import org.junit.Before;
+import org.junit.Test;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.BookKeeper;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceFactory;
 
@@ -12,5 +13,10 @@ public class BookKeeperTest {
     @Before
     public void init() {
         bookKeeper = new BookKeeper(new InvoiceFactory());
+    }
+
+    @Test
+    public void requestForAnInvoiceWithOneElementReturnInvoiceContainsOneElement() {
+
     }
 }
