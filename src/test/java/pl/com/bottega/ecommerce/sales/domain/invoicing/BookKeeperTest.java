@@ -88,5 +88,17 @@ public class BookKeeperTest {
 	@Test
 	public void testInvoiceRequestShouldInvokeCalculateTaxWithTwoCorrectParameters() {
 		
+		// given
+		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
+		RequestItem item = new RequestItem(productData, 3, new Money(16));
+		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
+		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
+		
+		when(mockedRequest.getItems()).thenReturn(Arrays.asList(item));
+		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(0.7),"Tax"));
+		
+		ArgumentCaptor<ProductType> parameterOne = ArgumentCaptor.forClass(ProductType.class);
+		ArgumentCaptor<Money> parameterTwo = ArgumentCaptor.forClass(Money.class);
+		
 	}
 }
