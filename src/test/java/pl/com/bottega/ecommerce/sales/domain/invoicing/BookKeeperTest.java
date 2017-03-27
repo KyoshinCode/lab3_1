@@ -76,4 +76,20 @@ public class BookKeeperTest {
 
         verify(mockInvoiceFactory,times(1)).create(CLIENT_DATA);
     }
+
+    @Test
+    public void checkMoney() {
+        INVOICE_REQUEST_WITH_ONE_ELEMENT.add(REQUEST_ITEM);
+        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
+        when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
+
+        BookKeeper bookKeeper = new BookKeeper(mockInvoiceFactory);
+        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
+        Tax tax = new Tax(MONEY, "description");
+        when(mockTaxPolicy.calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class))).thenReturn(tax);
+
+       Invoice invoice =  bookKeeper.issuance(INVOICE_REQUEST_WITH_ONE_ELEMENT,mockTaxPolicy);
+
+        assertThat(invoice.getItems().get(0).getTax().getAmount(), is(MONEY));
+    }
 }
