@@ -4,18 +4,13 @@ import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
@@ -23,13 +18,19 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 public class BookKeeperTest {
 	
+	private InvoiceFactory factory;
+	private BookKeeper bookKeeper;
+	
+	@Before
+	public void setUp() {
+		factory = new InvoiceFactory();
+		bookKeeper = new BookKeeper(factory);
+	}
+	
 	@Test
 	public void testInvoiceRequestWithOneItemShouldReturnInvoiceWithOneLine() {
 		
 		// given
-		InvoiceFactory factory = new InvoiceFactory();
-		BookKeeper bookKeeper = new BookKeeper(factory);
-		
 		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
 		RequestItem item = new RequestItem(productData, 3, new Money(16));
 		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
@@ -49,9 +50,6 @@ public class BookKeeperTest {
 	public void testInvoiceRequestWithTwoItemsShouldInvokeCalculateTaxTwoTimes() {
 
 		// given
-		InvoiceFactory factory = new InvoiceFactory();
-		BookKeeper bookKeeper = new BookKeeper(factory);
-		
 		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
 		RequestItem item = new RequestItem(productData, 3, new Money(16));
 		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
