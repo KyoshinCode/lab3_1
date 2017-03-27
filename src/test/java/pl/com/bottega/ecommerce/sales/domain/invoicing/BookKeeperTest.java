@@ -25,6 +25,7 @@ public class BookKeeperTest {
     final ClientData CLIENT_DATA = new ClientData(Id.generate(),"name");
     final InvoiceRequest INVOICE_REQUEST_WITH_ONE_ELEMENT = new InvoiceRequest(CLIENT_DATA);
     final InvoiceRequest INVOICE_REQUEST_WITH_TWO_ELEMENT = new InvoiceRequest(CLIENT_DATA);
+    final InvoiceRequest INVOICE_REQUEST = new InvoiceRequest(CLIENT_DATA);
     final Money MONEY = new Money(1);
     final RequestItem REQUEST_ITEM = new RequestItem(new ProductData(Id.generate(), MONEY, "name", ProductType.DRUG, new Date()),0 ,MONEY);
     @Test
@@ -46,9 +47,6 @@ public class BookKeeperTest {
 
     @Test
     public void callCalculateTaxTwice() {
-        INVOICE_REQUEST_WITH_TWO_ELEMENT.add(REQUEST_ITEM);
-        INVOICE_REQUEST_WITH_TWO_ELEMENT.add(REQUEST_ITEM);
-
         InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
         when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
 
@@ -59,7 +57,6 @@ public class BookKeeperTest {
 
         bookKeeper.issuance(INVOICE_REQUEST_WITH_TWO_ELEMENT,mockTaxPolicy);
 
-        verify(mockTaxPolicy,times(2)).calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class));
-
+        verify(mockInvoiceFactory,times(1)).create(CLIENT_DATA);
     }
 }
