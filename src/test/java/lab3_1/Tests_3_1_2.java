@@ -120,4 +120,34 @@ public class Tests_3_1_2 {
 		testHandler.handle(testCommand);
 		Mockito.verify(suSe, Mockito.times(0)).suggestEquivalent(tProd, testC);
 	}
+	
+	@Test
+	public void testSuggestionServiceCalledWhenProductUnavailable() {
+		Product tProd = new ProductBuilder()
+				.unavailable()
+				.withName("test product")
+				.withPrice(new Money(123))
+				.withType(ProductType.STANDARD)
+				.withId(Id.generate())
+				.build();
+		Product sProd = new ProductBuilder()
+				.available()
+				.withName("suggested")
+				.withPrice(new Money(123))
+				.withType(ProductType.DRUG)
+				.withId(Id.generate())
+				.build();
+		Reservation tRes = new ReservationBuilder()
+				.open()
+				.withClientData(new ClientData(Id.generate(), "wujeksado"))
+				.withId(Id.generate())
+				.build();
+		Mockito.when(this.prRep.load(testCommand.getProductId())).thenReturn(tProd);
+		Mockito.when(this.resRep.load(testCommand.getOrderId())).thenReturn(tRes);
+		Client testC = new Client();
+		Mockito.when(clRep.load(sysCon.getSystemUser().getClientId())).thenReturn(testC);
+		Mockito.when(suSe.suggestEquivalent(tProd, testC)).thenReturn(sProd);
+		testHandler.handle(testCommand);
+		Mockito.verify(suSe, Mockito.times(1)).suggestEquivalent(tProd, testC);
+	}
 }
