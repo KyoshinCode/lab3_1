@@ -10,6 +10,7 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
@@ -84,4 +85,8 @@ public class BookKeeperTest {
 		Assert.assertThat(invoice.getNet(), is(equalTo(item.getTotalCost().add(item.getTotalCost()))));
 	}
 	
+	@Test
+	public void testInvoiceRequestShouldInvokeCalculateTaxWithTwoCorrectParameters() {
+		
+	}
 }
