@@ -100,5 +100,12 @@ public class BookKeeperTest {
 		ArgumentCaptor<ProductType> parameterOne = ArgumentCaptor.forClass(ProductType.class);
 		ArgumentCaptor<Money> parameterTwo = ArgumentCaptor.forClass(Money.class);
 		
+		// when
+		Invoice invoice = bookKeeper.issuance(mockedRequest, mockedTaxPolicy);
+				
+		//then
+		verify(mockedTaxPolicy).calculateTax(parameterOne.capture(),parameterTwo.capture());
+		Assert.assertThat(ProductType.FOOD, is(equalTo(parameterOne.getValue())));
+		Assert.assertThat(new Money(16), is(equalTo(parameterTwo.getValue())));
 	}
 }
