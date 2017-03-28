@@ -20,13 +20,14 @@ import static org.junit.Assert.assertThat;
  */
 public class BookKeeperTest {
 
-    //BookKeeper bookKeeper;
     private InvoiceRequest invoiceRequest;
     private ArrayList<RequestItem> requestItemList;
     private RequestItem requestItem;
     private ProductData productData;
     private InvoiceFactory invoiceFactory;
-
+    private BookKeeper bookKeeper;
+    private TaxPolicy taxPolicy;
+    
     @Before
     public void setUp() {
         requestItemList = new ArrayList<>();
@@ -51,10 +52,10 @@ public class BookKeeperTest {
     }
 
     @Test
-    public void methodTest() {
+    public void requestForOneInvoice() {
         requestItemList.add(requestItem);
-        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
-        TaxPolicy taxPolicy = new TaxPolicy() {
+        bookKeeper = new BookKeeper(invoiceFactory);
+        taxPolicy = new TaxPolicy() {
             @Override
             public Tax calculateTax(ProductType productType, Money net) {
                 return new Tax(new Money(0.23), "VAT");
