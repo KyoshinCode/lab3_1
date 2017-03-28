@@ -44,4 +44,19 @@ public class BookKeeperTest {
         // then
         Assert.assertThat(invoice.getItems().size(), is(1));
     }
+
+    @Test
+    public void requestForAnInvoiceWithTwoElementsInvokeCalculateTaxMethodTwoTimes() {
+        // given
+        ProductData productData1 = mock(ProductData.class),
+                    productData2 = mock(ProductData.class);
+
+        // when
+        invoiceRequest.add(new RequestItem(productData1, 1, Money.ZERO));
+        invoiceRequest.add(new RequestItem(productData2, 1, Money.ZERO));
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        // then
+        verify(taxPolicy, times(2)).calculateTax(any(ProductType.class), any(Money.class));
+    }
 }
