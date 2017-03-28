@@ -57,14 +57,14 @@ public class TAddProductCommandHandler {
 				new ClientData(Id.generate(), "wkurwiony tester"), new Date());
 
 		c = new Client();
+		
+		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
+		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
+		Mockito.when(sS.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(p2);
 	}
 
 	@Test
 	public void availableItemDoesntSuggestAnything() {
-		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
-		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
-		Mockito.when(sS.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(p2);
-
 		handler.handle(command);
 
 		Mockito.verify(sS, Mockito.times(0)).suggestEquivalent(p1, c);
@@ -73,10 +73,6 @@ public class TAddProductCommandHandler {
 	@Test(expected = DomainOperationException.class)
 	public void productAddedToClosedReservationThrowsException() {
 		res.close();
-
-		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
-		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
-		Mockito.when(sS.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(p2);
 
 		handler.handle(command);
 	}
@@ -88,10 +84,7 @@ public class TAddProductCommandHandler {
 
 		p1.markAsRemoved();
 
-		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
-		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
 		Mockito.when(cR.load(Mockito.any(Id.class))).thenReturn(c);
-		Mockito.when(sS.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(p2);
 
 		handler.handle(command);
 
