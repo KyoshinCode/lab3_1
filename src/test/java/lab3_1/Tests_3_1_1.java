@@ -19,6 +19,7 @@ import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.TaxPolicy;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -37,7 +38,13 @@ public class Tests_3_1_1 {
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class),
 				Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mocking"));
 		clientData = new ClientData(Id.generate(), "wujeksado");
-		productData = new ProductData(Id.generate(), new Money(123.45), "Tomato", ProductType.FOOD, new Date());
+		productData = new ProductDataBuilder()
+				.withDate(new Date())
+				.withName("testProductData")
+				.withPrice(new Money(123))
+				.withProductId(Id.generate())
+				.withType(ProductType.STANDARD)
+				.build();
 		requestItem = new RequestItem(productData, 1, new Money(10.25));	
 		bookKeeper = new BookKeeper(new InvoiceFactory());
 		invoiceRequest = new InvoiceRequest(clientData);
