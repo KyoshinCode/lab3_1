@@ -58,7 +58,6 @@ public class TAddProductCommandHandler {
 
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
 		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
-		Mockito.when(cR.load(Mockito.any(Id.class))).thenReturn(c);
 		Mockito.when(sS.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(p2);
 
 		handler.handle(command);
@@ -73,11 +72,8 @@ public class TAddProductCommandHandler {
 		Reservation res = new Reservation(Id.generate(), Reservation.ReservationStatus.CLOSED,
 				new ClientData(Id.generate(), "troszke mniej zdenerwowany tester"), new Date());
 
-		Client c = new Client();
-
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
 		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
-		Mockito.when(cR.load(Mockito.any(Id.class))).thenReturn(c);
 		Mockito.when(sS.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(p2);
 
 		handler.handle(command);
