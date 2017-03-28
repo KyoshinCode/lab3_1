@@ -31,6 +31,8 @@ public class BookKeeperTest {
 	private RequestItem requestItem;
 	private InvoiceRequest mockedInvoiceRequest;
 	private TaxPolicy mockedTaxPolicy;
+	private ClientData clientData;
+	private Tax tax;
 	
 	@Before public void initialize() {
 		invoiceFactory = new InvoiceFactory();
@@ -39,6 +41,8 @@ public class BookKeeperTest {
 		requestItem = new RequestItem(productData, 2, new Money(10));
 		mockedInvoiceRequest = mock(InvoiceRequest.class);
 		mockedTaxPolicy = mock(TaxPolicy.class);
+		clientData = new ClientData(Id.generate(),"Name");
+		tax = new Tax(new Money(0.5),"descritpion");
 	}
 	
 	@Test
@@ -47,7 +51,7 @@ public class BookKeeperTest {
 		final int testValue = 1;
 		
 		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem));
-		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(new Tax(new Money(0.5),"Cheese Tax"));
+		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(tax);
 		
 		//when
 		Invoice result = bookKeeper.issuance(mockedInvoiceRequest, mockedTaxPolicy);
@@ -62,7 +66,7 @@ public class BookKeeperTest {
 		final int testValue = 2;
 		
 		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem, requestItem));
-		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(new Tax(new Money(0.5),"Cheese Tax"));
+		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(tax);
 		
 		//when
 		bookKeeper.issuance(mockedInvoiceRequest, mockedTaxPolicy);
@@ -75,7 +79,6 @@ public class BookKeeperTest {
 	public void testCreatingNewInvoiceShouldCallInvoiceFactoryCreateMethodOnce() {
 		//given
 		final int testValue = 1;
-		ClientData clientData = new ClientData(Id.generate(),"Name");
 		mockedInvoiceRequest = new InvoiceRequest(clientData);
 		InvoiceFactory mockedInvoiceFactory = mock(InvoiceFactory.class);
 		bookKeeper = new BookKeeper(mockedInvoiceFactory);
@@ -91,6 +94,7 @@ public class BookKeeperTest {
 	
 	@Test
 	public void testToGetInvoiceLineWithProperValues() {
+		//given
 		
 	}
 	
