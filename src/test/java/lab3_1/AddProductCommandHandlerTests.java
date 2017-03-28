@@ -65,6 +65,7 @@ public class AddProductCommandHandlerTests {
 		clientRepository = Mockito.mock(ClientRepository.class);
 		Mockito.when(productRepository.load(Mockito.any(Id.class))).thenReturn(avaiableProduct);
 		Mockito.when(reservationRepository.load(Mockito.any(Id.class))).thenReturn(reservation);
+		Mockito.when(suggestionService.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(avaiableProduct);
 		//Mockito.when(reservation.add(Mockito.any(Product.class), Mockito.any(AddProductCommand.class))).thenReturn(product);
 		// Generating data
 		Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
@@ -88,10 +89,7 @@ public class AddProductCommandHandlerTests {
 	}
 	
 	@Test
-	public void testProductSuggestionWhenProductUnavaiable() {
-		Client client = new Client();
-		Mockito.when(clientRepository.load(Mockito.any(Id.class))).thenReturn(client);
-		Mockito.when(suggestionService.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(avaiableProduct);
+	public void testProductSuggestionWhenProductUnavaiable() {		
 		Mockito.when(productRepository.load(Mockito.any(Id.class))).thenReturn(unavaiableProduct);
 		addProductCommandHandler.handle(addProductCommand);		
 		assertThat(unavaiableProduct.isAvailable(), is(equalTo(false)));
