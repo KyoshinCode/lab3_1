@@ -33,6 +33,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 public class AddProductCommandHandlerTests {
@@ -95,6 +96,12 @@ public class AddProductCommandHandlerTests {
 		addProductCommandHandler.handle(addProductCommand);		
 		assertThat(unavaiableProduct.isAvailable(), is(equalTo(false)));
 		Mockito.verify(suggestionService, Mockito.times(1)).suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class));
+	}
+	
+	@Test (expected = DomainOperationException.class)
+	public void testClosedReservation() {
+		reservation.close();
+		addProductCommandHandler.handle(addProductCommand);
 	}
 
 }
