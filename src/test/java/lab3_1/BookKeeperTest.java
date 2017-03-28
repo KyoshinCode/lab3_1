@@ -7,7 +7,7 @@ import org.junit.Test;
 public class BookKeeperTest {
 
 	@Test
-	public void testToDemandToGetInvoiceWithOnePositionAndGetInvoiceWithOnePosition() {
+	public void testInvoiceRequestWithOnePositionShouldReturnInvoiceWithOnePosition() {
 		
 	}
 
