@@ -44,5 +44,8 @@ public class BookKeeperTest {
 		//then
 		assertThat(result.getItems().size(), is(testValue));
 	}
-
+	@Test
+	public void testInvoiceRequestWithTwoPositionsShouldCallcalculateTaxMethodTwice() {
+	
+	}
 }
