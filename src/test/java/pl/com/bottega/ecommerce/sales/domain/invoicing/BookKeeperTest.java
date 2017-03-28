@@ -1,5 +1,6 @@
 package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
@@ -8,6 +9,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,7 +39,9 @@ public class BookKeeperTest {
 
         // when
         invoiceRequest.add(new RequestItem(productData, 1, Money.ZERO));
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         // then
+        Assert.assertThat(invoice.getItems().size(), is(1));
     }
 }
