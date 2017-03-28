@@ -1,8 +1,9 @@
+package pl.com.bottega.ecommerce.sales.domain.invoicing;
+
 import org.junit.Before;
 import org.junit.Test;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
-import pl.com.bottega.ecommerce.sales.domain.invoicing.*;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
@@ -33,7 +34,10 @@ public class BookKeeperTest {
     public void requestForAnInvoiceWithOneElementReturnInvoiceContainsOneElement() {
         // given
         ProductData productData = mock(ProductData.class);
+
         // when
+        invoiceRequest.add(new RequestItem(productData, 1, Money.ZERO));
+
         // then
     }
 }
