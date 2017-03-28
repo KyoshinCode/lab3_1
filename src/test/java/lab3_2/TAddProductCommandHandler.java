@@ -30,6 +30,10 @@ public class TAddProductCommandHandler {
 	ProductRepository pR;
 	SuggestionService sS;
 	AddProductCommand command;
+	Product p1;
+	Product p2;
+	Reservation res;
+	Client c;
 
 	@Before
 	public void setup() {
@@ -45,17 +49,18 @@ public class TAddProductCommandHandler {
 		Whitebox.setInternalState(handler, "clientRepository", cR);
 		Whitebox.setInternalState(handler, "productRepository", pR);
 		Whitebox.setInternalState(handler, "suggestionService", sS);
+
+		p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
+		p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
+
+		res = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
+				new ClientData(Id.generate(), "wkurwiony tester"), new Date());
+
+		c = new Client();
 	}
 
 	@Test
 	public void availableItemDoesntSuggestAnything() {
-		Product p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
-		Product p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
-		Reservation res = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
-				new ClientData(Id.generate(), "wkurwiony tester"), new Date());
-
-		Client c = new Client();
-
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
 		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
 		Mockito.when(sS.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(p2);
@@ -67,10 +72,7 @@ public class TAddProductCommandHandler {
 
 	@Test(expected = DomainOperationException.class)
 	public void productAddedToClosedReservationThrowsException() {
-		Product p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
-		Product p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
-		Reservation res = new Reservation(Id.generate(), Reservation.ReservationStatus.CLOSED,
-				new ClientData(Id.generate(), "troszke mniej zdenerwowany tester"), new Date());
+		res.close();
 
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
 		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
@@ -78,20 +80,13 @@ public class TAddProductCommandHandler {
 
 		handler.handle(command);
 	}
-	
+
 	@Test
 	public void unavailableItemSuggestsAnother() {
 		SystemContext sC = new SystemContext();
 		Whitebox.setInternalState(handler, "systemContext", sC);
-		
-		Product p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
-		p1.markAsRemoved();
-		
-		Product p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
-		Reservation res = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
-				new ClientData(Id.generate(), "wkurwiony tester"), new Date());
 
-		Client c = new Client();
+		p1.markAsRemoved();
 
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
 		Mockito.when(rR.load(command.getOrderId())).thenReturn(res);
@@ -100,6 +95,6 @@ public class TAddProductCommandHandler {
 
 		handler.handle(command);
 
-		Mockito.verify(sS, Mockito.times(1)).suggestEquivalent(p1, c);
+		Mockito.verify(sS, Mockito.times(1)).suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class));
 	}
 }
