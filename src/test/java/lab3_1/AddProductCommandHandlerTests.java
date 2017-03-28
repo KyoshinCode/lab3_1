@@ -8,11 +8,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.instanceOf;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
 import pl.com.bottega.ecommerce.sales.application.api.handler.AddProductCommandHandler;
+import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.BookKeeper;
@@ -70,6 +75,13 @@ public class AddProductCommandHandlerTests {
 	public void testRepositorySave() {
 		addProductCommandHandler.handle(addProductCommand);		
 		Mockito.verify(reservationRepository, Mockito.times(1)).save(Mockito.any(Reservation.class));
+	}
+	
+	@Test
+	public void testProductSuggestion() {
+		addProductCommandHandler.handle(addProductCommand);
+		assertThat(product.isAvailable(), is(equalTo(true)));
+		Mockito.verify(suggestionService, Mockito.times(0)).suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class));
 	}
 
 }
