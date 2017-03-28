@@ -53,9 +53,10 @@ public class BookKeeperTest {
 		RequestItem requestItem = new RequestItem(productData, 2, new Money(10));
 		InvoiceRequest mockedInvoiceRequest = mock(InvoiceRequest.class);
 		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
-		final int testValue = 1;
+		final int testValue = 2;
 		
 		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem, requestItem));
 		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(new Tax(new Money(0.5),"Cheese Tax"));
+		
 	}	
 }
