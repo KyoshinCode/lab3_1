@@ -23,26 +23,36 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 
 public class TAddProductCommandHandler {
+	AddProductCommandHandler handler;
+	ReservationRepository rR;
+	ClientRepository cR;
+	ProductRepository pR;
+	SuggestionService sS;
+	AddProductCommand command;
 
-	@Test
-	public void availableItemDoesntSuggestAnything() {
-		AddProductCommandHandler handler = new AddProductCommandHandler();
-		ReservationRepository rR = Mockito.mock(ReservationRepository.class);
-		ClientRepository cR = Mockito.mock(ClientRepository.class);
-		ProductRepository pR = Mockito.mock(ProductRepository.class);
-		SuggestionService sS = Mockito.mock(SuggestionService.class);
-		AddProductCommand command;
+	@Before
+	public void setup() {
+		handler = new AddProductCommandHandler();
+		rR = Mockito.mock(ReservationRepository.class);
+		cR = Mockito.mock(ClientRepository.class);
+		pR = Mockito.mock(ProductRepository.class);
+		sS = Mockito.mock(SuggestionService.class);
+
+		command = new AddProductCommand(Id.generate(), Id.generate(), 123);
 
 		Whitebox.setInternalState(handler, "reservationRepository", rR);
 		Whitebox.setInternalState(handler, "clientRepository", cR);
 		Whitebox.setInternalState(handler, "productRepository", pR);
 		Whitebox.setInternalState(handler, "suggestionService", sS);
+	}
 
+	@Test
+	public void availableItemDoesntSuggestAnything() {
 		Product p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
 		Product p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
 		Reservation res = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
 				new ClientData(Id.generate(), "wkurwiony tester"), new Date());
-		command = new AddProductCommand(Id.generate(), Id.generate(), 123);
+
 		Client c = new Client();
 
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
@@ -54,26 +64,14 @@ public class TAddProductCommandHandler {
 
 		Mockito.verify(sS, Mockito.times(0)).suggestEquivalent(p1, c);
 	}
-	 
-	@Test (expected = DomainOperationException.class)
+
+	@Test(expected = DomainOperationException.class)
 	public void productAddedToClosedReservationThrowsException() {
-		AddProductCommandHandler handler = new AddProductCommandHandler();
-		ReservationRepository rR = Mockito.mock(ReservationRepository.class);
-		ClientRepository cR = Mockito.mock(ClientRepository.class);
-		ProductRepository pR = Mockito.mock(ProductRepository.class);
-		SuggestionService sS = Mockito.mock(SuggestionService.class);
-		AddProductCommand command;
-
-		Whitebox.setInternalState(handler, "reservationRepository", rR);
-		Whitebox.setInternalState(handler, "clientRepository", cR);
-		Whitebox.setInternalState(handler, "productRepository", pR);
-		Whitebox.setInternalState(handler, "suggestionService", sS);
-
 		Product p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
 		Product p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
 		Reservation res = new Reservation(Id.generate(), Reservation.ReservationStatus.CLOSED,
 				new ClientData(Id.generate(), "troszke mniej zdenerwowany tester"), new Date());
-		command = new AddProductCommand(Id.generate(), Id.generate(), 123);
+
 		Client c = new Client();
 
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
