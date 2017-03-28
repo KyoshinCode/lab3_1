@@ -15,17 +15,23 @@ import static org.mockito.Mockito.*;
 public class BookKeeperTest {
 
     private BookKeeper bookKeeper;
+    private TaxPolicy taxPolicy;
 
     @Before
     public void init() {
         bookKeeper = new BookKeeper(new InvoiceFactory());
+
+        taxPolicy = mock(TaxPolicy.class);
+        when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class)))
+                .thenReturn(new Tax(Money.ZERO, "test"));
+
+
     }
 
     @Test
     public void requestForAnInvoiceWithOneElementReturnInvoiceContainsOneElement() {
         // given
-        TaxPolicy taxPolicy = mock(TaxPolicy.class);
-        when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class)))
-                .thenReturn(new Tax(Money.ZERO, "test"));
+        // when
+        // then
     }
 }
