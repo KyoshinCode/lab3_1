@@ -59,4 +59,15 @@ public class BookKeeperTest {
         // then
         verify(taxPolicy, times(2)).calculateTax(any(ProductType.class), any(Money.class));
     }
+
+    @Test
+    public void requestForAnInvoiceWithoutElementsReturnInvoiceContainsZeroElements() {
+        // given
+
+        // when
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        // than
+        Assert.assertThat(invoice.getItems().size(), is(0));
+    }
 }
