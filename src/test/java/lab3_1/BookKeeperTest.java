@@ -58,5 +58,7 @@ public class BookKeeperTest {
 		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem, requestItem));
 		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(new Tax(new Money(0.5),"Cheese Tax"));
 		
+		//when
+		bookKeeper.issuance(mockedInvoiceRequest, mockedTaxPolicy);
 	}	
 }
