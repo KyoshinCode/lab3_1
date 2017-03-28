@@ -76,7 +76,7 @@ public class BookKeeperTest {
 		//given
 		final int testValue = 1;
 		ClientData clientData = new ClientData(Id.generate(),"Name");
-		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+		mockedInvoiceRequest = new InvoiceRequest(clientData);
 		InvoiceFactory mockedInvoiceFactory = mock(InvoiceFactory.class);
 		bookKeeper = new BookKeeper(mockedInvoiceFactory);
 
@@ -84,7 +84,7 @@ public class BookKeeperTest {
 		when(mockedInvoiceFactory.create(clientData)).thenReturn(new Invoice(Id.generate(),clientData));
 		
 		//when
-		bookKeeper.issuance(invoiceRequest, mockedTaxPolicy);
+		bookKeeper.issuance(mockedInvoiceRequest, mockedTaxPolicy);
 		
 		//then
 		verify(mockedInvoiceFactory,times(testValue)).create(clientData);
