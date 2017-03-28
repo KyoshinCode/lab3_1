@@ -60,5 +60,8 @@ public class BookKeeperTest {
 		
 		//when
 		bookKeeper.issuance(mockedInvoiceRequest, mockedTaxPolicy);
+
+		//then
+		verify(mockedTaxPolicy, times(testValue)).calculateTax(ProductType.FOOD, requestItem.getTotalCost());
 	}	
 }
