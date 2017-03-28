@@ -72,7 +72,7 @@ public class BookKeeperTest {
 	}
 	
 	@Test
-	public void testInvoiceRequestWithTwoPositionsShouldCallInvoiceFactoryCreateMethodOnce() {
+	public void testCreatingNewInvoiceShouldCallInvoiceFactoryCreateMethodOnce() {
 		
 	}	
 }
