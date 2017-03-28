@@ -2,6 +2,7 @@ package lab3_1;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -9,7 +10,6 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import junit.framework.Assert;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.BookKeeper;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Invoice;
@@ -30,15 +30,19 @@ public class BookKeeperTest {
 		InvoiceFactory invoiceFactory= new InvoiceFactory();
 		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
 		ProductData productData = new ProductData(new Id("123"), new Money(3), "Cheese", ProductType.FOOD, new Date());
-		RequestItem requestItem = new RequestItem(productData,2, new Money(10));
+		RequestItem requestItem = new RequestItem(productData, 2, new Money(10));
 		InvoiceRequest mockedInvoiceRequest = mock(InvoiceRequest.class);
 		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
 		final int testValue = 1;
 		
-		//when
 		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem));
-		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, productData.getPrice())).thenReturn(new Tax(new Money(0.5),"Cheese Tax"));
+		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(new Tax(new Money(0.5),"Cheese Tax"));
+		
+		//when
 		Invoice result = bookKeeper.issuance(mockedInvoiceRequest, mockedTaxPolicy);
+		
+		//then
+		assertThat(result.getItems().size(), is(testValue));
 	}
 
 }
