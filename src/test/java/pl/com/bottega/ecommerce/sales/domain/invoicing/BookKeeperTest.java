@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by Konrad Gos on 21.03.2017.
@@ -25,9 +28,8 @@ public class BookKeeperTest {
     private RequestItem requestItem;
     private ProductData productData;
     private InvoiceFactory invoiceFactory;
-    private BookKeeper bookKeeper;
     private TaxPolicy taxPolicy;
-    
+
     @Before
     public void setUp() {
         requestItemList = new ArrayList<>();
@@ -49,22 +51,36 @@ public class BookKeeperTest {
 
         invoiceFactory = Mockito.mock(InvoiceFactory.class);
         Mockito.when(invoiceFactory.create(clientData)).thenReturn(new Invoice(Id.generate(), clientData));
-    }
 
-    @Test
-    public void requestForOneInvoice() {
-        requestItemList.add(requestItem);
-        bookKeeper = new BookKeeper(invoiceFactory);
         taxPolicy = new TaxPolicy() {
             @Override
             public Tax calculateTax(ProductType productType, Money net) {
                 return new Tax(new Money(0.23), "VAT");
             }
         };
+    }
+
+    @Test
+    public void requestForOneInvoice() {
+        requestItemList.add(requestItem);
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
 
         Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
         assertThat(invoice.getItems().size(), is(equalTo(1)));
+    }
+
+    @Test
+    public void requestForTwoInvoicesSpyTaxCall() {
+        requestItemList.add(requestItem);
+        requestItemList.add(requestItem);
+
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+
+        TaxPolicy spyTaxPolicy = spy(taxPolicy);
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, spyTaxPolicy);
+
+        verify(spyTaxPolicy, times(2)).calculateTax(productData.getType(), requestItem.getTotalCost());
     }
 
 }
