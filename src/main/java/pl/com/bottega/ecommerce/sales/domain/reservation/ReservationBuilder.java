@@ -4,11 +4,12 @@ import java.util.Date;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
+import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation.ReservationStatus;
 
 public class ReservationBuilder {
 	
-	private Reservation.ReservationStatus rStat = null;
-	private ClientData data;
+	private Reservation.ReservationStatus rStat = ReservationStatus.OPENED;
+	private ClientData data = new ClientData(Id.generate(), "default");
 	private Id id = Id.generate();
 	
 	public ReservationBuilder withClientData(ClientData data) {
