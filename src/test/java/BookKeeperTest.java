@@ -4,6 +4,7 @@ import pl.com.bottega.ecommerce.sales.domain.invoicing.BookKeeper;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceFactory;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.TaxPolicy;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -31,6 +32,8 @@ public class BookKeeperTest {
     @Test
     public void requestForAnInvoiceWithOneElementReturnInvoiceContainsOneElement() {
         // given
+        ProductData productData = mock(ProductData.class);
+
         // when
         // then
     }
