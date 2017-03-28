@@ -11,6 +11,7 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.BookKeeper;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Invoice;
@@ -73,6 +74,11 @@ public class BookKeeperTest {
 	
 	@Test
 	public void testCreatingNewInvoiceShouldCallInvoiceFactoryCreateMethodOnce() {
+		//given
+		final int testValue = 1;
+		ClientData clientData = new ClientData(Id.generate(),"Name");
+		InvoiceFactory mockedInvoiceFactory = mock(InvoiceFactory.class);
 		
+		when(mockedInvoiceFactory.create(clientData)).thenReturn(new Invoice(Id.generate(),clientData));
 	}	
 }
