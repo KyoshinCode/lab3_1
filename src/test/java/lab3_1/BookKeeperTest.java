@@ -3,7 +3,6 @@ package lab3_1;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import org.junit.Test;
@@ -22,7 +21,13 @@ public class BookKeeperTest {
 
 	@Test
 	public void testInvoiceRequestWithOnePositionShouldReturnInvoiceWithOnePosition() {
-
+		//given
+		InvoiceFactory invoiceFactory= new InvoiceFactory();
+		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+		ProductData productData = new ProductData(new Id("123"), new Money(3), "Cheese", ProductType.FOOD, new Date());
+		RequestItem requestItem = new RequestItem(productData,2, new Money(10));
+		InvoiceRequest mockedInvoiceRequest = mock(InvoiceRequest.class);
+		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
 	}
 
 }
