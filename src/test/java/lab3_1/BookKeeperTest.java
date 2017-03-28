@@ -87,5 +87,7 @@ public class BookKeeperTest {
 		//when
 		bookKeeper.issuance(invoiceRequest, mockedTaxPolicy);
 		
+		//then
+		verify(mockedInvoiceFactory,times(testValue)).create(clientData);
 	}	
 }
