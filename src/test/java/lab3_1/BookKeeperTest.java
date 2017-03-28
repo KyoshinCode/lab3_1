@@ -3,6 +3,7 @@ package lab3_1;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs; 
 
 import java.util.Arrays;
 import java.util.Date;
@@ -15,6 +16,7 @@ import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.BookKeeper;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Invoice;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceFactory;
+import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceLine;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceRequest;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
@@ -95,7 +97,11 @@ public class BookKeeperTest {
 	@Test
 	public void testToGetInvoiceLineWithProperValues() {
 		//given
+		InvoiceLine testValue = new InvoiceLine(productData,requestItem.getQuantity(),requestItem.getTotalCost(),tax);
 		
+		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem));
+		when(mockedTaxPolicy.calculateTax(ProductType.FOOD, requestItem.getTotalCost())).thenReturn(tax);
+
 	}
 	
 }
