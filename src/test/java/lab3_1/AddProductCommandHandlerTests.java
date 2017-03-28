@@ -43,7 +43,7 @@ public class AddProductCommandHandlerTests {
 	private SuggestionService suggestionService;
 	private ClientRepository clientRepository;
 	private SystemContext systemContext;
-	private Product product;
+	private Product avaiableProduct, unavaiableProduct;
 	private Reservation reservation;
 	private ClientData clientData;
 	
@@ -52,7 +52,9 @@ public class AddProductCommandHandlerTests {
 		addProductCommandHandler = new AddProductCommandHandler();
 		addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 123);
 		systemContext = new SystemContext();
-		product = new Product(Id.generate(), new Money(10),"Test name",ProductType.FOOD);
+		avaiableProduct = new Product(Id.generate(), new Money(10),"Test name",ProductType.FOOD);
+		unavaiableProduct = new Product(Id.generate(), new Money(10),"Test name",ProductType.FOOD);
+		unavaiableProduct.markAsRemoved();
 		clientData = new ClientData(Id.generate(), "sochacki");
 		reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,clientData,new Date());
 		// Mocking
@@ -60,7 +62,7 @@ public class AddProductCommandHandlerTests {
 		productRepository = Mockito.mock(ProductRepository.class);
 		suggestionService = Mockito.mock(SuggestionService.class);
 		clientRepository = Mockito.mock(ClientRepository.class);
-		Mockito.when(productRepository.load(Mockito.any(Id.class))).thenReturn(product);
+		Mockito.when(productRepository.load(Mockito.any(Id.class))).thenReturn(avaiableProduct);
 		Mockito.when(reservationRepository.load(Mockito.any(Id.class))).thenReturn(reservation);
 		//Mockito.when(reservation.add(Mockito.any(Product.class), Mockito.any(AddProductCommand.class))).thenReturn(product);
 		// Generating data
@@ -78,10 +80,21 @@ public class AddProductCommandHandlerTests {
 	}
 	
 	@Test
-	public void testProductSuggestion() {
+	public void testProductSuggestionWhenProductAvaiable() {
 		addProductCommandHandler.handle(addProductCommand);
-		assertThat(product.isAvailable(), is(equalTo(true)));
+		assertThat(avaiableProduct.isAvailable(), is(equalTo(true)));
 		Mockito.verify(suggestionService, Mockito.times(0)).suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class));
+	}
+	
+	@Test
+	public void testProductSuggestionWhenProductUnavaiable() {
+		Client client = new Client();
+		Mockito.when(clientRepository.load(Mockito.any(Id.class))).thenReturn(client);
+		Mockito.when(suggestionService.suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class))).thenReturn(avaiableProduct);
+		Mockito.when(productRepository.load(Mockito.any(Id.class))).thenReturn(unavaiableProduct);
+		addProductCommandHandler.handle(addProductCommand);		
+		assertThat(unavaiableProduct.isAvailable(), is(equalTo(false)));
+		Mockito.verify(suggestionService, Mockito.times(1)).suggestEquivalent(Mockito.any(Product.class), Mockito.any(Client.class));
 	}
 
 }
