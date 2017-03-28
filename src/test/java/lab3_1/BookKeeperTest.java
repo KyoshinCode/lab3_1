@@ -104,7 +104,9 @@ public class BookKeeperTest {
 		
 		//when
 		Invoice result = bookKeeper.issuance(mockedInvoiceRequest, mockedTaxPolicy);
-
+		
+		//then
+		assertThat(result.getItems().get(0), samePropertyValuesAs(testValue));
 	}
 	
 }
