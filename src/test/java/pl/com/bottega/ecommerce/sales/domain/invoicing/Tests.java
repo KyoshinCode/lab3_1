@@ -1,5 +1,6 @@
 package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
+import org.junit.Before;
 import org.junit.Test;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
@@ -17,18 +18,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class Tests {
+    RequestItem item;
+    BookKeeper bookKeeper;
+
+    @Before
+    public void initItem() {
+        ProductData productData = new ProductData(Id.generate(), new Money(20), "Ziemniaki", ProductType.FOOD, Calendar.getInstance().getTime());
+        item = new RequestItem(productData, 10, new Money(100));
+
+    }
+    @Before
+    public void initBookKeeper(){
+        InvoiceFactory invoiceFactory = new InvoiceFactory();
+        bookKeeper = new BookKeeper(invoiceFactory);
+    }
+
     @Test
     public void InvoiceRequestWithOneInvoice(){
-        //given
-        ProductData productData = new ProductData(Id.generate(), new Money(20), "Ziemniaki", ProductType.FOOD, Calendar.getInstance().getTime());
-        RequestItem item = new RequestItem(productData,  10,  new Money(100));
-
-        InvoiceFactory invoiceFactory = new InvoiceFactory();
-        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
-
         InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
         TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
-
+        //given
         when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item));
         when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
 
