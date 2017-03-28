@@ -45,7 +45,7 @@ public class AddProductCommandHandler implements CommandHandler<AddProductComman
 			product = suggestionService.suggestEquivalent(product, client);
 		}
 			
-		reservation.add(product, command.getQuantity());		
+		reservation.add(product, command.getQuantity());	
 		reservationRepository.save(reservation);		
 		return null;
 	}
