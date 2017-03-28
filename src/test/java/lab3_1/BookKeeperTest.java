@@ -69,5 +69,10 @@ public class BookKeeperTest {
 
 		//then
 		verify(mockedTaxPolicy, times(testValue)).calculateTax(ProductType.FOOD, requestItem.getTotalCost());
+	}
+	
+	@Test
+	public void testInvoiceRequestWithTwoPositionsShouldCallInvoiceFactoryCreateMethodOnce() {
+		
 	}	
 }
