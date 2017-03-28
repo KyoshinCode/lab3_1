@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.*;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Date;
 
