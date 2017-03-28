@@ -11,6 +11,10 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 import java.util.ArrayList;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
 /**
  * Created by Konrad Gos on 21.03.2017.
  */
@@ -48,7 +52,18 @@ public class BookKeeperTest {
 
     @Test
     public void methodTest() {
+        requestItemList.add(requestItem);
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+        TaxPolicy taxPolicy = new TaxPolicy() {
+            @Override
+            public Tax calculateTax(ProductType productType, Money net) {
+                return new Tax(new Money(0.23), "VAT");
+            }
+        };
 
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        assertThat(invoice.getItems().size(), is(equalTo(1)));
     }
 
 }
