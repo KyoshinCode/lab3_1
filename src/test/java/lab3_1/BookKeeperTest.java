@@ -8,6 +8,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
@@ -23,16 +24,26 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 public class BookKeeperTest {
-
+	
+	InvoiceFactory invoiceFactory;
+	BookKeeper bookKeeper;
+	ProductData productData;
+	RequestItem requestItem;
+	InvoiceRequest mockedInvoiceRequest;
+	TaxPolicy mockedTaxPolicy;
+	
+	@Before public void initialize() {
+		invoiceFactory = new InvoiceFactory();
+		bookKeeper = new BookKeeper(invoiceFactory);
+		productData = new ProductData(new Id("123"), new Money(3), "Cheese", ProductType.FOOD, new Date());
+		requestItem = new RequestItem(productData, 2, new Money(10));
+		mockedInvoiceRequest = mock(InvoiceRequest.class);
+		mockedTaxPolicy = mock(TaxPolicy.class);
+	}
+	
 	@Test
 	public void testInvoiceRequestWithOnePositionShouldReturnInvoiceWithOnePosition() {
 		//given
-		InvoiceFactory invoiceFactory= new InvoiceFactory();
-		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
-		ProductData productData = new ProductData(new Id("123"), new Money(3), "Cheese", ProductType.FOOD, new Date());
-		RequestItem requestItem = new RequestItem(productData, 2, new Money(10));
-		InvoiceRequest mockedInvoiceRequest = mock(InvoiceRequest.class);
-		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
 		final int testValue = 1;
 		
 		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem));
@@ -44,15 +55,10 @@ public class BookKeeperTest {
 		//then
 		assertThat(result.getItems().size(), is(testValue));
 	}
+	
 	@Test
 	public void testInvoiceRequestWithTwoPositionsShouldCallcalculateTaxMethodTwice() {
 		//given
-		InvoiceFactory invoiceFactory= new InvoiceFactory();
-		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
-		ProductData productData = new ProductData(new Id("123"), new Money(3), "Cheese", ProductType.FOOD, new Date());
-		RequestItem requestItem = new RequestItem(productData, 2, new Money(10));
-		InvoiceRequest mockedInvoiceRequest = mock(InvoiceRequest.class);
-		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
 		final int testValue = 2;
 		
 		when(mockedInvoiceRequest.getItems()).thenReturn(Arrays.asList(requestItem, requestItem));
