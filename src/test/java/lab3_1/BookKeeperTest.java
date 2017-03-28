@@ -80,7 +80,6 @@ public class BookKeeperTest {
 		InvoiceFactory mockedInvoiceFactory = mock(InvoiceFactory.class);
 		bookKeeper = new BookKeeper(mockedInvoiceFactory);
 
-		
 		when(mockedInvoiceFactory.create(clientData)).thenReturn(new Invoice(Id.generate(),clientData));
 		
 		//when
@@ -89,4 +88,10 @@ public class BookKeeperTest {
 		//then
 		verify(mockedInvoiceFactory,times(testValue)).create(clientData);
 	}	
+	
+	@Test
+	public void testToGetInvoiceLineWithProperValues() {
+	
+	}
+	
 }
