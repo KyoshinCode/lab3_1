@@ -17,12 +17,14 @@ import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationItem;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 import pl.com.bottega.ecommerce.system.application.SystemUser;
 
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
@@ -41,6 +43,7 @@ public class AddProductCommandHandlerTest {
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
     private Product product;
+    private Product equivalentProduct;
 
     @Before
     public void setUp() throws Exception {
@@ -54,13 +57,14 @@ public class AddProductCommandHandlerTest {
         addProductCommandHandler = new AddProductCommandHandler();
         ClientData clientData = new ClientData(Id.generate(), "Andrew");
         product = new Product(id,new Money(100),"product", ProductType.FOOD);
-        reservation = spy(new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date()));
+        equivalentProduct = new Product(id,new Money(100),"eqproduct",ProductType.FOOD);
+        reservation = spy(new Reservation(new Id("2"), Reservation.ReservationStatus.OPENED,clientData,new Date()));
         Client client = new Client();
         SystemContext systemContext = new SystemContext();
         when(clientRepository.load(id)).thenReturn(client);
         when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
         when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
-        when(suggestionService.suggestEquivalent(product,client)).thenReturn(product);
+        when(suggestionService.suggestEquivalent(product,client)).thenReturn(equivalentProduct);
         Whitebox.setInternalState(addProductCommandHandler,"reservationRepository",reservationRepository);
         Whitebox.setInternalState(addProductCommandHandler,"productRepository",productRepository);
         Whitebox.setInternalState(addProductCommandHandler,"suggestionService",suggestionService);
@@ -84,4 +88,13 @@ public class AddProductCommandHandlerTest {
         verify(reservation).add(product,1);
 
     }
+
+    @Test public void addProduct_checkIfEquivalentProductHasBeenAddedUponPrimaryProductUnavailability(){
+
+        product.markAsRemoved();
+        assertThat(product.isAvailable(),is(equalTo(false)));
+        addProductCommandHandler.handle(addProductCommand);
+        verify(reservation).add(equivalentProduct,1);
+    }
+
 }
