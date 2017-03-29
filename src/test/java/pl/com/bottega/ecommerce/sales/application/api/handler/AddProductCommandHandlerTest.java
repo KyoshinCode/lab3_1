@@ -97,4 +97,11 @@ public class AddProductCommandHandlerTest {
         verify(reservation).add(equivalentProduct,1);
     }
 
+    @Test (expected = DomainOperationException.class)
+    public void addProduct_reservationHasBeenPreviouslyClosed(){
+
+        reservation.close();
+        addProductCommandHandler.handle(addProductCommand);
+    }
+
 }
