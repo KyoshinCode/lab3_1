@@ -63,6 +63,9 @@ public class AddProductCommandHandlerTest {
         reservation = spy(new Reservation(new Id("2"), Reservation.ReservationStatus.OPENED, clientData, new Date()));
         client = new Client();
         systemContext = new SystemContext();
+        //Tested class initialization
+        addProductCommand = new AddProductCommand(id, id, 1);
+        addProductCommandHandler = new AddProductCommandHandler();
         //Setting stubs behavior
         when(clientRepository.load(id)).thenReturn(client);
         when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
@@ -74,9 +77,7 @@ public class AddProductCommandHandlerTest {
         Whitebox.setInternalState(addProductCommandHandler, "suggestionService", suggestionService);
         Whitebox.setInternalState(addProductCommandHandler, "clientRepository", clientRepository);
         Whitebox.setInternalState(addProductCommandHandler, "systemContext", systemContext);
-        //Tested class initialization
-        addProductCommand = new AddProductCommand(id, id, 1);
-        addProductCommandHandler = new AddProductCommandHandler();
+
 
 
     }
