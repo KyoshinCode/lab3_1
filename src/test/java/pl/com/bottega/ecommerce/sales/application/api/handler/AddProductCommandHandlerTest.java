@@ -1,6 +1,5 @@
 package pl.com.bottega.ecommerce.sales.application.api.handler;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -14,19 +13,18 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
-import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationItem;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
-import pl.com.bottega.ecommerce.system.application.SystemUser;
+
 
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.isA;
+
 import static org.mockito.Mockito.*;
 
 /**

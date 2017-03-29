@@ -3,7 +3,6 @@ package pl.com.bottega.ecommerce.sales.domain.invoicing;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
+
 import static org.mockito.Mockito.*;
 
 /**
