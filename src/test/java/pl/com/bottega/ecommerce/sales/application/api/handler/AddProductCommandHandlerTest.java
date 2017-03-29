@@ -14,6 +14,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationItem;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
@@ -21,9 +22,10 @@ import pl.com.bottega.ecommerce.system.application.SystemUser;
 
 import java.util.Date;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by grusz on 25.03.2017.
@@ -38,6 +40,7 @@ public class AddProductCommandHandlerTest {
     private Reservation reservation;
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
+    private Product product;
 
     @Before
     public void setUp() throws Exception {
@@ -50,8 +53,8 @@ public class AddProductCommandHandlerTest {
         addProductCommand = new AddProductCommand(id,id,1);
         addProductCommandHandler = new AddProductCommandHandler();
         ClientData clientData = new ClientData(Id.generate(), "Andrew");
-        Product product = new Product(id,new Money(100),"product", ProductType.FOOD);
-        reservation = new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date());
+        product = new Product(id,new Money(100),"product", ProductType.FOOD);
+        reservation = spy(new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date()));
         Client client = new Client();
         SystemContext systemContext = new SystemContext();
         when(clientRepository.load(id)).thenReturn(client);
@@ -72,6 +75,13 @@ public class AddProductCommandHandlerTest {
 
         addProductCommandHandler.handle(addProductCommand);
         verify(reservationRepository).save(reservation);
+
+    }
+
+    @Test public void addProduct_checkIfReservationProductAddMethodHasBeenCalled(){
+
+        addProductCommandHandler.handle(addProductCommand);
+        verify(reservation).add(product,1);
 
     }
 }
