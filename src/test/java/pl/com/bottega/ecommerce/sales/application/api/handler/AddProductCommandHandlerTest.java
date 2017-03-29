@@ -44,61 +44,72 @@ public class AddProductCommandHandlerTest {
     private AddProductCommandHandler addProductCommandHandler;
     private Product product;
     private Product equivalentProduct;
+    private Client client;
+    private SystemContext systemContext;
+    private ClientData clientData;
+    private ClientRepository clientRepository;
 
     @Before
     public void setUp() throws Exception {
 
+        //Setting mocks
         productRepository = mock(ProductRepository.class);
         reservationRepository = mock(ReservationRepository.class);
         suggestionService = mock(SuggestionService.class);
-        ClientRepository clientRepository = mock(ClientRepository.class);
+        clientRepository = mock(ClientRepository.class);
+        //Fakes initialization
         id = new Id("1");
-        addProductCommand = new AddProductCommand(id,id,1);
-        addProductCommandHandler = new AddProductCommandHandler();
-        ClientData clientData = new ClientData(Id.generate(), "Andrew");
-        product = new Product(id,new Money(100),"product", ProductType.FOOD);
-        equivalentProduct = new Product(id,new Money(100),"eqproduct",ProductType.FOOD);
-        reservation = spy(new Reservation(new Id("2"), Reservation.ReservationStatus.OPENED,clientData,new Date()));
-        Client client = new Client();
-        SystemContext systemContext = new SystemContext();
+        clientData = new ClientData(Id.generate(), "Andrew");
+        product = new Product(id, new Money(100), "product", ProductType.FOOD);
+        equivalentProduct = new Product(id, new Money(100), "eqproduct", ProductType.FOOD);
+        reservation = spy(new Reservation(new Id("2"), Reservation.ReservationStatus.OPENED, clientData, new Date()));
+        client = new Client();
+        systemContext = new SystemContext();
+        //Setting stubs behavior
         when(clientRepository.load(id)).thenReturn(client);
         when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
         when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
-        when(suggestionService.suggestEquivalent(product,client)).thenReturn(equivalentProduct);
-        Whitebox.setInternalState(addProductCommandHandler,"reservationRepository",reservationRepository);
-        Whitebox.setInternalState(addProductCommandHandler,"productRepository",productRepository);
-        Whitebox.setInternalState(addProductCommandHandler,"suggestionService",suggestionService);
-        Whitebox.setInternalState(addProductCommandHandler,"clientRepository",clientRepository);
-        Whitebox.setInternalState(addProductCommandHandler,"systemContext",systemContext);
-
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(equivalentProduct);
+        //Setting private fields of tested class to use stubs
+        Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
+        Whitebox.setInternalState(addProductCommandHandler, "productRepository", productRepository);
+        Whitebox.setInternalState(addProductCommandHandler, "suggestionService", suggestionService);
+        Whitebox.setInternalState(addProductCommandHandler, "clientRepository", clientRepository);
+        Whitebox.setInternalState(addProductCommandHandler, "systemContext", systemContext);
+        //Tested class initialization
+        addProductCommand = new AddProductCommand(id, id, 1);
+        addProductCommandHandler = new AddProductCommandHandler();
 
 
     }
 
-    @Test public void addProduct_checkIfReservationSaveMethodHasBeenCalled(){
+    @Test
+    public void addProduct_checkIfReservationSaveMethodHasBeenCalled() {
 
         addProductCommandHandler.handle(addProductCommand);
         verify(reservationRepository).save(reservation);
 
     }
 
-    @Test public void addProduct_checkIfReservationProductAddMethodHasBeenCalled(){
+    @Test
+    public void addProduct_checkIfReservationProductAddMethodHasBeenCalled() {
 
         addProductCommandHandler.handle(addProductCommand);
-        verify(reservation).add(product,1);
+        verify(reservation).add(product, 1);
 
     }
 
-    @Test public void addProduct_checkIfEquivalentProductHasBeenAddedUponPrimaryProductUnavailability(){
+    @Test
+    public void addProduct_checkIfEquivalentProductHasBeenAddedUponPrimaryProductUnavailability() {
 
         product.markAsRemoved();
-        assertThat(product.isAvailable(),is(equalTo(false)));
+        assertThat(product.isAvailable(), is(equalTo(false)));
         addProductCommandHandler.handle(addProductCommand);
-        verify(reservation).add(equivalentProduct,1);
+        verify(reservation).add(equivalentProduct, 1);
     }
 
-    @Test (expected = DomainOperationException.class)
-    public void addProduct_reservationHasBeenPreviouslyClosed(){
+    @Test(expected = DomainOperationException.class)
+    public void addProduct_reservationHasBeenPreviouslyClosed() {
 
         reservation.close();
         addProductCommandHandler.handle(addProductCommand);
