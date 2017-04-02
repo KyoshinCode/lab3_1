@@ -8,9 +8,9 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
  */
 public class ProductBuilder {
     private Id id = Id.generate();
-    private Money productPrice;
-    private String productName;
-    private ProductType productType;
+    private Money productPrice = new Money(15);
+    private String productName = "Hamburger";
+    private ProductType productType = ProductType.FOOD;
 
     public ProductBuilder() {
     }

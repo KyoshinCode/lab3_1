@@ -10,9 +10,9 @@ import java.util.Date;
  */
 public class ReservationBuilder {
     private Id id = Id.generate();
-    private Reservation.ReservationStatus status;
-    private ClientData clientData;
-    private Date createDate;
+    private Reservation.ReservationStatus status = Reservation.ReservationStatus.OPENED;
+    private ClientData clientData = new ClientData(Id.generate(),"Adam");
+    private Date createDate = new Date();
 
     public ReservationBuilder() {
     }
