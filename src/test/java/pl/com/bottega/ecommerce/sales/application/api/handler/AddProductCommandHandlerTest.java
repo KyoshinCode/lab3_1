@@ -19,9 +19,7 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import java.util.Date;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Konrad Gos on 02.04.2017.
@@ -54,7 +52,7 @@ public class AddProductCommandHandlerTest {
 
         ClientData clientData = new ClientData(id, "Adam");
         product = new Product(id,new Money(15),"Hamburger", ProductType.FOOD);
-        reservation = new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date());
+        reservation = spy(new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date()));
         Client client = new Client();
         SystemContext systemContext = new SystemContext();
 
