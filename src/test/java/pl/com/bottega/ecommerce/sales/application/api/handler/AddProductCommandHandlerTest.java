@@ -67,8 +67,8 @@ public class AddProductCommandHandlerTest {
 
     @Test
     public void testHandler_productAvailable_NoClientLoad() throws Exception {
-        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Pusia"), new Date());
-        Product product = new Product(Id.generate(), new Money(10), "ciasto z buraka", ProductType.FOOD);
+        Reservation reservation = new ReservationBuilder().setClient(new ClientData(Id.generate(), "Pusia")).opened().build();
+        Product product = new ProductBuilder().setId(command.getProductId()).setName("ciasto z buraka").build();
 
         when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
         when(productRepository.load(command.getProductId())).thenReturn(product);
@@ -80,8 +80,8 @@ public class AddProductCommandHandlerTest {
 
     @Test
     public void testHandler_reservationRepositoryLoadOnce() throws Exception {
-        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Pimpek"), new Date());
-        Product product = new Product(Id.generate(), new Money(12, "PLN"), "wianek", ProductType.STANDARD);
+        Reservation reservation = new ReservationBuilder().setClient(new ClientData(Id.generate(), "Pimpek")).opened().build();
+        Product product = new ProductBuilder().setId(command.getProductId()).setName("wianek").setType(ProductType.STANDARD).build();
 
         when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
         when(productRepository.load(command.getProductId())).thenReturn(product);
@@ -93,8 +93,8 @@ public class AddProductCommandHandlerTest {
 
     @Test
     public void testHandler_productReservation() throws Exception {
-        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Bzyczek"), new Date());
-        Product product = new Product(Id.generate(), new Money(120000, "PLN"), "Audi A8", ProductType.STANDARD);
+        Reservation reservation = new ReservationBuilder().setClient(new ClientData(Id.generate(), "Bzyczek")).opened().build();
+        Product product = new ProductBuilder().setId(command.getProductId()).setName("Audi A8").setType(ProductType.STANDARD).build();
 
         when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
         when(productRepository.load(command.getProductId())).thenReturn(product);
@@ -106,9 +106,8 @@ public class AddProductCommandHandlerTest {
 
     @Test
     public void testHandler_suggestEquivalent() throws Exception {
-        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Lawenda"), new Date());
-        Product product = new Product(Id.generate(), new Money(5.5, "USD"), "Skrzyp polny", ProductType.DRUG);
-        product.markAsRemoved();
+        Reservation reservation = new ReservationBuilder().setClient(new ClientData(Id.generate(), "Lawenda")).opened().build();
+        Product product = new ProductBuilder().setId(command.getProductId()).setName("Skrzyp polny").setType(ProductType.DRUG).unavailable().build();
 
         when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
         when(productRepository.load(command.getProductId())).thenReturn(product);
@@ -116,7 +115,7 @@ public class AddProductCommandHandlerTest {
         Client client = new Client();
 
         when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
-        when(suggestionService.suggestEquivalent(product, client)).thenReturn(new Product(Id.generate(), new Money(2.4, "USD"), "Bratek", ProductType.DRUG));
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(new ProductBuilder().setId(command.getProductId()).setName("Bratek").setType(ProductType.DRUG).build());
 
         handler.handle(command);
 
@@ -125,15 +124,14 @@ public class AddProductCommandHandlerTest {
 
     @Test
     public void testHandle_reserveSuggestedProduct() throws Exception {
-        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Anna"), new Date());
-        Product product = new Product(Id.generate(), new Money(479.99, "USD"), "Czolenka czerwone Badura", ProductType.STANDARD);
-        product.markAsRemoved();
+        Reservation reservation = new ReservationBuilder().setClient(new ClientData(Id.generate(), "Anna")).opened().build();
+        Product product = new ProductBuilder().setId(command.getProductId()).setName("Czolenka czerwone Badura").setType(ProductType.STANDARD).unavailable().build();
 
         when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
         when(productRepository.load(command.getProductId())).thenReturn(product);
 
         Client client = new Client();
-        Product productAvailable = new Product(Id.generate(), new Money(143.99, "USD"), "Czolenka czerwone Lasocki", ProductType.STANDARD);
+        Product productAvailable = new ProductBuilder().setId(command.getProductId()).setName("Czolenka czerwone Lasocki").setType(ProductType.STANDARD).build();
 
         when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
         when(suggestionService.suggestEquivalent(product, client)).thenReturn(productAvailable);
