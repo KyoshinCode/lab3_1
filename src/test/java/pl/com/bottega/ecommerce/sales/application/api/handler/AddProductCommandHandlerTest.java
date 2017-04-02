@@ -15,6 +15,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import java.util.Date;
@@ -81,6 +82,12 @@ public class AddProductCommandHandlerTest {
     public void checkIfReservationAddMethodInHandleHasBeenCalled() {
         addProductCommandHandler.handle(addProductCommand);
         verify(reservation).add(product, 1);
+    }
+
+    @Test(expected = DomainOperationException.class)
+    public void checkIfReservationHasBeenClosedBeforeHandleMethod() {
+        reservation.close();
+        addProductCommandHandler.handle(addProductCommand);
     }
 
 }
