@@ -22,6 +22,7 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.spy;
 
 /**
  * Created by Piotrek on 02.04.2017.
@@ -35,6 +36,7 @@ public class AddProductCommandHandlerTest {
     private Id id;
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
+    private Product product;
 
     @Before
     public void setUp() throws Exception{
@@ -46,8 +48,8 @@ public class AddProductCommandHandlerTest {
         addProductCommand = new AddProductCommand(id, id, 1);
         addProductCommandHandler = new AddProductCommandHandler();
         ClientData clientData = new ClientData(Id.generate(), "TEST");
-        Product product = new Product(id, new Money(200), "test", ProductType.STANDARD);
-        reservation = new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date());
+        product = new Product(id, new Money(200), "test", ProductType.STANDARD);
+        reservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));
         Client client = new Client();
         SystemContext systemContext = new SystemContext();
 
@@ -74,5 +76,11 @@ public class AddProductCommandHandlerTest {
     public void reservationPreviouslyClosedTest(){
         reservation.close();
         addProductCommandHandler.handle(addProductCommand);
+    }
+    
+    @Test
+    public void reservationAddMethodCancelTest(){
+        addProductCommandHandler.handle(addProductCommand);
+        Mockito.verify(reservation).add(product, 1);
     }
 }
