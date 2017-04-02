@@ -92,4 +92,15 @@ public class BookKeeperTest {
         assertThat(invoice.getItems().size(), is(equalTo(0)));
     }
 
+    @Test
+    public void requestForNoInvoicesSpyTaxCall() {
+
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+
+        TaxPolicy spyTaxPolicy = spy(taxPolicy);
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, spyTaxPolicy);
+
+        verify(spyTaxPolicy, times(0)).calculateTax(productData.getType(), requestItem.getTotalCost());
+    }
+
 }
