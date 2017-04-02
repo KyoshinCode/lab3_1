@@ -10,9 +10,11 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
@@ -37,14 +39,13 @@ public class AddProductCommandHandlerTest {
     private ReservationRepository reservationRepository;
     private SuggestionService suggestionService;
     private Id id;
-    private Reservation reservation;
+    private Reservation spyReservation;
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
     private Product product;
     private Product equivalentProduct;
     private Client client;
     private SystemContext systemContext;
-    private ClientData clientData;
     private ClientRepository clientRepository;
 
     @Before
@@ -57,10 +58,23 @@ public class AddProductCommandHandlerTest {
         clientRepository = mock(ClientRepository.class);
         //Fakes initialization
         id = new Id("1");
-        clientData = new ClientData(Id.generate(), "Andrew");
-        product = new Product(id, new Money(100), "product", ProductType.FOOD);
-        equivalentProduct = new Product(id, new Money(100), "eqproduct", ProductType.FOOD);
-        reservation = spy(new Reservation(new Id("2"), Reservation.ReservationStatus.OPENED, clientData, new Date()));
+
+        product =  ProductBuilder.
+                aProduct()
+                .withName("product")
+                .build();
+
+        equivalentProduct = ProductBuilder
+                .aProduct()
+                .withName("eqproduct")
+                .build();
+
+        Reservation reservation = ReservationBuilder
+                .aReservation()
+                .withStatus(Reservation.ReservationStatus.OPENED)
+                .build();
+
+        spyReservation = spy(reservation);
         client = new Client();
         systemContext = new SystemContext();
         //Tested class initialization
@@ -68,7 +82,7 @@ public class AddProductCommandHandlerTest {
         addProductCommandHandler = new AddProductCommandHandler();
         //Setting stubs behavior
         when(clientRepository.load(id)).thenReturn(client);
-        when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
+        when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(spyReservation);
         when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
         when(suggestionService.suggestEquivalent(product, client)).thenReturn(equivalentProduct);
         //Setting private fields of tested class to use stubs
@@ -86,7 +100,7 @@ public class AddProductCommandHandlerTest {
     public void addProduct_checkIfReservationSaveMethodHasBeenCalled() {
 
         addProductCommandHandler.handle(addProductCommand);
-        verify(reservationRepository).save(reservation);
+        verify(reservationRepository).save(spyReservation);
 
     }
 
@@ -94,7 +108,7 @@ public class AddProductCommandHandlerTest {
     public void addProduct_checkIfReservationProductAddMethodHasBeenCalled() {
 
         addProductCommandHandler.handle(addProductCommand);
-        verify(reservation).add(product, 1);
+        verify(spyReservation).add(product, 1);
 
     }
 
@@ -104,13 +118,13 @@ public class AddProductCommandHandlerTest {
         product.markAsRemoved();
         assertThat(product.isAvailable(), is(equalTo(false)));
         addProductCommandHandler.handle(addProductCommand);
-        verify(reservation).add(equivalentProduct, 1);
+        verify(spyReservation).add(equivalentProduct, 1);
     }
 
     @Test(expected = DomainOperationException.class)
     public void addProduct_reservationHasBeenPreviouslyClosed() {
 
-        reservation.close();
+        spyReservation.close();
         addProductCommandHandler.handle(addProductCommand);
     }
 
