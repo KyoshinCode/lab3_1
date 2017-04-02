@@ -10,9 +10,11 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
@@ -55,8 +57,10 @@ public class AddProductCommandHandlerTest {
         addProductCommandHandler = new AddProductCommandHandler();
 
         clientData = new ClientData(id, "Adam");
-        product = new Product(id,new Money(15),"Hamburger", ProductType.FOOD);
-        reservation = spy(new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date()));
+        //product = new Product(id,new Money(15),"Hamburger", ProductType.FOOD);
+        product = new ProductBuilder().Product().withId(Id.generate()).withPrice(new Money(15)).withName("Hamburger").withProductType(ProductType.FOOD).build();
+        //reservation = spy(new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date()));
+        reservation = spy(new ReservationBuilder().Reservation().withId(Id.generate()).withStatus(Reservation.ReservationStatus.OPENED).withClientData(clientData).withCreateDate(new Date()).build());
         client = new Client();
         systemContext = new SystemContext();
 
