@@ -67,20 +67,29 @@ public class AddProductCommandHandlerTest {
                 .withProductType(ProductType.STANDARD)
                 .build();
 
-        spyReservation = ReservationBuilder.
+        productCopy = ProductBuilder.
+                productBuilder()
+                .withId(Id.generate())
+                .withMoney(new Money(200))
+                .withName("test")
+                .withProductType(ProductType.STANDARD)
+                .build();
+
+        Reservation reservation = ReservationBuilder.
                 reservationBuilder()
                 .withId(Id.generate())
                 .withStatus(Reservation.ReservationStatus.OPENED)
-                .withClientData(clientData)
+                .withClientData(new ClientData(Id.generate(), "TEST"))
                 .withDate(new Date())
                 .build();
 
         /*clientData = new ClientData(Id.generate(), "TEST");
         product = new Product(id, new Money(200), "test", ProductType.STANDARD);
         productCopy = new Product(id, new Money(200), "testCopy", ProductType.STANDARD);
-        spyReservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));
+        spyReservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));*/
         client = new Client();
-        systemContext = new SystemContext();*/
+        systemContext = new SystemContext();
+        spyReservation = spy(reservation);
 
         Mockito.when(clientRepository.load(id)).thenReturn(client);
         Mockito.when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(spyReservation);
