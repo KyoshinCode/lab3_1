@@ -30,6 +30,11 @@ public class ClientData {
 		this.name = name;
 	}
 	
+	public ClientData(String name) {
+		this.id = Id.generate();
+		this.name = name;
+	}
+	
 	public Id getAggregateId() {
 		return id;
 	}

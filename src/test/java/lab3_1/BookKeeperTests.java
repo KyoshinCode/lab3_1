@@ -43,10 +43,10 @@ public class BookKeeperTests {
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class)))
 				.thenReturn(taxBuilder.build());
 		// Generating data
-		requestItem = new RequestItem(
-				productDataBuilder.build(), 1,
-				new Money(10.25));
-		clientData = new ClientData(Id.generate(), "Zawadzki");
+		RequestItem.Builder requestItemB = new RequestItem.Builder();
+		requestItemB.productData(productDataBuilder.build()).quantity(1).totalCost(new Money(10.25));
+		requestItem = requestItemB.build();
+		clientData = new ClientData("Zawadzki");
 
 		bookKeeper = new BookKeeper(new InvoiceFactory());
 		invoiceRequest = new InvoiceRequest(clientData);
