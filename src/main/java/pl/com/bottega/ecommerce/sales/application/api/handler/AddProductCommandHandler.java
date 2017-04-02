@@ -29,26 +29,15 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 
 public class AddProductCommandHandler implements CommandHandler<AddProductCommand, Void>{
-
-
 	private ReservationRepository reservationRepository;
-	
-
 	private ProductRepository productRepository;
-	
-
 	private SuggestionService suggestionService;
-	
-
 	private ClientRepository clientRepository;
-	
-
 	private SystemContext systemContext;
 	
 	@Override
 	public Void handle(AddProductCommand command) {
-		Reservation reservation = reservationRepository.load(command.getOrderId());
-		
+		Reservation reservation = reservationRepository.load(command.getOrderId());		
 		Product product = productRepository.load(command.getProductId());
 		
 		if (! product.isAvailable()){
@@ -56,10 +45,8 @@ public class AddProductCommandHandler implements CommandHandler<AddProductComman
 			product = suggestionService.suggestEquivalent(product, client);
 		}
 			
-		reservation.add(product, command.getQuantity());
-		
-		reservationRepository.save(reservation);
-		
+		reservation.add(product, command.getQuantity());	
+		reservationRepository.save(reservation);		
 		return null;
 	}
 	
