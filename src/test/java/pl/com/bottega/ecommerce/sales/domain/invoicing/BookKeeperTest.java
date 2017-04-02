@@ -83,4 +83,13 @@ public class BookKeeperTest {
         verify(spyTaxPolicy, times(2)).calculateTax(productData.getType(), requestItem.getTotalCost());
     }
 
+    @Test
+    public void requestForNoInvoice() {
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        assertThat(invoice.getItems().size(), is(equalTo(0)));
+    }
+
 }
