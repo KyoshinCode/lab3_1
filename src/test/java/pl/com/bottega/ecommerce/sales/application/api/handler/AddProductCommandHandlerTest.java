@@ -1,5 +1,6 @@
 package pl.com.bottega.ecommerce.sales.application.api.handler;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -21,6 +22,8 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import java.util.Date;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
 
@@ -37,6 +40,7 @@ public class AddProductCommandHandlerTest {
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
     private Product product;
+    private Product productCopy;
 
     @Before
     public void setUp() throws Exception{
@@ -49,6 +53,7 @@ public class AddProductCommandHandlerTest {
         addProductCommandHandler = new AddProductCommandHandler();
         ClientData clientData = new ClientData(Id.generate(), "TEST");
         product = new Product(id, new Money(200), "test", ProductType.STANDARD);
+        productCopy = new Product(id, new Money(200), "testCopy", ProductType.STANDARD);
         reservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));
         Client client = new Client();
         SystemContext systemContext = new SystemContext();
@@ -57,6 +62,8 @@ public class AddProductCommandHandlerTest {
         Mockito.when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
         Mockito.when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
         Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(product);
+        Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(productCopy);
+
 
         //static field set
         Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
@@ -82,5 +89,14 @@ public class AddProductCommandHandlerTest {
     public void reservationAddMethodCancelTest(){
         addProductCommandHandler.handle(addProductCommand);
         Mockito.verify(reservation).add(product, 1);
+    }
+
+    @Test
+    public void checkIfPossibleToAddOverPrimaryUnavailable(){
+        product.markAsRemoved();
+        Assert.assertThat(product.isAvailable(), is(equalTo(false)));
+
+        addProductCommandHandler.handle(addProductCommand);
+        Mockito.verify(reservation).add(productCopy, 1);
     }
 }
