@@ -26,7 +26,6 @@ import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
 
 /**
@@ -83,10 +82,6 @@ public class AddProductCommandHandlerTest {
                 .withDate(new Date())
                 .build();
 
-        /*clientData = new ClientData(Id.generate(), "TEST");
-        product = new Product(id, new Money(200), "test", ProductType.STANDARD);
-        productCopy = new Product(id, new Money(200), "testCopy", ProductType.STANDARD);
-        spyReservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));*/
         client = new Client();
         systemContext = new SystemContext();
         spyReservation = spy(reservation);
@@ -96,7 +91,6 @@ public class AddProductCommandHandlerTest {
         Mockito.when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
         Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(product);
         Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(productCopy);
-
 
         //private field set
         Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
