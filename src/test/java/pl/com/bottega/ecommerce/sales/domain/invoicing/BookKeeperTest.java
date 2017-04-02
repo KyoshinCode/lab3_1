@@ -44,6 +44,7 @@ public class BookKeeperTest {
         Assert.assertThat(invoice.getItems().size(), is(1));
 
     }
+
     @Test
     public void testIssuanceBehaviorCalculateTaxMethodCallTwoTimes() {
         TaxPolicy taxPolicy = spy(TaxPolicy.class);
@@ -52,9 +53,9 @@ public class BookKeeperTest {
         ProductData productData1 = new ProductData(Id.generate(), AMOUNT, "name product1", ProductType.FOOD,
                 new Date());
 
-        invoiceRequest.add(new RequestItem(productData, 1,AMOUNT));
-        invoiceRequest.add(new RequestItem(productData1,1, AMOUNT));
-        when(taxPolicy.calculateTax(any(ProductType.class),any(Money.class)))
+        invoiceRequest.add(new RequestItem(productData, 1, AMOUNT));
+        invoiceRequest.add(new RequestItem(productData1, 1, AMOUNT));
+        when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class)))
                 .thenReturn(new Tax(AMOUNT, "desc"));
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
 
@@ -62,6 +63,25 @@ public class BookKeeperTest {
 
         verify(taxPolicy, times(2)).calculateTax(any(ProductType.class), any(Money.class));
 
+    }
+
+    @Test
+    public void testIssuanceInvoiceWithTheSameItem() {
+        ProductData p = new ProductData(Id.generate(), AMOUNT, "name product", ProductType.DRUG,
+                new Date());
+        RequestItem requestItem = new RequestItem(p, 1, AMOUNT);
+        int NUMBER_ITEM = 150;
+        for (int i = 0; i < NUMBER_ITEM; i++) {
+            invoiceRequest.add(requestItem);
+        }
+
+        when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class)))
+                .thenReturn(new Tax(AMOUNT, "desc"));
+
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+        Assert.assertThat(invoice.getItems().size(), is(150));
     }
 
 
