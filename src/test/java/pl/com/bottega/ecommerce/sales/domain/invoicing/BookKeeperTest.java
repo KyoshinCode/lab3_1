@@ -36,12 +36,15 @@ public class BookKeeperTest {
     public void setUp() throws Exception{
         invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "TEST"));
         Product product = ProductBuilder
-                productBuilder()
+                .productBuilder()
                 .withId(Id.generate())
                 .withMoney(new Money(200))
                 .withName("test")
                 .withProductType(ProductType.STANDARD)
                 .build();
+
+        productData = product.generateSnapshot();
+        requestItem = new RequestItem(productData, 1, new Money(200));
 
         ClientData clientData = invoiceRequest.getClientData();
 
