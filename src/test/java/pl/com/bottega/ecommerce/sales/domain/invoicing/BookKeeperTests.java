@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-public class Tests {
+public class BookKeeperTests {
     RequestItem item;
     BookKeeper bookKeeper;
     @Before
