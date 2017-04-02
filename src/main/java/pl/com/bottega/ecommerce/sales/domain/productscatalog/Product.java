@@ -1,12 +1,10 @@
 package pl.com.bottega.ecommerce.sales.domain.productscatalog;
 
-import java.util.Date;
-
-
-
 import pl.com.bottega.ddd.support.domain.BaseAggregateRoot;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+
+import java.util.Date;
 
 public class Product extends BaseAggregateRoot{
 	private Money price;
@@ -19,7 +17,7 @@ public class Product extends BaseAggregateRoot{
 
 	private Product(){}
 	
-	Product(Id aggregateId, Money price, String name, ProductType productType){
+	public Product(Id aggregateId, Money price, String name, ProductType productType){
 		this.id = aggregateId;
 		this.price = price;
 		this.name = name;
