@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoRule;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
+import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
@@ -50,10 +51,12 @@ public class AddProductCommandHandlerTest {
 
     private AddProductCommand command;
 
+    private SystemContext systemContext;
+
     @Before
     public void setUp() throws Exception {
         handler = new AddProductCommandHandler();
-        SystemContext systemContext = new SystemContext();
+        systemContext = new SystemContext();
         Whitebox.setInternalState(handler, "reservationRepository", reservationRepository);
         Whitebox.setInternalState(handler, "productRepository", productRepository);
         Whitebox.setInternalState(handler, "suggestionService", suggestionService);
@@ -89,7 +92,7 @@ public class AddProductCommandHandlerTest {
     }
 
     @Test
-    public void testHandle_productReservation() throws Exception {
+    public void testHandler_productReservation() throws Exception {
         Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Bzyczek"), new Date());
         Product product = new Product(Id.generate(), new Money(120000, "PLN"), "Audi A8", ProductType.STANDARD);
 
@@ -99,5 +102,24 @@ public class AddProductCommandHandlerTest {
         handler.handle(command);
 
         assertThat(reservation.contains(product), is(true));
+    }
+
+    @Test
+    public void testHandler_suggestEquivalent() throws Exception {
+        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Lawenda"), new Date());
+        Product product = new Product(Id.generate(), new Money(5.5, "USD"), "Skrzyp polny", ProductType.DRUG);
+        product.markAsRemoved();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        Client client = new Client();
+
+        when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(new Product(Id.generate(), new Money(2.4, "USD"), "Bratek", ProductType.DRUG));
+
+        handler.handle(command);
+
+        verify(suggestionService, times(1)).suggestEquivalent(product, client);
     }
 }
