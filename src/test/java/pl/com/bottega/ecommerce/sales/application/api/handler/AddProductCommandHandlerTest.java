@@ -41,22 +41,27 @@ public class AddProductCommandHandlerTest {
     private AddProductCommandHandler addProductCommandHandler;
     private Product product;
     private Product productCopy;
+    private ClientRepository clientRepository;
+    private ClientData clientData;
+    private Client client;
+    private SystemContext systemContext;
 
     @Before
     public void setUp() throws Exception{
         reservationRepository = Mockito.mock(ReservationRepository.class);
         productRepository = Mockito.mock(ProductRepository.class);
         suggestionService = Mockito.mock(SuggestionService.class);
-        ClientRepository clientRepository = Mockito.mock(ClientRepository.class);
+        clientRepository = Mockito.mock(ClientRepository.class);
+
         id = new Id("1");
         addProductCommand = new AddProductCommand(id, id, 1);
         addProductCommandHandler = new AddProductCommandHandler();
-        ClientData clientData = new ClientData(Id.generate(), "TEST");
+        clientData = new ClientData(Id.generate(), "TEST");
         product = new Product(id, new Money(200), "test", ProductType.STANDARD);
         productCopy = new Product(id, new Money(200), "testCopy", ProductType.STANDARD);
         reservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));
-        Client client = new Client();
-        SystemContext systemContext = new SystemContext();
+        client = new Client();
+        systemContext = new SystemContext();
 
         Mockito.when(clientRepository.load(id)).thenReturn(client);
         Mockito.when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
@@ -65,7 +70,7 @@ public class AddProductCommandHandlerTest {
         Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(productCopy);
 
 
-        //static field set
+        //private field set
         Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
         Whitebox.setInternalState(addProductCommandHandler, "productRepository", productRepository);
         Whitebox.setInternalState(addProductCommandHandler, "suggestionService", suggestionService);
