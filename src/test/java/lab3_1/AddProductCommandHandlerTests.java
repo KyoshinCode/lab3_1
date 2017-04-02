@@ -51,13 +51,17 @@ public class AddProductCommandHandlerTests {
 	@Before
 	public void setUp() {
 		addProductCommandHandler = new AddProductCommandHandler();
-		addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 123);
+		AddProductCommand.Builder addProductCommandBuilder = new AddProductCommand.Builder().quantity(123);		
+		addProductCommand = addProductCommandBuilder.build();
 		systemContext = new SystemContext();
-		avaiableProduct = new Product(Id.generate(), new Money(10),"Test name",ProductType.FOOD);
-		unavaiableProduct = new Product(Id.generate(), new Money(10),"Test name",ProductType.FOOD);
+		Product.Builder productBuilder = new Product.Builder().name("Test name").price(new Money(10)).productType(ProductType.FOOD);
+		avaiableProduct = productBuilder.build();
+		unavaiableProduct = productBuilder.build();
 		unavaiableProduct.markAsRemoved();
-		clientData = new ClientData(Id.generate(), "sochacki");
+		clientData = new ClientData("sochacki");
+		Reservation.Builder reservationBuilder = new Reservation.Builder().status(Reservation.ReservationStatus.OPENED).clientData(clientData).createDate(new Date());
 		reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,clientData,new Date());
+		reservation = reservationBuilder.build();
 		// Mocking
 		reservationRepository = Mockito.mock(ReservationRepository.class);
 		productRepository = Mockito.mock(ProductRepository.class);
