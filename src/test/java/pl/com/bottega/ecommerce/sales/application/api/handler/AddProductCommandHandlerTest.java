@@ -34,6 +34,7 @@ public class AddProductCommandHandlerTest {
     private ClientRepository clientRepository;
 
     private Id id;
+    private Product product;
     private Reservation reservation;
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
@@ -52,7 +53,7 @@ public class AddProductCommandHandlerTest {
         addProductCommandHandler = new AddProductCommandHandler();
 
         ClientData clientData = new ClientData(id, "Adam");
-        Product product = new Product(id,new Money(15),"Hamburger", ProductType.FOOD);
+        product = new Product(id,new Money(15),"Hamburger", ProductType.FOOD);
         reservation = new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date());
         Client client = new Client();
         SystemContext systemContext = new SystemContext();
@@ -73,6 +74,13 @@ public class AddProductCommandHandlerTest {
     public void checkIfReservationSaveMethodInHandleHasBeenCalled(){
         addProductCommandHandler.handle(addProductCommand);
         verify(reservationRepository).save(reservation);
+    }
+
+    @Test
+    public void checkIfReservationAddMethodInHandleHasBeenCalled() {
+
+        addProductCommandHandler.handle(addProductCommand);
+        verify(reservation).add(product, 1);
     }
 
 }
