@@ -9,9 +9,9 @@ import java.util.Date;
  * Created by grusz on 02.04.2017.
  */
 public final class ReservationBuilder {
-    private Reservation.ReservationStatus status;
-    private ClientData clientData;
-    private Date createDate;
+    private Reservation.ReservationStatus status = Reservation.ReservationStatus.CLOSED;
+    private ClientData clientData = new ClientData(Id.generate(),"Andrew");
+    private Date createDate = new Date();
     private Id id = Id.generate();
 
     private ReservationBuilder() {
