@@ -2,6 +2,8 @@ package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 
@@ -13,6 +15,7 @@ import java.util.Calendar;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +24,6 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 public class Tests {
     RequestItem item;
     BookKeeper bookKeeper;
-
     @Before
     public void initItem() {
         ProductData productData = new ProductData(Id.generate(), new Money(20), "Ziemniaki", ProductType.FOOD, Calendar.getInstance().getTime());
@@ -64,6 +66,8 @@ public class Tests {
         //then
         verify(mockTaxPolicy, times(2)).calculateTax(ProductType.FOOD,new Money(100));
     }
+
+
     @Test
     public void VerifyMethodCalls(){
         //given
@@ -78,5 +82,22 @@ public class Tests {
         //then
         verify(mockInvoiceRequest).getClientData();
         verify(mockTaxPolicy).calculateTax(ProductType.FOOD, new Money(100));
+    }
+    @Test
+    public void InvoiceFactoryCreateCalls(){
+        //given
+        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
+        bookKeeper = new BookKeeper(mockInvoiceFactory);
+        InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
+        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
+        ClientData client = new ClientData(Id.generate(),"Patryk");
+        when(mockInvoiceFactory.create(client)).thenReturn(new Invoice(Id.generate(),client));
+
+        //when
+        bookKeeper.issuance(mockInvoiceRequest,mockTaxPolicy);
+
+        //then
+        verify(mockInvoiceFactory, times(1)).create(any(ClientData.class));
+
     }
 }
