@@ -73,4 +73,17 @@ public class AddProductCommandHandlerTest {
 
         verify(clientRepository, never()).load(reservation.getClientData().getAggregateId());
     }
+
+    @Test
+    public void testHandler_reservationRepositoryLoadOnce() throws Exception {
+        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Pimpek"), new Date());
+        Product product = new Product(Id.generate(), new Money(12, "PLN"), "wianek", ProductType.STANDARD);
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        handler.handle(command);
+
+        verify(reservationRepository, times(1)).load(command.getOrderId());
+    }
 }
