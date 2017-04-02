@@ -16,6 +16,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import java.util.Date;
@@ -67,5 +68,11 @@ public class AddProductCommandHandlerTest {
     public void reservationSaveMethodCancelTest(){
         addProductCommandHandler.handle(addProductCommand);
         Mockito.verify(reservationRepository).save(reservation);
+    }
+
+    @Test(expected = DomainOperationException.class)
+    public void reservationPreviouslyClosedTest(){
+        reservation.close();
+        addProductCommandHandler.handle(addProductCommand);
     }
 }
