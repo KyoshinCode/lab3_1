@@ -44,7 +44,7 @@ public class BookKeeperTest {
     public void testIssuance_OneInvoice() throws Exception {
         Money cost = new Money(100);
 
-        ProductData dummyData = new ProductData(Id.generate(), new Money(10), "stuff", ProductType.STANDARD, new Date());
+        ProductData dummyData = new ProductDataBuilder().build();
 
         when(policy.calculateTax(dummyData.getType(), cost)).thenReturn(new Tax(new Money(20), "DummyTax"));
         InvoiceRequest request = new InvoiceRequest(new ClientData(Id.generate(), "John Doe"));
@@ -61,7 +61,7 @@ public class BookKeeperTest {
         Money money = new Money(15);
         ProductData[] data = new ProductData[2];
         for(int i = 0; i < 2; i++) {
-            data[i] = new ProductData(Id.generate(), new Money(10 * i + 5), "stuff" + Integer.toString(i), ProductType.STANDARD, new Date());
+            data[i] = new ProductDataBuilder().withPrice(new Money(10 * i + 5)).withName("stuff" + Integer.toString(i)).build();
         }
         when(policy.calculateTax(ProductType.STANDARD, money)).thenReturn(new Tax(new Money(10), "dummy tax"));
         InvoiceRequest request = new InvoiceRequest(new ClientData(Id.generate(), "Jane Doe"));
@@ -80,7 +80,7 @@ public class BookKeeperTest {
         Tax tax = new Tax(new Money(2.5), "FakeTax");
 
         InvoiceRequest request = new InvoiceRequest(new ClientData(Id.generate(), "John Kowalski"));
-        request.add(new RequestItem(new ProductData(Id.generate(), new Money(15), "stuff", ProductType.DRUG, new Date()) , 2, money));
+        request.add(new RequestItem(new ProductDataBuilder().withType(ProductType.DRUG).build() , 2, money));
 
         when(policy.calculateTax(ProductType.DRUG, money)).thenReturn(tax);
 
