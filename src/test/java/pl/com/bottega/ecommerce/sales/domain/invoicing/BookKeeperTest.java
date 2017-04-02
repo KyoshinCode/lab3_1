@@ -9,6 +9,8 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
+import java.util.Date;
+
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +34,7 @@ public class BookKeeperTest {
 
 
     @Test
-    public void testIssuanceRequestToReturnIninvoiceWithOneItem() {
+    public void testIssuanceRequestToReturnInvoiceWithOneItem() {
         invoiceRequest.add(new RequestItem(productData, 1, AMOUNT));
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
 
@@ -40,6 +42,25 @@ public class BookKeeperTest {
 
         Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
         Assert.assertThat(invoice.getItems().size(), is(1));
+
+    }
+    @Test
+    public void testIssuanceBehaviorCalculateTaxMethodCallTwoTimes() {
+        TaxPolicy taxPolicy = spy(TaxPolicy.class);
+        ProductData productData = new ProductData(Id.generate(), AMOUNT, "name product", ProductType.DRUG,
+                new Date());
+        ProductData productData1 = new ProductData(Id.generate(), AMOUNT, "name product1", ProductType.FOOD,
+                new Date());
+
+        invoiceRequest.add(new RequestItem(productData, 1,AMOUNT));
+        invoiceRequest.add(new RequestItem(productData1,1, AMOUNT));
+        when(taxPolicy.calculateTax(any(ProductType.class),any(Money.class)))
+                .thenReturn(new Tax(AMOUNT, "desc"));
+        BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+
+        Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+        verify(taxPolicy, times(2)).calculateTax(any(ProductType.class), any(Money.class));
 
     }
 
