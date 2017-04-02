@@ -15,7 +15,9 @@ import java.util.Calendar;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class Tests {
     RequestItem item;
@@ -47,5 +49,19 @@ public class Tests {
         //then
         assertThat(invoice.getItems().size(), equalTo(1) );
 
+    }
+    @Test
+    public void InvoiceRequestWithTwoInvoices(){
+        InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
+        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
+        //given
+        when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item,item));
+        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
+
+        //when
+        bookKeeper.issuance(mockInvoiceRequest,mockTaxPolicy);
+
+        //then
+        verify(mockTaxPolicy, times(2)).calculateTax(ProductType.FOOD,new Money(100));
     }
 }
