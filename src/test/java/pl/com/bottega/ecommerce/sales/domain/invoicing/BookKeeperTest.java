@@ -43,7 +43,7 @@ public class BookKeeperTest {
     public void test_OnePosition() throws Exception {
         InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Anna"));
         Money money = new Money(10, "PLN");
-        ProductData productData = new ProductData(Id.generate(), money, "czekolada", ProductType.FOOD, new Date());
+        ProductData productData = new ProductDataBuilder().setPrice(money).setName("czekolada").build();
         when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(5, "PLN"), "Falszywy podatek"));
 
         invoiceRequest.add(new RequestItem(productData, 2, money));
@@ -57,7 +57,7 @@ public class BookKeeperTest {
     public void test_TwoPositions() throws Exception {
         InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Karol"));
         Money money = new Money(150);
-        ProductData productData = new ProductData(Id.generate(), money, "podklad", ProductType.DRUG, new Date());
+        ProductData productData = new ProductDataBuilder().setPrice(money).setName("podklad").setType(ProductType.DRUG).build();
         when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(120), "Fikcyjna pozycja"));
 
         invoiceRequest.add(new RequestItem(productData, 1, money));
@@ -72,7 +72,7 @@ public class BookKeeperTest {
     public void test_NoPosition() throws Exception {
         InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Napoleon"));
         Money money = new Money(20, "USD");
-        ProductData productData = new ProductData(Id.generate(), money, "sukienka", ProductType.STANDARD, new Date());
+        ProductData productData = new ProductDataBuilder().setPrice(money).setName("sukienka").setType(ProductType.STANDARD).build();
         when(taxPolicy.calculateTax(productData.getType(), money)).thenReturn(new Tax(new Money(34.1, "USD"), "Tajna operacja"));
 
         Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
