@@ -12,6 +12,7 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
@@ -35,7 +36,7 @@ public class AddProductCommandHandlerTest {
     private ReservationRepository reservationRepository;
     private ProductRepository productRepository;
     private SuggestionService suggestionService;
-    private Reservation reservation;
+    private Reservation spyReservation;
     private Id id;
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
@@ -56,15 +57,24 @@ public class AddProductCommandHandlerTest {
         id = new Id("1");
         addProductCommand = new AddProductCommand(id, id, 1);
         addProductCommandHandler = new AddProductCommandHandler();
-        clientData = new ClientData(Id.generate(), "TEST");
+
+        product = ProductBuilder.
+                productBuilder()
+                .withId(Id.generate())
+                .withMoney(new Money(200))
+                .withName("test")
+                .withProductType(ProductType.STANDARD)
+                .build();
+
+        /*clientData = new ClientData(Id.generate(), "TEST");
         product = new Product(id, new Money(200), "test", ProductType.STANDARD);
         productCopy = new Product(id, new Money(200), "testCopy", ProductType.STANDARD);
-        reservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));
+        spyReservation = Mockito.spy(new Reservation(id, Reservation.ReservationStatus.OPENED, clientData, new Date()));
         client = new Client();
-        systemContext = new SystemContext();
+        systemContext = new SystemContext();*/
 
         Mockito.when(clientRepository.load(id)).thenReturn(client);
-        Mockito.when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
+        Mockito.when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(spyReservation);
         Mockito.when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
         Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(product);
         Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(productCopy);
@@ -81,19 +91,19 @@ public class AddProductCommandHandlerTest {
     @Test
     public void reservationSaveMethodCancelTest(){
         addProductCommandHandler.handle(addProductCommand);
-        Mockito.verify(reservationRepository).save(reservation);
+        Mockito.verify(reservationRepository).save(spyReservation);
     }
 
     @Test(expected = DomainOperationException.class)
     public void reservationPreviouslyClosedTest(){
-        reservation.close();
+        spyReservation.close();
         addProductCommandHandler.handle(addProductCommand);
     }
     
     @Test
     public void reservationAddMethodCancelTest(){
         addProductCommandHandler.handle(addProductCommand);
-        Mockito.verify(reservation).add(product, 1);
+        Mockito.verify(spyReservation).add(product, 1);
     }
 
     @Test
@@ -102,6 +112,6 @@ public class AddProductCommandHandlerTest {
         Assert.assertThat(product.isAvailable(), is(equalTo(false)));
 
         addProductCommandHandler.handle(addProductCommand);
-        Mockito.verify(reservation).add(productCopy, 1);
+        Mockito.verify(spyReservation).add(productCopy, 1);
     }
 }
