@@ -122,4 +122,25 @@ public class AddProductCommandHandlerTest {
 
         verify(suggestionService, times(1)).suggestEquivalent(product, client);
     }
+
+    @Test
+    public void testHandle_reserveSuggestedProduct() throws Exception {
+        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Anna"), new Date());
+        Product product = new Product(Id.generate(), new Money(479.99, "USD"), "Czolenka czerwone Badura", ProductType.STANDARD);
+        product.markAsRemoved();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        Client client = new Client();
+        Product productAvailable = new Product(Id.generate(), new Money(143.99, "USD"), "Czolenka czerwone Lasocki", ProductType.STANDARD);
+
+        when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(productAvailable);
+
+        handler.handle(command);
+
+        assertThat(reservation.contains(product), is(false));
+        assertThat(reservation.contains(productAvailable), is(true));
+    }
 }
