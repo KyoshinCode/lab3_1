@@ -65,6 +65,12 @@ public class BookKeeperTest {
         Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
         assertThat(invoice.getItems().size(), is(equalTo(0)));
     }
-
+    @Test
+    public void testInvoiceZeroItemAsBehaviour() throws Exception {
+        when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class))).thenReturn(new Tax(new Money(30), "example"));
+        InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Ignacy Rzecki"));
+        bookKeeper.issuance(invoiceRequest, taxPolicy);
+        verify(taxPolicy, times(0)).calculateTax(any(ProductType.class), any(Money.class));
+    }
 
 }
