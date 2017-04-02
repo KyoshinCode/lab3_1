@@ -36,6 +36,9 @@ public class AddProductCommandHandlerTest {
     private Reservation reservation;
     private AddProductCommand addProductCommand;
     private AddProductCommandHandler addProductCommandHandler;
+    private ClientData clientData;
+    private Client client;
+    private SystemContext systemContext;
 
     @Before
     public void setUp() throws Exception {
@@ -50,11 +53,11 @@ public class AddProductCommandHandlerTest {
         addProductCommand = new AddProductCommand(id,id,1);
         addProductCommandHandler = new AddProductCommandHandler();
 
-        ClientData clientData = new ClientData(id, "Adam");
+        clientData = new ClientData(id, "Adam");
         product = new Product(id,new Money(15),"Hamburger", ProductType.FOOD);
         reservation = spy(new Reservation(id, Reservation.ReservationStatus.OPENED,clientData,new Date()));
-        Client client = new Client();
-        SystemContext systemContext = new SystemContext();
+        client = new Client();
+        systemContext = new SystemContext();
 
         when(clientRepository.load(id)).thenReturn(client);
         when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
@@ -76,7 +79,6 @@ public class AddProductCommandHandlerTest {
 
     @Test
     public void checkIfReservationAddMethodInHandleHasBeenCalled() {
-
         addProductCommandHandler.handle(addProductCommand);
         verify(reservation).add(product, 1);
     }
