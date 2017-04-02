@@ -15,7 +15,7 @@ public class ProductBuilder {
     private ProductBuilder() {
     }
 
-    public ProductBuilder productBuilder(){
+    public static ProductBuilder productBuilder(){
         return new  ProductBuilder();
     }
 

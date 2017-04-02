@@ -17,7 +17,7 @@ public class ReservationBuilder {
     private ReservationBuilder() {
     }
 
-    public ReservationBuilder reservationBuilder(){
+    public static ReservationBuilder reservationBuilder(){
         return new ReservationBuilder();
     }
 
