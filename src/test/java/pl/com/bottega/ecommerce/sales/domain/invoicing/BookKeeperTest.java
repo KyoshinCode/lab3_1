@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
@@ -22,7 +24,6 @@ import static org.mockito.Mockito.*;
 public class BookKeeperTest {
 
     private InvoiceRequest invoiceRequest;
-    private ArrayList<RequestItem> requestItems;
     private RequestItem requestItem;
     private InvoiceFactory invoiceFactory;
     private ProductData productData;
@@ -30,16 +31,13 @@ public class BookKeeperTest {
     @Before
     public void setUp() throws Exception {
 
-        invoiceRequest = mock(InvoiceRequest.class);
-        when(invoiceRequest.getClientData()).thenReturn(new ClientData(Id.generate(), "Andrew"));
-        requestItems = new ArrayList<>();
-        productData = mock(ProductData.class);
-        when(productData.getType()).thenReturn(ProductType.FOOD);
-        requestItem = mock(RequestItem.class);
-        when(requestItem.getTotalCost()).thenReturn(new Money(100));
-        when(requestItem.getProductData()).thenReturn(productData);
-        when(requestItem.getQuantity()).thenReturn(1);
-        when(invoiceRequest.getItems()).thenReturn(requestItems);
+        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Andrew"));
+        Product product = ProductBuilder
+                .aProduct()
+                .withProductType(ProductType.FOOD)
+                .build();
+        productData = product.generateSnapshot();
+        requestItem = new RequestItem(productData,1,new Money(100));
         ClientData clientData = invoiceRequest.getClientData();
         invoiceFactory = mock(InvoiceFactory.class);
         when(invoiceFactory.create(clientData)).thenReturn(new Invoice(Id.generate(), clientData));
@@ -48,7 +46,7 @@ public class BookKeeperTest {
     @Test
     public void issueInvoice_onePosition_checkPositionsAmountOnInvoice() {
 
-        requestItems.add(requestItem);
+        invoiceRequest.add(requestItem);
 
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
         TaxPolicy taxPolicy = new TaxPolicy() {
@@ -66,8 +64,8 @@ public class BookKeeperTest {
 
     @Test
     public void issueInvoice_TwoPositions_callCountForTaxPolicy(){
-        requestItems.add(requestItem);
-        requestItems.add(requestItem);
+        invoiceRequest.add(requestItem);
+        invoiceRequest.add(requestItem);
 
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
         TaxPolicy taxPolicy = new TaxPolicy() {
