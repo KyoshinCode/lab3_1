@@ -22,6 +22,7 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import java.util.Date;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -85,5 +86,18 @@ public class AddProductCommandHandlerTest {
         handler.handle(command);
 
         verify(reservationRepository, times(1)).load(command.getOrderId());
+    }
+
+    @Test
+    public void testHandle_productReservation() throws Exception {
+        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Bzyczek"), new Date());
+        Product product = new Product(Id.generate(), new Money(120000, "PLN"), "Audi A8", ProductType.STANDARD);
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        handler.handle(command);
+
+        assertThat(reservation.contains(product), is(true));
     }
 }
