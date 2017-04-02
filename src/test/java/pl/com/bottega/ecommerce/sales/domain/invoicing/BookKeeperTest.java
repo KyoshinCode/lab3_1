@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
@@ -18,6 +20,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder.productBuilder;
 
 /**
  * Created by Piotrek on 25.03.2017.
@@ -27,24 +30,18 @@ public class BookKeeperTest {
     private InvoiceFactory invoiceFactory;
     private InvoiceRequest invoiceRequest;
     private RequestItem requestItem;
-    private ArrayList<RequestItem> requestItemArrayList;
     private ProductData productData;
 
     @Before
     public void setUp() throws Exception{
-        invoiceRequest = Mockito.mock(InvoiceRequest.class);
-        Mockito.when(invoiceRequest.getClientData()).thenReturn(new ClientData(Id.generate(), "TEST_USER"));
-        requestItemArrayList = new ArrayList<>();
-
-        productData = Mockito.mock(ProductData.class);
-        Mockito.when(productData.getType()).thenReturn(ProductType.STANDARD);
-
-        requestItem = Mockito.mock(RequestItem.class);
-        Mockito.when(requestItem.getProductData()).thenReturn(productData);
-        Mockito.when(requestItem.getQuantity()).thenReturn(1);
-        Mockito.when(requestItem.getTotalCost()).thenReturn(new Money(200));
-
-        Mockito.when(invoiceRequest.getItems()).thenReturn(requestItemArrayList);
+        invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "TEST"));
+        Product product = ProductBuilder
+                productBuilder()
+                .withId(Id.generate())
+                .withMoney(new Money(200))
+                .withName("test")
+                .withProductType(ProductType.STANDARD)
+                .build();
 
         ClientData clientData = invoiceRequest.getClientData();
 
@@ -54,7 +51,7 @@ public class BookKeeperTest {
 
     @Test
     public void issuanceTestWithOnlyOneItem() throws Exception{
-        requestItemArrayList.add(requestItem);
+        invoiceRequest.add(requestItem);
 
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
         TaxPolicy taxPolicy = new TaxPolicy() {
@@ -70,8 +67,8 @@ public class BookKeeperTest {
 
     @Test
     public void issuanceTestWithTwoPositions() throws Exception{
-        requestItemArrayList.add(requestItem);
-        requestItemArrayList.add(requestItem);
+        invoiceRequest.add(requestItem);
+        invoiceRequest.add(requestItem);
 
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
         TaxPolicy taxPolicy = new TaxPolicy() {
@@ -102,9 +99,9 @@ public class BookKeeperTest {
 
     @Test
     public void issuanceTestWithThreePosition() throws Exception{
-        requestItemArrayList.add(requestItem);
-        requestItemArrayList.add(requestItem);
-        requestItemArrayList.add(requestItem);
+        invoiceRequest.add(requestItem);
+        invoiceRequest.add(requestItem);
+        invoiceRequest.add(requestItem);
 
         BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
         TaxPolicy taxPolicy = new TaxPolicy() {
