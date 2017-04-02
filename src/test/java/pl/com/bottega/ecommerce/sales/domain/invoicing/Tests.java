@@ -2,7 +2,6 @@ package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 
@@ -37,9 +36,9 @@ public class Tests {
 
     @Test
     public void InvoiceRequestWithOneInvoice(){
+        //given
         InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
         TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
-        //given
         when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item));
         when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
 
@@ -50,11 +49,12 @@ public class Tests {
         assertThat(invoice.getItems().size(), equalTo(1) );
 
     }
+
     @Test
-    public void InvoiceRequestWithTwoInvoices(){
+    public void CountCalculateTaxCalls(){
+        //given
         InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
         TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
-        //given
         when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item,item));
         when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
 
@@ -63,5 +63,20 @@ public class Tests {
 
         //then
         verify(mockTaxPolicy, times(2)).calculateTax(ProductType.FOOD,new Money(100));
+    }
+    @Test
+    public void VerifyMethodCalls(){
+        //given
+        InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
+        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
+        when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item));
+        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
+
+        //when
+        bookKeeper.issuance(mockInvoiceRequest,mockTaxPolicy);
+
+        //then
+        verify(mockInvoiceRequest).getClientData();
+        verify(mockTaxPolicy).calculateTax(ProductType.FOOD, new Money(100));
     }
 }
