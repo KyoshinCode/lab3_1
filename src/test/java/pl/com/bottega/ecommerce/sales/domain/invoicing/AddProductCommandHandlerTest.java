@@ -73,5 +73,15 @@ public class AddProductCommandHandlerTest {
         reservation.close();
         assertThat(reservation.isClosed() ,is(true));
     }
+	
+	@Test
+    public void testReservationRepositoryLoadOnce() throws Exception {
+        when(reserRep.load(testCommand.getOrderId())).thenReturn(reservation);
+        when(prodRep.load(testCommand.getProductId())).thenReturn(product);
+
+        testHandler.handle(testCommand);
+
+        verify(reserRep, times(1)).load(testCommand.getOrderId());
+    }
 
 }
