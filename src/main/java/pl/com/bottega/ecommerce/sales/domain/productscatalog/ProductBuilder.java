@@ -13,6 +13,7 @@ public class ProductBuilder {
 	private Money price = new Money(0);
 	private String name = "defaultName";
 	private ProductType productType = ProductType.FOOD;
+	private boolean available = true;
 
 	public ProductBuilder withId(Id id) {
 		this.id = id;
@@ -34,8 +35,22 @@ public class ProductBuilder {
 		return this;
 	}
 
+	public ProductBuilder available() {
+		this.available = true;
+		return this;
+	}
+
+	public ProductBuilder unacailable() {
+		this.available = false;
+		return this;
+	}
+
 	public Product build() {
-		return new Product(id, price, name, productType);
+		Product product = new Product(id, price, name, productType);
+		if (!available) {
+			product.markAsRemoved();
+		}
+		return product;
 	}
 
 }
