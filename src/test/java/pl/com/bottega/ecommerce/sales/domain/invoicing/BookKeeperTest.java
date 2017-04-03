@@ -58,5 +58,18 @@ public class BookKeeperTest {
 
 		verify(taxPolicy, times(2)).calculateTax(ProductType.FOOD, item.getTotalCost());
 	}
+	
+	@Test
+	public void testClientDataHaveCorrectValues() {
+		ClientData clientData = new ClientData(Id.generate(), "Kuba");
+		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+		
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		
+		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getAggregateId(), is(equalTo(clientData.getAggregateId())));
+		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getName(), is(equalTo(clientData.getName())));
+}
 
 }
