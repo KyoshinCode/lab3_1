@@ -99,4 +99,20 @@ public class AddProductCommandHandlerTest {
 		verify(clientRepository, times(1)).load(systemContext.getSystemUser().getClientId());
 	}
 
+	@Test
+	public void handle_WhenProductUnavailableSuggestedProductIsInReservation() throws Exception {
+		product.markAsRemoved();
+
+		Client client = new Client();
+		Product suggested = new ProductBuilder().withName("suggestedDefault").build();
+
+		when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+		when(suggestionService.suggestEquivalent(product, client)).thenReturn(suggested);
+
+		handler.handle(command);
+
+		assertThat(reservation.contains(product), is(false));
+		assertThat(reservation.contains(suggested), is(true));
+	}
+
 }
