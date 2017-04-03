@@ -22,6 +22,7 @@ import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
  
  public class Tests_2 {
@@ -67,4 +68,23 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 	testHandler.handle(testCommand);
 	assertThat(tRes.contains(tProd), is(equalTo(true)));
   	}
+ 	
+ 	@Test (expected = DomainOperationException.class)
+ 	public void testAvailableProductNotAddedToClosedReservation() {
+ 		Product tProd = new ProductBuilder()
+ 				.available()
+ 				.withName("test product")
+ 				.withPrice(new Money(123))
+ 				.withType(ProductType.STANDARD)
+ 				.withId(Id.generate())
+ 				.build();
+ 		Reservation tRes = new ReservationBuilder()
+ 				.close()
+ 				.withClientData(new ClientData(Id.generate(), "wujeksado"))
+ 				.withId(Id.generate())
+ 				.build();
+ 		Mockito.when(this.prRep.load(testCommand.getProductId())).thenReturn(tProd);
+ 		Mockito.when(this.resRep.load(testCommand.getOrderId())).thenReturn(tRes);
+ 		testHandler.handle(testCommand);
+ 	}
  }
