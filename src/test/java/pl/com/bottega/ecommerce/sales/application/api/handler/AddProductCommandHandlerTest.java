@@ -81,5 +81,13 @@ public class AddProductCommandHandlerTest {
         verify(reservation).add(equivalentProduct, 1);
     }
 
+    @Test
+    public void testHandleProductAddMethodHasBeenCalled() {
+        reservation = spy(new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "name"), new Date()));
+        when(productRepository.load(any(Id.class))).thenReturn(product);
+        when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
+        addProductCommandHandler.handle(command);
+        verify(reservation, times(1)).add(product, 1);
+    }
 
 }
