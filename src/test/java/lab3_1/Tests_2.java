@@ -12,7 +12,8 @@ import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
 import pl.com.bottega.ecommerce.sales.application.api.handler.AddProductCommandHandler;
- import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
+import pl.com.bottega.ecommerce.sales.domain.client.Client;
+import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
  import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
@@ -31,22 +32,24 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 	 AddProductCommand testCommand = null;
 	 ProductRepository prRep = null;
 	 ReservationRepository resRep = null;
+	 ClientRepository clRep = null;
+	 SuggestionService suSe = null;
+	 SystemContext sysCon = null;
  	
  	@Before
  	public void setupTests() {
- 		this.resRep = Mockito.mock(ReservationRepository.class);
- 		this.prRep = Mockito.mock(ProductRepository.class);
- 		ClientRepository clRep = Mockito.mock(ClientRepository.class);
- 		SuggestionService suSe = Mockito.mock(SuggestionService.class);
- 		SystemContext sysCon = Mockito.mock(SystemContext.class);
- 		this.testCommand = new AddProductCommand(Id.generate(), Id.generate(), 123);
- 		this.testHandler = new AddProductCommandHandler();
+ 		resRep = Mockito.mock(ReservationRepository.class);
+ 		prRep = Mockito.mock(ProductRepository.class);
+ 		clRep = Mockito.mock(ClientRepository.class);
+ 		suSe = Mockito.mock(SuggestionService.class);
+ 		sysCon = new SystemContext();
+ 		testHandler = new AddProductCommandHandler();
+ 		testCommand = new AddProductCommand(Id.generate(), Id.generate(), 123);
  		Whitebox.setInternalState(testHandler, "reservationRepository", resRep);
  		Whitebox.setInternalState(testHandler, "clientRepository", clRep);
  		Whitebox.setInternalState(testHandler, "productRepository", prRep);
  		Whitebox.setInternalState(testHandler, "suggestionService", suSe);
- 		Whitebox.setInternalState(testHandler, "systemContext", sysCon);
- 		
+ 		Whitebox.setInternalState(testHandler, "systemContext", sysCon);	
  	}
  	
  	@Test
@@ -86,5 +89,35 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
  		Mockito.when(this.prRep.load(testCommand.getProductId())).thenReturn(tProd);
  		Mockito.when(this.resRep.load(testCommand.getOrderId())).thenReturn(tRes);
  		testHandler.handle(testCommand);
+ 	}
+ 	
+ 	@Test
+ 	public void testSuggestionServiceNotCalledWhenProductAvailable() {
+ 		Product tProd = new ProductBuilder()
+ 				.available()
+ 				.withName("test product")
+ 				.withPrice(new Money(123))
+ 				.withType(ProductType.STANDARD)
+ 				.withId(Id.generate())
+ 				.build();
+ 		Product sProd = new ProductBuilder()
+ 				.available()
+ 				.withName("suggested")
+ 				.withPrice(new Money(123))
+ 				.withType(ProductType.DRUG)
+ 				.withId(Id.generate())
+ 				.build();
+ 		Reservation tRes = new ReservationBuilder()
+ 				.open()
+ 				.withClientData(new ClientData(Id.generate(), "user"))
+ 				.withId(Id.generate())
+ 				.build();
+ 		Mockito.when(this.prRep.load(testCommand.getProductId())).thenReturn(tProd);
+ 		Mockito.when(this.resRep.load(testCommand.getOrderId())).thenReturn(tRes);
+ 		Client testC = new Client();
+ 		Mockito.when(clRep.load(Id.generate())).thenReturn(testC);
+ 		Mockito.when(suSe.suggestEquivalent(tProd, testC)).thenReturn(sProd);
+ 		testHandler.handle(testCommand);
+ 		Mockito.verify(suSe, Mockito.times(0)).suggestEquivalent(tProd, testC);
  	}
  }
