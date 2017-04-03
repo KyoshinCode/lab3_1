@@ -1,6 +1,5 @@
 package pl.com.bottega.ecommerce.sales.domain.productscatalog;
 
-import org.mockito.Mock;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 

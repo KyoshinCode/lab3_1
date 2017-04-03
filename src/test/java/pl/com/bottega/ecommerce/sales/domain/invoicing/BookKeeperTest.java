@@ -6,6 +6,7 @@ import org.junit.Test;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -48,10 +49,10 @@ public class BookKeeperTest {
     @Test
     public void testIssuanceBehaviorCalculateTaxMethodCallTwoTimes() {
         TaxPolicy taxPolicy = spy(TaxPolicy.class);
-        ProductData productData = new ProductData(Id.generate(), AMOUNT, "name product", ProductType.DRUG,
-                new Date());
-        ProductData productData1 = new ProductData(Id.generate(), AMOUNT, "name product1", ProductType.FOOD,
-                new Date());
+        ProductData productData = ProductDataBuilder.productData().withId(Id.generate()).withPrice(AMOUNT).withType(ProductType.DRUG).build();
+
+        ProductData productData1 = ProductDataBuilder.productData().withId(Id.generate()).withPrice(AMOUNT).withType(ProductType.FOOD).build();
+
 
         invoiceRequest.add(new RequestItem(productData, 1, AMOUNT));
         invoiceRequest.add(new RequestItem(productData1, 1, AMOUNT));
@@ -67,8 +68,8 @@ public class BookKeeperTest {
 
     @Test
     public void testIssuanceInvoiceWithTheSameItem() {
-        ProductData p = new ProductData(Id.generate(), AMOUNT, "name product", ProductType.DRUG,
-                new Date());
+        ProductData p = ProductDataBuilder.productData().withId(Id.generate()).withPrice(AMOUNT).withType(ProductType.DRUG).build();
+
         RequestItem requestItem = new RequestItem(p, 1, AMOUNT);
         int NUMBER_ITEM = 150;
         for (int i = 0; i < NUMBER_ITEM; i++) {
