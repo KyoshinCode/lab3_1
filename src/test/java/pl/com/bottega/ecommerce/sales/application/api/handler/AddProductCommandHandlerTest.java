@@ -22,6 +22,8 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import java.util.Date;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -67,10 +69,12 @@ public class AddProductCommandHandlerTest {
     @Test
     public void CheckIfReservationRepositoryCalledProper() throws Exception {
 
-        when(reservationRepository.load(command.getOrderId())).thenReturn(new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Name"), new Date()));
-        when(productRepository.load(command.getProductId())).thenReturn(new Product(Id.generate(), new Money(10), "Product name", ProductType.FOOD));
+        when(reservationRepository.load(command.getOrderId())).thenReturn(new ReservationBuilder().withClient(new ClientData(Id.generate(),"name")).opened().build());
+        when(productRepository.load(command.getProductId())).thenReturn(new ProductBuilder().withAggregateId(command.getProductId()).buildProduct());
 
         handler.handle(command);
+
+        verify(reservationRepository, times(1)).load(command.getOrderId());
 
     }
 
