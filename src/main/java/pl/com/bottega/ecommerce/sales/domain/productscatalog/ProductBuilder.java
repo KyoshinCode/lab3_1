@@ -42,6 +42,10 @@ package pl.com.bottega.ecommerce.sales.domain.productscatalog;
  	}
  	
  	public Product build() {
- 		return new Product(this.id, this.price, this.name, this.type);
+ 		Product toReturn = new Product(this.id, this.price, this.name, this.type);
+ 		if(!isAv) {
+ 			toReturn.markAsRemoved();
+ 		}
+ 		return toReturn;
  	}
  }
