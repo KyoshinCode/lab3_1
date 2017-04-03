@@ -75,7 +75,10 @@ public class AddProductCommandHandlerTest {
         when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
         when(productRepository.load(command.getProductId())).thenReturn(product);
 
+        handler.handle(command);
+
         verify(reservationRepository, times(1)).load(command.getOrderId());
+
     }
 
     @Test
@@ -131,7 +134,5 @@ public class AddProductCommandHandlerTest {
         assertThat(reservation.contains(product), is(false));
         assertThat(reservation.contains(suggested), is(true));
     }
-
-
 
 }
