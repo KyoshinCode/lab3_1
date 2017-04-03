@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoRule;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
+import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
@@ -26,6 +27,13 @@ import static org.mockito.Mockito.*;
  */
 public class AddProductCommandHandlerTest {
 
+    private AddProductCommandHandler handler;
+    private SystemContext systemContext;
+    private AddProductCommand command;
+    private Reservation reservation;
+    private Product product;
+    private Client client;
+
     @Mock
     private ReservationRepository reservationRepository;
 
@@ -40,12 +48,6 @@ public class AddProductCommandHandlerTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    private AddProductCommandHandler handler;
-    private SystemContext systemContext;
-    private AddProductCommand command;
-    private Reservation reservation;
-    private Product product;
 
     @Before
     public void beforeRun() throws Exception    {
@@ -86,6 +88,25 @@ public class AddProductCommandHandlerTest {
         handler.handle(command);
 
         verify(clientRepository, never()).load(reservation.getClientData().getAggregateId());
+    }
+
+    @Test
+    public void CheckIfSuggestionServiceCalledWhenProductIsUnavailable() throws Exception {
+
+        reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "name")).opened().build();
+        product = new ProductBuilder().withAggregateId(command.getProductId()).unavailable().build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        client = new Client();
+
+        when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(new ProductBuilder().build());
+
+        handler.handle(command);
+
+        verify(suggestionService, times(1)).suggestEquivalent(product, client);
     }
 
 
