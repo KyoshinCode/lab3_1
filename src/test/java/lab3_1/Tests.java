@@ -3,7 +3,7 @@ package lab3_1;
  import static org.junit.Assert.*;
  
  import java.util.Date;
- 
+ import org.junit.Before;
  import org.junit.Test;
  import org.mockito.Mockito;
  import static org.hamcrest.Matchers.*;
@@ -23,29 +23,32 @@ package lab3_1;
  
  public class Tests{
  
+	public TaxPolicy taxPolicy;
+ 	public ProductData productData;
+ 	public RequestItem requestItem;
+ 	public BookKeeper bookKeeper;
+ 	public InvoiceRequest invoiceRequest;
+ 	
+ 	@Before
+ 	public void setupTests() {
+ 		taxPolicy = Mockito.mock(TaxPolicy.class);
+ 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class),
+  				Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mockowanie"));
+ 		productData = new ProductData(Id.generate(), new Money(123.45), "Tomato", ProductType.FOOD, new Date());
+ 		requestItem = new RequestItem(productData, 1, new Money(10.25));	
+ 		bookKeeper = new BookKeeper(new InvoiceFactory());
+ 		invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "user"));
+ 	
+ 	}
  	@Test
  	public void onePositionInvoice() {
- 		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
- 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class),
- 				Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mockowanie"));
- 		ProductData productData = new ProductData(Id.generate(), new Money(123.45), "Tomato", ProductType.FOOD, new Date());
- 				RequestItem requestItem = new RequestItem(productData, 1, new Money(10.25));
- 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
- 		InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "user"));
- 		invoiceRequest.add(requestItem);
- 		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
- 		assertThat(invoice.getItems().size(), is(equalTo(1)));
- 	}
+  		invoiceRequest.add(requestItem);
+  		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+  		assertThat(invoice.getItems().size(), is(equalTo(1)));
+  	}
  	
  	@Test
 	public void twoCalculateTaxCalls() {
- 		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
- 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class),
- 				Mockito.any(Money.class))).thenReturn(new Tax(new Money(0), "mockowanie"));
- 		ProductData productData = new ProductData(Id.generate(), new Money(123.45), "Tomato", ProductType.FOOD, new Date());
- 		RequestItem requestItem = new RequestItem(productData, 1, new Money(10.25));	
- 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
- 		InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "user"));
  		invoiceRequest.add(requestItem);
  		invoiceRequest.add(requestItem);
  		bookKeeper.issuance(invoiceRequest, taxPolicy);
