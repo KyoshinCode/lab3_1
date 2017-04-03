@@ -53,6 +53,10 @@ public class BookKeeperTest {
 
 		invoiceRequest.add(item);
 		invoiceRequest.add(item);
+		
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		verify(taxPolicy, times(2)).calculateTax(ProductType.FOOD, item.getTotalCost());
 	}
 
 }
