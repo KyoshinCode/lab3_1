@@ -83,5 +83,15 @@ public class AddProductCommandHandlerTest {
 
         verify(reserRep, times(1)).load(testCommand.getOrderId());
     }
+	
+	@Test
+	public void testProductSuggestionWhenAvaiable() {
+        when(reserRep.load(testCommand.getOrderId())).thenReturn(reservation);
+        when(prodRep.load(testCommand.getProductId())).thenReturn(product);
+		
+		testHandler.handle(testCommand);
+		assertThat(product.isAvailable(), is(equalTo(true)));
+		verify(suggServ, times(0)).suggestEquivalent(any(Product.class), any(Client.class));
+	}
 
 }
