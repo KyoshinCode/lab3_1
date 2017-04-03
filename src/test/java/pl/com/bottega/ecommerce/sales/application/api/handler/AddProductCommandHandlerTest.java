@@ -61,6 +61,10 @@ public class AddProductCommandHandlerTest {
         addProductCommandHandler.handle(addProductCommand);
         assertThat(product.isAvailable(), is(equalTo(true)));
     }
-
+    @Test
+    public void testReservationIsClosed() throws Exception {
+        reservation.close();
+        assertThat(reservation.isClosed() ,is(true));
+    }
 
 }
