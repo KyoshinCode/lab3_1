@@ -7,7 +7,7 @@ package pl.com.bottega.ecommerce.sales.domain.productscatalog;
  	
  	private String name = "testProduct";
  	private ProductType type = ProductType.STANDARD;
- 	private Money price = null;
+ 	private Money price = new Money(1);
  	private Id id = Id.generate();
  	boolean isAv = false;
  	
