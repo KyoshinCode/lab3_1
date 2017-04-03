@@ -10,6 +10,7 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
@@ -47,9 +48,9 @@ public class AddProductCommandHandlerTest {
         productRepository = mock(ProductRepository.class);
         clientRepository = mock(ClientRepository.class);
         systemContext = new SystemContext();
-        product = new Product(Id.generate(), new Money(10), "Test name", ProductType.FOOD);
-        equivalentProduct  = new Product(Id.generate(), new Money(100), "eqproduct", ProductType.FOOD);
-        addProductCommandHandler = new AddProductCommandHandler();
+
+        product = ProductBuilder.product().withName("test name").withProductType(ProductType.FOOD).withPrice(new Money(10)).build();
+        equivalentProduct  = ProductBuilder.product().withName("equivalentProduct").withProductType(ProductType.FOOD).withPrice(new Money(20)).build();        addProductCommandHandler = new AddProductCommandHandler();
         reservationRepository = mock(ReservationRepository.class);
         Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
         Whitebox.setInternalState(addProductCommandHandler, "productRepository", productRepository);

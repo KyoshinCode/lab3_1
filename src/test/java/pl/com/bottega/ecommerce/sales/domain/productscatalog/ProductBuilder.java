@@ -30,7 +30,7 @@ public class ProductBuilder {
         return this;
     }
 
-    static ProductBuilder product() {
+   public static ProductBuilder product() {
         return new ProductBuilder();
     }
 
