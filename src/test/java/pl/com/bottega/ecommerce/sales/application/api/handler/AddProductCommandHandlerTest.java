@@ -70,6 +70,20 @@ public class AddProductCommandHandlerTest {
 	}
 
 	@Test
+	public void handle_WhenProductAvailableSuggestionServiceAndClientRepositoryNotCalled() throws Exception {
+		Client client = new Client();
+		Product suggested = new ProductBuilder().withName("suggestedDefault").build();
+
+		when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+		when(suggestionService.suggestEquivalent(product, client)).thenReturn(suggested);
+
+		handler.handle(command);
+
+		verify(suggestionService, times(0)).suggestEquivalent(product, client);
+		verify(clientRepository, times(0)).load(systemContext.getSystemUser().getClientId());
+	}
+
+	@Test
 	public void handle_WhenProductUnavailableSuggestionServiceAndClientRepositoryCalledOnce() throws Exception {
 		product.markAsRemoved();
 
