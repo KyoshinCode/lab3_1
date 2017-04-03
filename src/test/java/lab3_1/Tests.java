@@ -23,11 +23,11 @@ package lab3_1;
  
  public class Tests{
  
-	public TaxPolicy taxPolicy;
- 	public ProductData productData;
- 	public RequestItem requestItem;
- 	public BookKeeper bookKeeper;
- 	public InvoiceRequest invoiceRequest;
+	private TaxPolicy taxPolicy;
+ 	private ProductData productData;
+ 	private RequestItem requestItem;
+ 	private BookKeeper bookKeeper;
+ 	private InvoiceRequest invoiceRequest;
  	
  	@Before
  	public void setupTests() {
