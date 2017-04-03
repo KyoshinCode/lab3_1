@@ -70,6 +70,16 @@ public class BookKeeperTest {
 		
 		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getAggregateId(), is(equalTo(clientData.getAggregateId())));
 		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getName(), is(equalTo(clientData.getName())));
-}
-
+	}
+	
+	public void testIssuanceWithNoItemsReturnsNoItemInvoice() throws Exception {
+		ClientData clientData = new ClientData(Id.generate(), "Kuba");
+		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+		
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+	}
 }
