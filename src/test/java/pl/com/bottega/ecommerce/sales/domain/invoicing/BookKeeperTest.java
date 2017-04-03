@@ -72,6 +72,7 @@ public class BookKeeperTest {
 		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getName(), is(equalTo(clientData.getName())));
 	}
 	
+	@Test
 	public void testIssuanceWithNoItemsReturnsNoItemInvoice() throws Exception {
 		ClientData clientData = new ClientData(Id.generate(), "Kuba");
 		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
@@ -83,4 +84,5 @@ public class BookKeeperTest {
 		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
 		assertThat(result.getItems().size(), is(equalTo(0)));
 	}
+	
 }
