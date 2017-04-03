@@ -14,17 +14,11 @@ import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
-import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
-import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 
-import java.util.Date;
-
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -50,6 +44,8 @@ public class AddProductCommandHandlerTest {
     private AddProductCommandHandler handler;
     private SystemContext systemContext;
     private AddProductCommand command;
+    private Reservation reservation;
+    private Product product;
 
     @Before
     public void beforeRun() throws Exception    {
@@ -69,13 +65,29 @@ public class AddProductCommandHandlerTest {
     @Test
     public void CheckIfReservationRepositoryCalledProper() throws Exception {
 
-        when(reservationRepository.load(command.getOrderId())).thenReturn(new ReservationBuilder().withClient(new ClientData(Id.generate(),"name")).opened().build());
-        when(productRepository.load(command.getProductId())).thenReturn(new ProductBuilder().withAggregateId(command.getProductId()).buildProduct());
+        reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "name")).opened().build();
+        product = new ProductBuilder().withAggregateId(command.getProductId()).build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        verify(reservationRepository, times(1)).load(command.getOrderId());
+    }
+
+    @Test
+    public void CheckIfClientRepositoryNotCalledWhenProductIsAvailable() throws Exception {
+
+        reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "name")).opened().build();
+        product = new ProductBuilder().withAggregateId(command.getProductId()).build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
 
         handler.handle(command);
 
-        verify(reservationRepository, times(1)).load(command.getOrderId());
-
+        verify(clientRepository, never()).load(reservation.getClientData().getAggregateId());
     }
+
+
 
 }
