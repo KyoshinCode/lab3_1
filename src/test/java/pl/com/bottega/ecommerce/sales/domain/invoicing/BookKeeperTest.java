@@ -95,5 +95,7 @@ public class BookKeeperTest {
 		
 		when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class))).thenReturn(new Tax(new Money(30), "example"));
 		
+		bookKeeper.issuance(invoiceRequest, taxPolicy);
+		verify(taxPolicy, times(0)).calculateTax(any(ProductType.class), any(Money.class));
 	}
 }
