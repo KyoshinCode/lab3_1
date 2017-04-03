@@ -19,6 +19,8 @@ import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
 
@@ -107,6 +109,27 @@ public class AddProductCommandHandlerTest {
         handler.handle(command);
 
         verify(suggestionService, times(1)).suggestEquivalent(product, client);
+    }
+
+    @Test
+    public void CheckIfSuggestedProductIsAddedToReservation() throws Exception {
+
+        reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "name")).opened().build();
+        product = new ProductBuilder().withAggregateId(command.getProductId()).withName("productName").unavailable().build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        client = new Client();
+        Product suggested = new ProductBuilder().withName("suggestedProduct").build();
+
+        when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(suggested);
+
+        handler.handle(command);
+
+        assertThat(reservation.contains(product), is(false));
+        assertThat(reservation.contains(suggested), is(true));
     }
 
 
