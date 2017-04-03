@@ -32,6 +32,10 @@ public class BookKeeperTest {
 				(new ProductData(Id.generate(), new Money(200), "Banan", ProductType.FOOD, new Date()), 1, new Money(20));
 
 		invoiceRequest.add(item);
+		
+		Invoice result = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		assertThat(result.getItems().size(), is(equalTo(1)));
 	}
 
 }
