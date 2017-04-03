@@ -63,4 +63,9 @@ package lab3_1;
  		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getAggregateId(), is(equalTo(clientData.getAggregateId())));
  		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getName(), is(equalTo(clientData.getName())));
  	}
+ 	
+ 	@Test
+ 	public void invoiceFactoryCorrectReturnType() {
+ 		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy), is(instanceOf(Invoice.class)));
+ 	}
  }
