@@ -3,6 +3,8 @@ package lab3_1;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Date;
 
@@ -45,4 +47,24 @@ public class BookKeeperTest {
 		Assert.assertThat(invoice.getItems().size(), is(equalTo(1)));
 	}
 
+	@Test
+	public void callCalculateTaxTwice() {
+
+		Money money = new Money(100);
+		ProductData productData = new ProductData(Id.generate(), money, "Product", ProductType.STANDARD, new Date());
+
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		Tax tax = new Tax(new Money(10), "Tax");
+		Mockito.when(taxPolicy.calculateTax(productData.getType(), productData.getPrice())).thenReturn(tax);
+
+		RequestItem requestItem = new RequestItem(productData, 1, money);
+		InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "ClientName"));
+		invoiceRequest.add(requestItem);
+		invoiceRequest.add(requestItem);
+
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		verify(taxPolicy, times(2)).calculateTax(ProductType.STANDARD, money);
+	}
 }
