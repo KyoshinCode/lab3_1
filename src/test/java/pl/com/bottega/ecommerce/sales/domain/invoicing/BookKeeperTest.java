@@ -85,4 +85,15 @@ public class BookKeeperTest {
 		assertThat(result.getItems().size(), is(equalTo(0)));
 	}
 	
+	public void testInvoiceZeroItemZeroTimes() throws Exception {
+		ClientData clientData = new ClientData(Id.generate(), "Kuba");
+		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+		
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		
+		when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class))).thenReturn(new Tax(new Money(30), "example"));
+		
+	}
 }
