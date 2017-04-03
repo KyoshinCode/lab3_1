@@ -42,8 +42,10 @@ public class AddProductCommandHandlerTest {
         clientRepository = mock(ClientRepository.class);
         addProductCommandHandler = new AddProductCommandHandler();
         addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
-        reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Julian Ochocki"), new Date());
-        product = new Product(Id.generate(), new Money(100), "serniczek", ProductType.FOOD);
+        reservation = new ReservationBuilder().reservationStatus(Reservation.ReservationStatus.OPENED).clientData(new ClientData(Id.generate(), "Andrzej Kmicic")).date(new Date()).build();
+        //(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Julian Ochocki"), new Date());
+        product = new ProductBuilder().money(new Money(100)).name("serniczek").productType(ProductType.FOOD).build();
+        //(Id.generate(), new Money(100), "serniczek", ProductType.FOOD);
 
         systemContext = new SystemContext();
         when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
