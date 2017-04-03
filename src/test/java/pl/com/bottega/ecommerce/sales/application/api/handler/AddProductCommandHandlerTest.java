@@ -73,7 +73,7 @@ public class AddProductCommandHandlerTest {
         when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
         when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
         addProductCommandHandler.handle(addProductCommand);
-        verify(reservationRepository, times(1));
+        verify(reservationRepository, times(1)).load(addProductCommand.getOrderId());
     }
     @Test
     public void testWithoutClient() throws Exception {
