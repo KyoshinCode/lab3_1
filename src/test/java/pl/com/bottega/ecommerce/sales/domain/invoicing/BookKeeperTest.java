@@ -34,7 +34,7 @@ public class BookKeeperTest {
     private TaxPolicy mockTaxPolicy;
 
     @Mock
-    InvoiceFactory mockInvoiceFactory;
+    private InvoiceFactory mockInvoiceFactory;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
