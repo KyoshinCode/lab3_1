@@ -37,5 +37,22 @@ public class BookKeeperTest {
 
 		assertThat(result.getItems().size(), is(equalTo(1)));
 	}
+	
+	@Test
+	public void testTwoItemsCallCalculateTaxTwice() throws Exception {
+		InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Kuba"));
+
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		when(taxPolicy.calculateTax(any(ProductType.class), any(Money.class))).thenReturn(
+				new Tax(new Money(1), "EUR"));
+		
+		RequestItem item = new RequestItem
+				(new ProductData(Id.generate(), new Money(200), "Banan", ProductType.FOOD, new Date()), 1, new Money(20));
+
+		invoiceRequest.add(item);
+		invoiceRequest.add(item);
+	}
 
 }
