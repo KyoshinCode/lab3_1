@@ -1,6 +1,5 @@
 package pl.com.bottega.ecommerce.sales.application.api.handler;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -58,11 +57,12 @@ public class AddProductCommandHandlerTest {
 		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
 		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
 		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
+		Product product = new Product(new Id("444"), new Money(10), "Chicken", ProductType.FOOD);
 		
 		when(mockedReservationRepository.load(dummyAddProductCommand.getOrderId()))
 			.thenReturn(reservation);
 		when(mockedProductRepository.load(dummyAddProductCommand.getProductId()))
-			.thenReturn(new Product(new Id("444"), new Money(10), "Chicken", ProductType.FOOD));
+			.thenReturn(product);
 		
 		// when
 		addProductCommandHandler.handle(dummyAddProductCommand);
