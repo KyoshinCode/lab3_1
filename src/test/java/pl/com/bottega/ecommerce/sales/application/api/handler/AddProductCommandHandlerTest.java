@@ -47,8 +47,13 @@ public class AddProductCommandHandlerTest {
 		 		
 		addProductCommandHandler = new AddProductCommandHandler();
         addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
-        reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Test"), new Date(0));
-        product = new Product(Id.generate(), new Money(100), "Apple", ProductType.FOOD);
+//        reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Test"), new Date(0));
+//        product = new Product(Id.generate(), new Money(100), "Apple", ProductType.FOOD);
+        
+        reservation = new ReservationBuilder().reservationStatus(Reservation.ReservationStatus.OPENED)
+        		.clientData(new ClientData(Id.generate(), "test")).date(new Date(0)).build();
+        product = new ProductBuilder().money(new Money(100)).name("Apple").productType(ProductType.FOOD).build();
+        
         when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
         when(productRepository.load(any(Id.class))).thenReturn(product);
         
