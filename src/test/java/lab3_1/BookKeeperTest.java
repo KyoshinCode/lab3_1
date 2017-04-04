@@ -53,7 +53,23 @@ public class BookKeeperTest {
 	@Test
 	public void testInvoiceWithTwoItems() {
 		
+		//Given
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
+		InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "John Doe"));
+		ProductData productData = new ProductData(Id.generate(), new Money(10), "item", ProductType.DRUG, new Date());
 		
+		when(mockedTaxPolicy.calculateTax(productData.getType(), productData.getPrice())).thenReturn(new Tax(new Money(5), "Fake"));
+		 
+		RequestItem requestItem = new RequestItem(productData, 5, productData.getPrice());
+		invoiceRequest.add(requestItem);
+		invoiceRequest.add(requestItem);
+		
+		//When
+		Invoice invoice = bookKeeper.issuance(invoiceRequest, mockedTaxPolicy);
+		
+		//Then
+		verify(mockedTaxPolicy, times(2)).calculateTax(productData.getType(), productData.getPrice());
 	}
 	
 	
