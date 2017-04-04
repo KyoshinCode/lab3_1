@@ -73,4 +73,10 @@ public class AddProductCommandHandlerTest {
 		Mockito.verify(reservationRepository, Mockito.times(1)).save(Mockito.any(Reservation.class));
 	}
 
+	@Test
+	public void reservationRepositoryLoadTest() {
+		addProductCommandHandler.handle(addProductCommand);
+		Mockito.verify(reservationRepository, Mockito.times(1)).load(Mockito.any(Id.class));
+	}
+
 }
