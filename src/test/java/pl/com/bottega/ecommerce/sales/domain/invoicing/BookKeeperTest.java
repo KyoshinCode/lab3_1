@@ -7,6 +7,7 @@ import org.junit.Test;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -29,7 +30,7 @@ public class BookKeeperTest {
 				new Tax(new Money(1), "EUR"));
 		
 		RequestItem item = new RequestItem
-				(new ProductData(Id.generate(), new Money(200), "Banan", ProductType.FOOD, new Date()), 1, new Money(20));
+				(new ProductDataBuilder().setPrice(new Money(10, "EUR")).setName("ananas").build(), 1, new Money(20));
 
 		invoiceRequest.add(item);
 		
