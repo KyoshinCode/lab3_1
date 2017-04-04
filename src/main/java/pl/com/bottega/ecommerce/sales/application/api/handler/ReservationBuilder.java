@@ -9,16 +9,16 @@ import java.util.Date;
 
 public class ReservationBuilder {
     private Id id = Id.generate();
-    private Reservation.ReservationStatus reservationStatus;
+    private Reservation.ReservationStatus status;
     private ClientData clientData;
-    private Date date;
+    private Date createDate;
 
     public ReservationBuilder id(Id id) {
         this.id = id;
         return this;
     }
-    public ReservationBuilder reservationStatus(Reservation.ReservationStatus reservationStatus) {
-        this.reservationStatus = reservationStatus;
+    public ReservationBuilder reservationStatus(Reservation.ReservationStatus status) {
+        this.status = status;
         return this;
     }
     public ReservationBuilder clientData(ClientData clientData) {
@@ -26,11 +26,11 @@ public class ReservationBuilder {
         return this;
     }
     public ReservationBuilder date(Date date) {
-        this.date = date;
+        this.createDate = date;
         return this;
     }
     public Reservation build() {
-        Reservation reservation = new Reservation(id, reservationStatus, clientData, date);
+        Reservation reservation = new Reservation(id, status, clientData, createDate);
         return reservation;
     }
 
