@@ -82,6 +82,12 @@ public class AddProductCommandHandlerTest {
          verify(reservationRepository, times(5));
      }
 	
+    @Test
+    public void testRemovedReservation() throws Exception {
+    	 reservation.markAsRemoved();
+    	 assertThat(reservation.isRemoved() ,is(true));
+    }
+   
 	
 
 }
