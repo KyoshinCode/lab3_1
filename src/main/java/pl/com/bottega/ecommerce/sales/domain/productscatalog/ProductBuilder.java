@@ -12,4 +12,28 @@ public class ProductBuilder {
 	
 	public ProductBuilder() {
 	}
+	
+	public ProductBuilder withProductId(Id productId) {
+		this.productId = productId;
+		return this;
+	}
+	
+	public ProductBuilder withPrice(Money price) {
+		this.price = price;
+		return this;
+	}
+	
+	public ProductBuilder withName(String name) {
+		this.name = name;
+		return this;
+	}
+	
+	public ProductBuilder withType(ProductType type) {
+		this.type = type;
+		return this;
+	}
+	
+	public Product build() {
+		return new Product(this.productId, this.price, this.name, this.type);
+	}
 }
