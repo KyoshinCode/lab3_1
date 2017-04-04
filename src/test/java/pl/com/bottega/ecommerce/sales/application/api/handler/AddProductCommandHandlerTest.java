@@ -55,6 +55,11 @@ public class AddProductCommandHandlerTest {
 		when(mockedProductRepository.load(dummyAddProductCommand.getProductId()))
 			.thenReturn(new Product(new Id("444"), new Money(10), "Chicken", ProductType.FOOD));
 		
+		// when
+		addProductCommandHandler.handle(dummyAddProductCommand);
+		
+		// then
+		verify(mockedReservationRepository, times(1)).load(dummyAddProductCommand.getOrderId());
 	}
 
 }
