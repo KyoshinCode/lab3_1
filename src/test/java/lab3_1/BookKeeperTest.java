@@ -28,7 +28,7 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 public class BookKeeperTest {
 
 	@Test
-	public void invoiceWithOneItem() {
+	public void testInvoiceWithOneItem() {
 		
 		//Given
 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
@@ -48,5 +48,15 @@ public class BookKeeperTest {
 		Assert.assertThat(invoice.getItems().size(), is(equalTo(1)));
 		
 	}
+	
+	
+	@Test
+	public void testInvoiceWithTwoItems() {
+		
+		
+	}
+	
+	
+	
 	
 }
