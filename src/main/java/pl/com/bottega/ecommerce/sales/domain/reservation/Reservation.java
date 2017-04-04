@@ -31,10 +31,10 @@ public class Reservation extends BaseAggregateRoot{
 	private Date createDate;
 
 	@SuppressWarnings("unused")
-	private Reservation() {
+	public Reservation() {
 	}
 
-	Reservation(Id aggregateId, ReservationStatus status,
+	public Reservation(Id aggregateId, ReservationStatus status,
 			ClientData clientData, Date createDate) {
 		this.id = aggregateId;
 		this.status = status;
