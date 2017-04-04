@@ -13,6 +13,7 @@ import org.mockito.internal.util.reflection.Whitebox;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
+import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommandBuilder;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
@@ -64,7 +65,12 @@ public class AddProductCommandHandlerTest {
 			.withDate(new Date())
 			.build();
 		
-		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
+		AddProductCommandBuilder addProductCommandBuilder = new AddProductCommandBuilder();
+		AddProductCommand addProductCommand = addProductCommandBuilder
+			.withOrderId(new Id("123"))
+			.withProductId(new Id("456"))
+			.withQuantity(1)
+			.build();
 		
 		ProductBuilder productBuilder = new ProductBuilder();
 		Product product = productBuilder
@@ -74,16 +80,16 @@ public class AddProductCommandHandlerTest {
 			.withType(ProductType.FOOD)
 			.build();
 		
-		when(mockedReservationRepository.load(dummyAddProductCommand.getOrderId()))
+		when(mockedReservationRepository.load(addProductCommand.getOrderId()))
 			.thenReturn(reservation);
-		when(mockedProductRepository.load(dummyAddProductCommand.getProductId()))
+		when(mockedProductRepository.load(addProductCommand.getProductId()))
 			.thenReturn(product);
 		
 		// when
-		addProductCommandHandler.handle(dummyAddProductCommand);
+		addProductCommandHandler.handle(addProductCommand);
 		
 		// then
-		verify(mockedReservationRepository, times(1)).load(dummyAddProductCommand.getOrderId());
+		verify(mockedReservationRepository, times(1)).load(addProductCommand.getOrderId());
 	}
 	
 	@Test
@@ -98,7 +104,12 @@ public class AddProductCommandHandlerTest {
 			.withDate(new Date())
 			.build();
 		
-		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
+		AddProductCommandBuilder addProductCommandBuilder = new AddProductCommandBuilder();
+		AddProductCommand addProductCommand = addProductCommandBuilder
+			.withOrderId(new Id("123"))
+			.withProductId(new Id("456"))
+			.withQuantity(1)
+			.build();
 
 		ProductBuilder productBuilder = new ProductBuilder();
 		Product product = productBuilder
@@ -108,13 +119,13 @@ public class AddProductCommandHandlerTest {
 			.withType(ProductType.FOOD)
 			.build();
 		
-		when(mockedReservationRepository.load(dummyAddProductCommand.getOrderId()))
+		when(mockedReservationRepository.load(addProductCommand.getOrderId()))
 			.thenReturn(reservation);
-		when(mockedProductRepository.load(dummyAddProductCommand.getProductId()))
+		when(mockedProductRepository.load(addProductCommand.getProductId()))
 			.thenReturn(product);
 		
 		// when
-		addProductCommandHandler.handle(dummyAddProductCommand);
+		addProductCommandHandler.handle(addProductCommand);
 				
 		// then
 		Assert.assertThat(reservation.contains(product), is(equalTo(true)));
