@@ -33,13 +33,13 @@ public class ProductData {
 	private ProductType type;
 
 	
-	ProductData(Id productId, Money price, String name, ProductType type, 
+	public ProductData(Id productId, Money price, String name, ProductType type,
 			Date snapshotDate) {
 		this.productId = productId;
 		this.price = price;
 		this.name = name;
-		this.snapshotDate = snapshotDate;
 		this.type = type;
+		this.snapshotDate = snapshotDate;
 	}
 
 	public Id getProductId() {
