@@ -15,6 +15,7 @@ import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
 import pl.com.bottega.ecommerce.sales.application.api.handler.AddProductCommandHandler;
+import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
@@ -45,6 +46,7 @@ public class AddProductCommandHandlerTest {
     private SystemContext systemContext;
 	private AddProductCommandHandler addProductCommandHandler;
 	private AddProductCommand addProductCommand;
+	private Product product;
 
 	@Before
 	public void setUp(){
@@ -53,7 +55,7 @@ public class AddProductCommandHandlerTest {
 
 		ClientData clientData = new ClientData(Id.generate(), "ClientName");
 		Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, clientData, new Date());
-		Product product = new Product(Id.generate(), new Money(10),"ProductName",ProductType.STANDARD);
+		product = new Product(Id.generate(), new Money(10),"ProductName",ProductType.STANDARD);
 
 		Mockito.when(reservationRepository.load(Mockito.any(Id.class))).thenReturn(reservation);
 		Mockito.when(productRepository.load(Mockito.any(Id.class))).thenReturn(product);
@@ -79,4 +81,18 @@ public class AddProductCommandHandlerTest {
 		Mockito.verify(reservationRepository, Mockito.times(1)).load(Mockito.any(Id.class));
 	}
 
+	@Test
+	public void suggestEquivalentTest() {
+		Client client = new Client();
+		product.markAsRemoved();
+
+		Product goodProduct = new Product(Id.generate(), new Money(10),"ProductName",ProductType.STANDARD);
+
+		Mockito.when(clientRepository.load(Mockito.any(Id.class))).thenReturn(client);
+		Mockito.when(suggestionService.suggestEquivalent(product, client)).thenReturn(goodProduct);
+
+		addProductCommandHandler.handle(addProductCommand);
+
+		Mockito.verify(suggestionService, Mockito.times(1)).suggestEquivalent(product, client);
+	}
 }
