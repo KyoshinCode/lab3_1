@@ -29,32 +29,33 @@ public class AddProductCommandHandlerTest {
 	private ReservationRepository mockedReservationRepository;
 	private ProductRepository mockedProductRepository;
 	private SuggestionService mockedSuggestionService;
+	private ClientRepository mockedClientRepository;
 	private SystemContext systemContext;
 	
 	@Before
 	public void setUp() throws Exception {
-	}
-
-	@Test
-	public void testHandleShouldInvokeSaveOnce() {
 		
-		// given
-		AddProductCommandHandler addProductCommandHandler = new AddProductCommandHandler();
-		ReservationRepository mockedReservationRepository = mock(ReservationRepository.class);
-		ProductRepository mockedProductRepository = mock(ProductRepository.class);
-		SuggestionService mockedSuggestionService = mock(SuggestionService.class);
-		ClientRepository mockedClientRepository = mock(ClientRepository.class);
-		SystemContext systemContext = new SystemContext();
-		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
-		
-		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
-		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
+		addProductCommandHandler = new AddProductCommandHandler();
+		mockedReservationRepository = mock(ReservationRepository.class);
+		mockedProductRepository = mock(ProductRepository.class);
+		mockedSuggestionService = mock(SuggestionService.class);
+		mockedClientRepository = mock(ClientRepository.class);
+		systemContext = new SystemContext();
 		
 		Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", mockedReservationRepository);
 		Whitebox.setInternalState(addProductCommandHandler, "productRepository", mockedProductRepository);
 		Whitebox.setInternalState(addProductCommandHandler, "suggestionService", mockedSuggestionService);
 		Whitebox.setInternalState(addProductCommandHandler, "clientRepository", mockedClientRepository);
 		Whitebox.setInternalState(addProductCommandHandler, "systemContext", systemContext);
+	}
+
+	@Test
+	public void testHandleShouldInvokeSaveOnce() {
+		
+		// given
+		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
+		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
+		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
 		
 		when(mockedReservationRepository.load(dummyAddProductCommand.getOrderId()))
 			.thenReturn(reservation);
