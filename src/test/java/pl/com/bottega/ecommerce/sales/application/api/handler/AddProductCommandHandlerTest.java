@@ -61,5 +61,10 @@ public class AddProductCommandHandlerTest {
 		// then
 		verify(mockedReservationRepository, times(1)).load(dummyAddProductCommand.getOrderId());
 	}
+	
+	@Test
+	public void testHandleShouldAddCorrectProductToReservation() {
+		
+	}
 
 }
