@@ -44,7 +44,7 @@ public class AddProductCommandHandlerTest {
     }
 
     @Test
-    public void test() {
+    public void clientWithNoProductAfterAddHaveOneProduct() {
         // given
 
         // when
