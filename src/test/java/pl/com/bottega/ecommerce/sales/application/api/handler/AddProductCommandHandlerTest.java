@@ -24,7 +24,13 @@ import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation.ReservationStatus;
 
 public class AddProductCommandHandlerTest {
-
+	
+	private AddProductCommandHandler addProductCommandHandler;
+	private ReservationRepository mockedReservationRepository;
+	private ProductRepository mockedProductRepository;
+	private SuggestionService mockedSuggestionService;
+	private SystemContext systemContext;
+	
 	@Before
 	public void setUp() throws Exception {
 	}
