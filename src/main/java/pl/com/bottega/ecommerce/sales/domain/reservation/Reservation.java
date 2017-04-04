@@ -12,20 +12,18 @@ import pl.com.bottega.ecommerce.sales.domain.offer.DiscountPolicy;
 import pl.com.bottega.ecommerce.sales.domain.offer.Offer;
 import pl.com.bottega.ecommerce.sales.domain.offer.OfferItem;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product.Builder;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
-public class Reservation extends BaseAggregateRoot{
+public class Reservation extends BaseAggregateRoot {
 	public enum ReservationStatus {
 		OPENED, CLOSED
 	}
 
-	
 	private ReservationStatus status;
 
-	
 	private List<ReservationItem> items;
 
-	
 	private ClientData clientData;
 
 	private Date createDate;
@@ -34,8 +32,7 @@ public class Reservation extends BaseAggregateRoot{
 	private Reservation() {
 	}
 
-	public Reservation(Id aggregateId, ReservationStatus status,
-			ClientData clientData, Date createDate) {
+	public Reservation(Id aggregateId, ReservationStatus status, ClientData clientData, Date createDate) {
 		this.id = aggregateId;
 		this.status = status;
 		this.clientData = clientData;
@@ -70,16 +67,13 @@ public class Reservation extends BaseAggregateRoot{
 
 		for (ReservationItem item : items) {
 			if (item.getProduct().isAvailable()) {
-				Discount discount = discountPolicy.applyDiscount(item
-						.getProduct(), item.getQuantity(), item.getProduct()
-						.getPrice());
-				OfferItem offerItem = new OfferItem(item.getProduct()
-						.generateSnapshot(), item.getQuantity(), discount);
+				Discount discount = discountPolicy.applyDiscount(item.getProduct(), item.getQuantity(),
+						item.getProduct().getPrice());
+				OfferItem offerItem = new OfferItem(item.getProduct().generateSnapshot(), item.getQuantity(), discount);
 
 				availabeItems.add(offerItem);
 			} else {
-				OfferItem offerItem = new OfferItem(item.getProduct()
-						.generateSnapshot(), item.getQuantity());
+				OfferItem offerItem = new OfferItem(item.getProduct().generateSnapshot(), item.getQuantity());
 
 				unavailableItems.add(offerItem);
 			}
@@ -121,12 +115,10 @@ public class Reservation extends BaseAggregateRoot{
 	}
 
 	public List<ReservedProduct> getReservedProducts() {
-		ArrayList<ReservedProduct> result = new ArrayList<ReservedProduct>(
-				items.size());
+		ArrayList<ReservedProduct> result = new ArrayList<ReservedProduct>(items.size());
 
 		for (ReservationItem item : items) {
-			result.add(new ReservedProduct(item.getProduct().getId(),
-					item.getProduct().getName(), item.getQuantity(),
+			result.add(new ReservedProduct(item.getProduct().getId(), item.getProduct().getName(), item.getQuantity(),
 					calculateItemCost(item)));
 		}
 
@@ -147,5 +139,50 @@ public class Reservation extends BaseAggregateRoot{
 
 	public ReservationStatus getStatus() {
 		return status;
+	}
+
+	public static class Builder {
+		private Id id = Id.generate();
+		private ReservationStatus status;
+		private List<ReservationItem> items = new ArrayList<ReservationItem>();
+		private ClientData clientData;
+		private Date createDate;
+
+		public Builder id(Id id) {
+			this.id = id;
+			return this;
+		}
+		
+		public Builder status(ReservationStatus status) {
+			this.status = status;
+			return this;
+		}
+
+		public Builder items(List<ReservationItem> items) {
+			this.items = items;
+			return this;
+		}
+
+		public Builder clientData(ClientData clientData) {
+			this.clientData = clientData;
+			return this;
+		}
+
+		public Builder createDate(Date createDate) {
+			this.createDate = createDate;
+			return this;
+		}
+
+		public Reservation build() {
+			return new Reservation(this);
+		}
+	}
+
+	private Reservation(Builder builder) {
+		this.id = builder.id;
+		this.status = builder.status;
+		this.items = builder.items;
+		this.clientData = builder.clientData;
+		this.createDate = builder.createDate;
 	}
 }

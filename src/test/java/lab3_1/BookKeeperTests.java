@@ -1,9 +1,9 @@
 package lab3_1;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.util.Date;
 
@@ -19,8 +19,10 @@ import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceFactory;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceRequest;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
+import pl.com.bottega.ecommerce.sales.domain.invoicing.TaxBuilder;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.TaxPolicy;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -33,15 +35,18 @@ public class BookKeeperTests {
 	
 	@Before
 	public void setUp() {
+		// Building
+		TaxBuilder taxBuilder = new TaxBuilder().withMoney(new Money(0)).withDescription("mocking");
+		ProductDataBuilder productDataBuilder = new ProductDataBuilder().withPrice(new Money(123.45)).withName("Pomidorek").withType(ProductType.FOOD).withSnapshotDate(new Date());
 		// Mocking
 		taxPolicy = Mockito.mock(TaxPolicy.class);
 		Mockito.when(taxPolicy.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class)))
-				.thenReturn(new Tax(new Money(0), "mocking"));
+				.thenReturn(taxBuilder.build());
 		// Generating data
-		requestItem = new RequestItem(
-				new ProductData(Id.generate(), new Money(123.45), "Pomidorek", ProductType.FOOD, new Date()), 1,
-				new Money(10.25));
-		clientData = new ClientData(Id.generate(), "Zawadzki");
+		RequestItem.Builder requestItemB = new RequestItem.Builder();
+		requestItemB.productData(productDataBuilder.build()).quantity(1).totalCost(new Money(10.25));
+		requestItem = requestItemB.build();
+		clientData = new ClientData("Zawadzki");
 
 		bookKeeper = new BookKeeper(new InvoiceFactory());
 		invoiceRequest = new InvoiceRequest(clientData);
@@ -58,7 +63,7 @@ public class BookKeeperTests {
 	@Test
 	public void testIssuanceNumOfMethodCalls2() {
 		invoiceRequest.add(requestItem);
-		invoiceRequest.add(requestItem);		
+		invoiceRequest.add(requestItem);
 		bookKeeper.issuance(invoiceRequest, taxPolicy);		
 		
 		Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class));

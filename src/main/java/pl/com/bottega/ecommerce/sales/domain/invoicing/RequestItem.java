@@ -44,4 +44,34 @@ public class RequestItem {
 		return quantity;
 	}
 
+	public static class Builder {
+		private ProductData productData;
+		private int quantity;
+		private Money totalCost;
+
+		public Builder productData(ProductData productData) {
+			this.productData = productData;
+			return this;
+		}
+
+		public Builder quantity(int quantity) {
+			this.quantity = quantity;
+			return this;
+		}
+
+		public Builder totalCost(Money totalCost) {
+			this.totalCost = totalCost;
+			return this;
+		}
+
+		public RequestItem build() {
+			return new RequestItem(this);
+		}
+	}
+
+	private RequestItem(Builder builder) {
+		this.productData = builder.productData;
+		this.quantity = builder.quantity;
+		this.totalCost = builder.totalCost;
+	}
 }
