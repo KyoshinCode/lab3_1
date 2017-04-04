@@ -28,7 +28,7 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 public class BookKeeperTest {
 
 	@Test
-	public void testInvoiceWithOneItem() {
+	public void testInvoiceRequestWithOneItemReturnInvoiceWithOneItem() {
 		
 		//Given
 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
@@ -51,7 +51,7 @@ public class BookKeeperTest {
 	
 	
 	@Test
-	public void testInvoiceWithTwoItems() {
+	public void testInvoiceWithTwoItemsUseCalculateTaxMethodTwoTimes() {
 		
 		//Given
 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
