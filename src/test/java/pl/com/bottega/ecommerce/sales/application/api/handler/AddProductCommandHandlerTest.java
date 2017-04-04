@@ -3,7 +3,9 @@ package pl.com.bottega.ecommerce.sales.application.api.handler;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
@@ -28,8 +30,8 @@ public class AddProductCommandHandlerTest {
 	private AddProductCommandHandler addProductCommandHandler;
 
 	
-	@Test
-	public void test() {
+	@Before
+	public void setUp() {
 		 reservationRepository = mock(ReservationRepository.class); 
 		 productRepository = mock(ProductRepository.class);
 		 suggestionService = mock(SuggestionService.class);
@@ -37,9 +39,13 @@ public class AddProductCommandHandlerTest {
 		 systemContext = mock(SystemContext.class);
 		 		
 		addProductCommandHandler = new AddProductCommandHandler();
-        addProductCommandHandler = new AddProductCommandHandler();
         addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
         
+        Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
+		Whitebox.setInternalState(addProductCommandHandler, "clientRepository", clientRepository);
+		Whitebox.setInternalState(addProductCommandHandler, "productRepository", productRepository);
+		Whitebox.setInternalState(addProductCommandHandler, "suggestionService", suggestionService);
+		Whitebox.setInternalState(addProductCommandHandler, "systemContext", systemContext);
 
 	}
 
