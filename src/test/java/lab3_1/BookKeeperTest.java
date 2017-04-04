@@ -41,15 +41,15 @@ public class BookKeeperTest {
 	private InvoiceRequest invoiceRequest;
 	private BookKeeper bookKeeper;
 	private Money money;
+	private ProductData productData;
 
 	@Before
 	public void setUp(){
 		bookKeeper = new BookKeeper(new InvoiceFactory());
 		money = new Money(100);
+		productData = new ProductData(Id.generate(), money, "Product", ProductType.STANDARD, new Date());
 
-		ProductData productData = new ProductData(Id.generate(), money, "Product", ProductType.STANDARD, new Date());
 		Tax tax = new Tax(new Money(10), "Tax");
-
 		Mockito.when(taxPolicy.calculateTax(productData.getType(), productData.getPrice())).thenReturn(tax);
 
 		requestItem = new RequestItem(productData, 1, money);
@@ -74,5 +74,16 @@ public class BookKeeperTest {
 		bookKeeper.issuance(invoiceRequest, taxPolicy);
 
 		verify(taxPolicy, times(2)).calculateTax(ProductType.STANDARD, money);
+	}
+
+	@Test
+	public void productOnInvoiceTest() {
+
+		invoiceRequest.add(requestItem);
+		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		Assert.assertThat(invoice.getItems().get(0).getProduct().getPrice(), is(equalTo(productData.getPrice())));
+		Assert.assertThat(invoice.getItems().get(0).getProduct().getType(), is(equalTo(productData.getType())));
+		Assert.assertThat(invoice.getItems().get(0).getProduct().getName(), is(equalTo(productData.getName())));
 	}
 }
