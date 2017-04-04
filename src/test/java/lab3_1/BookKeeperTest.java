@@ -19,9 +19,11 @@ import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceFactory;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceLine;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.InvoiceRequest;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
+import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItemBuilder;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.TaxPolicy;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -39,8 +41,17 @@ public class BookKeeperTest {
 	@Before public void initialize() {
 		invoiceFactory = new InvoiceFactory();
 		bookKeeper = new BookKeeper(invoiceFactory);
-		productData = new ProductData(new Id("123"), new Money(3), "Cheese", ProductType.FOOD, new Date());
-		requestItem = new RequestItem(productData, 2, new Money(10));
+		productData = new ProductDataBuilder()
+				.withId(new Id("123"))
+				.withPrice(new Money(3))
+				.withName("Cheese")
+				.withType(ProductType.FOOD)
+				.build();
+		requestItem = new RequestItemBuilder()
+				.withproductData(productData)
+				.withQuantity(2)
+				.withTotalCost(new Money(10))
+				.build();
 		mockedInvoiceRequest = mock(InvoiceRequest.class);
 		mockedTaxPolicy = mock(TaxPolicy.class);
 		clientData = new ClientData(Id.generate(),"Name");

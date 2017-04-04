@@ -17,12 +17,12 @@ public class RequestItemBuilder {
 		return this;
 	}
 	
-	public RequestItemBuilder withSnapshotDate(int quantity) {
+	public RequestItemBuilder withQuantity(int quantity) {
 		this.quantity = quantity;
 		return this;
 	}
 	
-	public RequestItemBuilder withType(Money totalCost) {
+	public RequestItemBuilder withTotalCost(Money totalCost) {
 		this.totalCost = totalCost;
 		return this;
 	}
