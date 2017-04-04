@@ -1,7 +1,11 @@
 package lab3_1;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+
 import java.util.Date;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,14 +51,16 @@ public class AddProductCommandHandlerTest {
 	private AddProductCommandHandler addProductCommandHandler;
 	private AddProductCommand addProductCommand;
 	private Product product;
+	private Reservation reservation;
+	private ClientData clientData;
 
 	@Before
 	public void setUp(){
 		addProductCommandHandler = new AddProductCommandHandler();
 		addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
 
-		ClientData clientData = new ClientData(Id.generate(), "ClientName");
-		Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, clientData, new Date());
+		clientData = new ClientData(Id.generate(), "ClientName");
+		reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, clientData, new Date());
 		product = new Product(Id.generate(), new Money(10),"ProductName",ProductType.STANDARD);
 
 		Mockito.when(reservationRepository.load(Mockito.any(Id.class))).thenReturn(reservation);
@@ -95,4 +101,13 @@ public class AddProductCommandHandlerTest {
 
 		Mockito.verify(suggestionService, Mockito.times(1)).suggestEquivalent(product, client);
 	}
+
+    @Test
+    public void reservationWithOneProductTest() {
+		addProductCommandHandler.handle(addProductCommand);
+
+		Assert.assertThat(reservation.getReservedProducts().size(), is(equalTo(1)));
+        Assert.assertThat(reservation.getClientData(), is(equalTo(clientData)));
+        Assert.assertThat(reservation.contains(product), is(true));
+    }
 }
