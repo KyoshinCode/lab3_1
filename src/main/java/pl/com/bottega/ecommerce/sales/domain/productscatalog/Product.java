@@ -10,38 +10,38 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 public class Product extends BaseAggregateRoot{
 	private Money price;
-	
+
 	private String name;
-	
+
 
 	private ProductType productType;
-	
+
 
 	private Product(){}
-	
-	Product(Id aggregateId, Money price, String name, ProductType productType){
+
+	public Product(Id aggregateId, Money price, String name, ProductType productType){
 		this.id = aggregateId;
 		this.price = price;
 		this.name = name;
 		this.productType = productType;
 	}
-	
-	public boolean isAvailable(){		
+
+	public boolean isAvailable(){
 		return ! isRemoved();
 	}
-	
+
 	public Money getPrice() {
 		return price;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public ProductType getProductType() {
 		return productType;
 	}
-	
+
 	public ProductData generateSnapshot(){
 		return new ProductData(getId(), price, name, productType, new Date());
 	}
