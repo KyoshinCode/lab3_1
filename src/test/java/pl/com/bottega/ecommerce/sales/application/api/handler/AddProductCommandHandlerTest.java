@@ -23,6 +23,7 @@ import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation.ReservationStatus;
 
 public class AddProductCommandHandlerTest {
@@ -55,8 +56,14 @@ public class AddProductCommandHandlerTest {
 	public void testHandleShouldInvokeSaveOnce() {
 		
 		// given
-		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
-		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
+		ReservationBuilder reservationBuilder = new ReservationBuilder();
+		Reservation reservation = reservationBuilder
+			.withAggregateId(new Id("333"))
+			.withStatus(ReservationStatus.OPENED)
+			.withClientData(new ClientData(new Id("194972"), "Aleksander Kaczmarczyk"))
+			.withDate(new Date())
+			.build();
+		
 		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
 		
 		ProductBuilder productBuilder = new ProductBuilder();
@@ -83,8 +90,14 @@ public class AddProductCommandHandlerTest {
 	public void testHandleShouldAddCorrectProductToReservation() {
 		
 		// given
-		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
-		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
+		ReservationBuilder reservationBuilder = new ReservationBuilder();
+		Reservation reservation = reservationBuilder
+			.withAggregateId(new Id("333"))
+			.withStatus(ReservationStatus.OPENED)
+			.withClientData(new ClientData(new Id("194972"), "Aleksander Kaczmarczyk"))
+			.withDate(new Date())
+			.build();
+		
 		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
 
 		ProductBuilder productBuilder = new ProductBuilder();
