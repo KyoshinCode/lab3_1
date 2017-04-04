@@ -37,23 +37,22 @@ public class BookKeeperTest {
 	
 	@Test
 	public void invoiceWithOneItemTest() {
-		
-//		TaxPolicy taxPolicyMocked = mock(TaxPolicy.class);
-		
-//		when(taxPolicyMocked.calculateTax(any(ProductType.class), any(Money.class))).thenReturn(new Tax(new Money(100), "EUR"));
-		
 		RequestItem requestItem = new RequestItem(productData, 1, new Money(100));
 		invoiceRequest.add(requestItem);
 		
 		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicyMocked);
 		assertThat(invoice.getItems().size(), is(equalTo(1)));
-		
-		
 	}
 	
-//	@Test
-//	public void invoiceWithTwoItemsCallCalculateTaxTwoTimesTest() {
-//		
-//	}
+	@Test
+	public void invoiceWithTwoItemsCallCalculateTaxTwoTimesTest() {
+		RequestItem requestItem = new RequestItem(productData, 1, new Money(100));
+		invoiceRequest.add(requestItem);
+		invoiceRequest.add(requestItem);
+		
+		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicyMocked);
+		
+		verify(taxPolicyMocked, times(2)).calculateTax(any(ProductType.class), any(Money.class));
+	}
 
 }
