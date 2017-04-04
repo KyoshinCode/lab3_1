@@ -87,6 +87,12 @@ public class AddProductCommandHandlerTest {
     	 reservation.markAsRemoved();
     	 assertThat(reservation.isRemoved() ,is(true));
     }
+    
+    @Test
+    public void testClosedReservation() throws Exception {
+    	 reservation.close();
+    	 assertThat(reservation.isClosed() ,is(true));
+    }
    
 	
 
