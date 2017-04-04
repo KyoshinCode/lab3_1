@@ -1,6 +1,5 @@
 package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -14,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -32,7 +32,15 @@ public class BookKeeperTest {
 	public void testIssuanceShouldReturnInvoiceWithOneLineWhenRequestHasOneItem() {
 		
 		// given
-		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
+		ProductDataBuilder productDataBuilder = new ProductDataBuilder();
+		ProductData productData = productDataBuilder
+			.withProductId(new Id("999"))
+			.withPrice(new Money(5))
+			.withName("Chicken")
+			.withType(ProductType.FOOD)
+			.withDate(new Date())
+			.build();
+		
 		RequestItem item = new RequestItem(productData, 3, new Money(16));
 		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
 		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
@@ -51,7 +59,15 @@ public class BookKeeperTest {
 	public void testIssuanceShouldInvokeCalculateTaxTwoTimesWhenRequestHasTwoItems() {
 
 		// given
-		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
+		ProductDataBuilder productDataBuilder = new ProductDataBuilder();
+		ProductData productData = productDataBuilder
+			.withProductId(new Id("999"))
+			.withPrice(new Money(5))
+			.withName("Chicken")
+			.withType(ProductType.FOOD)
+			.withDate(new Date())
+			.build();
+		
 		RequestItem item = new RequestItem(productData, 3, new Money(16));
 		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
 		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
@@ -70,7 +86,15 @@ public class BookKeeperTest {
 	public void testIssuanceShouldReturnInvoiceWithNetBeingSumOfTwoItemsTotalCostsWhenRequestHasTwoItems() {
 		
 		// given
-		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
+		ProductDataBuilder productDataBuilder = new ProductDataBuilder();
+		ProductData productData = productDataBuilder
+			.withProductId(new Id("999"))
+			.withPrice(new Money(5))
+			.withName("Chicken")
+			.withType(ProductType.FOOD)
+			.withDate(new Date())
+			.build();
+		
 		RequestItem item = new RequestItem(productData, 3, new Money(16));
 		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
 		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
@@ -89,7 +113,15 @@ public class BookKeeperTest {
 	public void testIssuanceShouldInvokeCalculateTaxWithTwoCorrectParameters() {
 		
 		// given
-		ProductData productData = new ProductData(new Id("999"), new Money(5), "Chicken", ProductType.FOOD, new Date());
+		ProductDataBuilder productDataBuilder = new ProductDataBuilder();
+		ProductData productData = productDataBuilder
+			.withProductId(new Id("999"))
+			.withPrice(new Money(5))
+			.withName("Chicken")
+			.withType(ProductType.FOOD)
+			.withDate(new Date())
+			.build();
+		
 		RequestItem item = new RequestItem(productData, 3, new Money(16));
 		InvoiceRequest mockedRequest = mock(InvoiceRequest.class);
 		TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
