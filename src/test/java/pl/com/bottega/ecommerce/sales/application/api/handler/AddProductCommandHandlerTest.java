@@ -32,7 +32,9 @@ public class AddProductCommandHandlerTest {
     private SuggestionService suggestionService;
     private ClientRepository clientRepository;
     private SystemContext systemContext;
-
+    AddProductCommand command;
+    Reservation reservation;
+    Product product;
     @Before
     public void setUp(){
         handler = new AddProductCommandHandler();
@@ -43,6 +45,12 @@ public class AddProductCommandHandlerTest {
         clientRepository = mock(ClientRepository.class);
         systemContext = mock(SystemContext.class);
 
+        command = new AddProductCommand(Id.generate(),Id.generate(),5);
+        reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "JAN"), new Date());
+        product = new Product(Id.generate(),new Money(100),"product", ProductType.FOOD);
+
+        when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
+        when(productRepository.load(any(Id.class))).thenReturn(product);
 
 
         Whitebox.setInternalState(handler, "reservationRepository", reservationRepository);
@@ -56,27 +64,13 @@ public class AddProductCommandHandlerTest {
 
     @Test
     public void isReservationSaved(){
-        AddProductCommand command = new AddProductCommand(Id.generate(),Id.generate(),5);
-        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "JAN"), new Date());
-        Product product = new Product(Id.generate(),new Money(100),"product", ProductType.FOOD);
-
-        when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
-        when(productRepository.load(any(Id.class))).thenReturn(product);
-
         handler.handle(command);
         verify(reservationRepository).save(reservation);
     }
 
     @Test
     public void isProductAdded(){
-        AddProductCommand command = new AddProductCommand(Id.generate(),Id.generate(),5);
-        Reservation reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "JAN"), new Date());
-        Product product = new Product(Id.generate(),new Money(100),"product", ProductType.FOOD);
-
-        when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
-        when(productRepository.load(any(Id.class))).thenReturn(product);
         handler.handle(command);
-
         assertFalse(reservation.getReservedProducts().isEmpty());
     }
 }
