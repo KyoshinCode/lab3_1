@@ -69,17 +69,19 @@ public class AddProductCommandHandlerTest {
 
 	@Test
     public void testProductIsNotAvailable() throws Exception {
-		reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.CLOSED, new ClientData(Id.generate(), "Test"), new Date(0));
+		reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "Test"), new Date(0));
         addProductCommandHandler.handle(addProductCommand);
         assertThat(product.isAvailable(), is(equalTo(true)));
     }
 	
     @Test
      public void testReservationHandle() throws Exception {
+//    	when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
+    	when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
          for (int i=0; i<5; i++) {
         	 addProductCommandHandler.handle(addProductCommand);
          }
-         verify(reservationRepository, times(5));
+         verify(reservationRepository, times(5)).load(addProductCommand.getOrderId());
      }
 	
     @Test
