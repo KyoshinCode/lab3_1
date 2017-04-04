@@ -10,7 +10,6 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
-
 import java.util.Date;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
@@ -87,5 +86,14 @@ public class BookKeeperTest {
 		Assert.assertThat(invoice.getItems().get(0).getProduct(), is(not(invoice.getItems().get(1).getProduct())));
 	}
 	
+	@Test
+	public void testInvoiceRequestWithoutItemsDoNotUseCalculateTaxMethod() {
+		
+		when(mockedTaxPolicy.calculateTax(productData.getType(), productData.getPrice())).thenReturn(new Tax(new Money(5), "Fake"));	
+		
+		bookKeeper.issuance(invoiceRequest, mockedTaxPolicy);
+				
+		verify(mockedTaxPolicy, times(0)).calculateTax(productData.getType(), productData.getPrice());
+	}
 	
 }
