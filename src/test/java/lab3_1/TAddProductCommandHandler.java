@@ -19,6 +19,8 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation.ReservationStatus;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
@@ -53,9 +55,10 @@ public class TAddProductCommandHandler {
 		p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
 		p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
 
-		res = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
-				new ClientData(Id.generate(), "wkurwiony tester"), new Date());
+		//res = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
+				//new ClientData(Id.generate(), "wkurwiony tester"), new Date());
 
+		res = new ReservationBuilder().withStatus(ReservationStatus.OPENED).build();
 		c = new Client();
 		
 		Mockito.when(pR.load(command.getProductId())).thenReturn(p1);
