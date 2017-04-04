@@ -52,11 +52,9 @@ public class AddProductCommandHandlerTest {
 		Whitebox.setInternalState(addProductCommandHandler, "clientRepository", mockedClientRepository);
 		Whitebox.setInternalState(addProductCommandHandler, "systemContext", systemContext);
 	}
-
-	@Test
-	public void testHandleShouldInvokeSaveOnce() {
+	
+	public Reservation buildReservation() {
 		
-		// given
 		ReservationBuilder reservationBuilder = new ReservationBuilder();
 		Reservation reservation = reservationBuilder
 			.withAggregateId(new Id("333"))
@@ -65,12 +63,22 @@ public class AddProductCommandHandlerTest {
 			.withDate(new Date())
 			.build();
 		
+		return reservation;
+	}
+	
+	public AddProductCommand buildAddProductCommand() {
+		
 		AddProductCommandBuilder addProductCommandBuilder = new AddProductCommandBuilder();
 		AddProductCommand addProductCommand = addProductCommandBuilder
 			.withOrderId(new Id("123"))
 			.withProductId(new Id("456"))
 			.withQuantity(1)
 			.build();
+		
+		return addProductCommand;
+	}
+	
+	public Product buildProduct() {
 		
 		ProductBuilder productBuilder = new ProductBuilder();
 		Product product = productBuilder
@@ -79,6 +87,17 @@ public class AddProductCommandHandlerTest {
 			.withName("Chicken")
 			.withType(ProductType.FOOD)
 			.build();
+		
+		return product;
+	}
+
+	@Test
+	public void testHandleShouldInvokeSaveOnce() {
+		
+		// given
+		Reservation reservation = buildReservation();
+		AddProductCommand addProductCommand = buildAddProductCommand();
+		Product product = buildProduct();
 		
 		when(mockedReservationRepository.load(addProductCommand.getOrderId()))
 			.thenReturn(reservation);
@@ -96,28 +115,9 @@ public class AddProductCommandHandlerTest {
 	public void testHandleShouldAddCorrectProductToReservation() {
 		
 		// given
-		ReservationBuilder reservationBuilder = new ReservationBuilder();
-		Reservation reservation = reservationBuilder
-			.withAggregateId(new Id("333"))
-			.withStatus(ReservationStatus.OPENED)
-			.withClientData(new ClientData(new Id("194972"), "Aleksander Kaczmarczyk"))
-			.withDate(new Date())
-			.build();
-		
-		AddProductCommandBuilder addProductCommandBuilder = new AddProductCommandBuilder();
-		AddProductCommand addProductCommand = addProductCommandBuilder
-			.withOrderId(new Id("123"))
-			.withProductId(new Id("456"))
-			.withQuantity(1)
-			.build();
-
-		ProductBuilder productBuilder = new ProductBuilder();
-		Product product = productBuilder
-			.withProductId(new Id("444"))
-			.withPrice(new Money(10))
-			.withName("Chicken")
-			.withType(ProductType.FOOD)
-			.build();
+		Reservation reservation = buildReservation();
+		AddProductCommand addProductCommand = buildAddProductCommand();
+		Product product = buildProduct();
 		
 		when(mockedReservationRepository.load(addProductCommand.getOrderId()))
 			.thenReturn(reservation);
