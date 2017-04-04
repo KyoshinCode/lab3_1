@@ -72,6 +72,15 @@ public class AddProductCommandHandlerTest {
 	@Test
 	public void testHandleShouldAddCorrectProductToReservation() {
 		
+		// given
+		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
+		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
+		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
+		
+		when(mockedReservationRepository.load(dummyAddProductCommand.getOrderId()))
+			.thenReturn(reservation);
+		when(mockedProductRepository.load(dummyAddProductCommand.getProductId()))
+			.thenReturn(new Product(new Id("444"), new Money(10), "Chicken", ProductType.FOOD));
 	}
 
 }
