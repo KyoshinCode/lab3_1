@@ -72,7 +72,30 @@ public class BookKeeperTest {
 		verify(mockedTaxPolicy, times(2)).calculateTax(productData.getType(), productData.getPrice());
 	}
 	
-	
+	@Test
+	public void testInvoiceRequestWithTwoItemsReturnInvoiceWithTwoDifferentItems() {
+		
+		//Given
+				BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+				TaxPolicy mockedTaxPolicy = mock(TaxPolicy.class);
+				InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "John Doe"));
+				ProductData productData = new ProductData(Id.generate(), new Money(10), "item", ProductType.DRUG, new Date());
+				ProductData productData2 = new ProductData(Id.generate(), new Money(10), "item2", ProductType.FOOD, new Date());
+				when(mockedTaxPolicy.calculateTax(productData.getType(), productData.getPrice())).thenReturn(new Tax(new Money(5), "Fake"));
+				when(mockedTaxPolicy.calculateTax(productData2.getType(), productData2.getPrice())).thenReturn(new Tax(new Money(5), "Fake"));
+				 
+				RequestItem requestItem = new RequestItem(productData, 5, productData.getPrice());
+				invoiceRequest.add(requestItem);
+				requestItem = new RequestItem(productData2, 4, productData2.getPrice());
+				invoiceRequest.add(requestItem);
+				
+				//When
+				Invoice invoice = bookKeeper.issuance(invoiceRequest, mockedTaxPolicy);
+		
+				//Then
+				Assert.assertThat(invoice.getItems().get(0).getProduct(), is(not(invoice.getItems().get(1).getProduct())));
+		
+	}
 	
 	
 }
