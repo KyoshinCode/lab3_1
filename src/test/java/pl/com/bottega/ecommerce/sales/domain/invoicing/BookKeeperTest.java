@@ -39,7 +39,6 @@ public class BookKeeperTest {
 	@Test
 	public void invoiceWithOneItemTest() {
 		invoiceRequest.add(requestItem);
-		
 		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicyMocked);
 		assertThat(invoice.getItems().size(), is(equalTo(1)));
 	}
@@ -52,5 +51,13 @@ public class BookKeeperTest {
 		
 		verify(taxPolicyMocked, times(2)).calculateTax(any(ProductType.class), any(Money.class));
 	}
+	
+	@Test
+	public void invoiceWithZeroItemsTest() {
+		Invoice invoice = bookKeeper.issuance(invoiceRequest, taxPolicyMocked);
+		assertThat(invoice.getItems().size(), is(equalTo(0)));
+	}
 
+	
+	
 }
