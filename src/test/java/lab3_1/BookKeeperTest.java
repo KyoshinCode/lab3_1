@@ -1,6 +1,7 @@
 package lab3_1;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -85,5 +86,10 @@ public class BookKeeperTest {
 		Assert.assertThat(invoice.getItems().get(0).getProduct().getPrice(), is(equalTo(productData.getPrice())));
 		Assert.assertThat(invoice.getItems().get(0).getProduct().getType(), is(equalTo(productData.getType())));
 		Assert.assertThat(invoice.getItems().get(0).getProduct().getName(), is(equalTo(productData.getName())));
+	}
+
+	@Test
+	public void issuanceReturnTypeTest() {
+		Assert.assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy), is(instanceOf(Invoice.class)));
 	}
 }
