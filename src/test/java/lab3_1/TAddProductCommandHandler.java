@@ -15,6 +15,7 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
@@ -52,8 +53,9 @@ public class TAddProductCommandHandler {
 		Whitebox.setInternalState(handler, "productRepository", pR);
 		Whitebox.setInternalState(handler, "suggestionService", sS);
 
-		p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
-		p2 = new Product(Id.generate(), new Money(8), "test4", ProductType.FOOD);
+		//p1 = new Product(Id.generate(), new Money(5), "test", ProductType.FOOD);
+		p1 = new ProductBuilder().build();
+		p2 = new ProductBuilder().withName("produkcik").withPrice(new Money(3)).withType(ProductType.FOOD).build();
 
 		//res = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
 				//new ClientData(Id.generate(), "wkurwiony tester"), new Date());
@@ -85,8 +87,9 @@ public class TAddProductCommandHandler {
 		SystemContext sC = new SystemContext();
 		Whitebox.setInternalState(handler, "systemContext", sC);
 
-		p1.markAsRemoved();
-
+		Product pUnavailable = new ProductBuilder().buildAsUnavailable();
+		
+		Mockito.when(pR.load(command.getProductId())).thenReturn(pUnavailable);
 		Mockito.when(cR.load(Mockito.any(Id.class))).thenReturn(c);
 
 		handler.handle(command);
