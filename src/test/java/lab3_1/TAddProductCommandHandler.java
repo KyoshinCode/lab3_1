@@ -1,4 +1,4 @@
-package lab3_2;
+package lab3_1;
 
 import java.util.Date;
 
