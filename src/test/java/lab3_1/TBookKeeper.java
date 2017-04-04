@@ -21,6 +21,7 @@ import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.TaxPolicy;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -44,7 +45,8 @@ public class TBookKeeper {
 		money = new Money(5);
 		date = new Date(0);
 
-		pData = new ProductData(Id.generate(), money, "test", ProductType.STANDARD, date);
+		//pData = new ProductData(Id.generate(), money, "test", ProductType.STANDARD, date);
+		pData = new ProductDataBuilder().build();
 		item = new RequestItem(pData, 1, money);
 
 		tax = new Tax(money, "test");
