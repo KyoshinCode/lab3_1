@@ -11,6 +11,7 @@ import org.mockito.internal.util.reflection.Whitebox;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
+import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
@@ -29,15 +30,17 @@ public class AddProductCommandHandlerTest {
 
     private AddProductCommandHandler handler;
     private ReservationRepository reservationRepository;
-    private ProductRepository productRepository;
-    private SuggestionService suggestionService;
-    private ClientRepository clientRepository;
-    private SystemContext systemContext;
-    AddProductCommand command;
-    Reservation reservation;
-    Product product;
+    private AddProductCommand command;
+    private Reservation reservation;
+    private Product product;
+
     @Before
     public void setUp(){
+        ProductRepository productRepository;
+        SuggestionService suggestionService;
+        ClientRepository clientRepository;
+        SystemContext systemContext;
+        
         handler = new AddProductCommandHandler();
 
         reservationRepository = mock(ReservationRepository.class);
@@ -48,11 +51,14 @@ public class AddProductCommandHandlerTest {
 
         command = new AddProductCommand(Id.generate(),Id.generate(),5);
         reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "JAN"), new Date());
-        product = new Product(Id.generate(),new Money(100),"product", ProductType.FOOD);
+        product = new Product(Id.generate(),new Money(50),"product", ProductType.FOOD);
+        Product equivalentProduct = new Product(Id.generate(),new Money(55),"equivalentProduct", ProductType.FOOD);
+        Client client = new Client();
 
+        when(clientRepository.load(any(Id.class))).thenReturn(client);
         when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
         when(productRepository.load(any(Id.class))).thenReturn(product);
-
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(equivalentProduct);
 
         Whitebox.setInternalState(handler, "reservationRepository", reservationRepository);
         Whitebox.setInternalState(handler, "productRepository", productRepository);
@@ -79,6 +85,12 @@ public class AddProductCommandHandlerTest {
     public void exceptionWhenReservationClosed(){
         reservation.close();
         handler.handle(command);
+    }
+
+    @Test
+    public void productRemoved(){
+        product.markAsRemoved();
+        assertFalse(product.isAvailable());
     }
 
 }
