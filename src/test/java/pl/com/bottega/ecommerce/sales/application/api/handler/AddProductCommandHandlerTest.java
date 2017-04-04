@@ -13,6 +13,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationFactory;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
+import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import static org.hamcrest.Matchers.is;
@@ -59,6 +60,7 @@ public class AddProductCommandHandlerTest {
 
         Product product = mock(Product.class);
         when(product.isAvailable()).thenReturn(true);
+        when(product.getPrice()).thenReturn(Money.ZERO);
 
         when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
         when(productRepository.load(any(Id.class))).thenReturn(product);
@@ -67,6 +69,6 @@ public class AddProductCommandHandlerTest {
         addProductCommandHandler.handle(addProductCommand);
 
         // then
-
+        Assert.assertThat(reservation.getReservedProducts().size(), is(1));
     }
 }
