@@ -15,4 +15,33 @@ public class ProductDataBuilder {
 	
 	public ProductDataBuilder() {
 	}
+	
+	public ProductDataBuilder withProductId(Id productId) {
+		this.productId = productId;
+		return this;
+	}
+	
+	public ProductDataBuilder withPrice(Money price) {
+		this.price = price;
+		return this;
+	}
+	
+	public ProductDataBuilder withName(String name) {
+		this.name = name;
+		return this;
+	}
+	
+	public ProductDataBuilder withDate(Date snapshotDate) {
+		this.snapshotDate = snapshotDate;
+		return this;
+	}
+	
+	public ProductDataBuilder withType(ProductType type) {
+		this.type = type;
+		return this;
+	}
+	
+	public ProductData build() {
+		return new ProductData(this.productId, this.price, this.name, this.type, this.snapshotDate);
+	}
 }
