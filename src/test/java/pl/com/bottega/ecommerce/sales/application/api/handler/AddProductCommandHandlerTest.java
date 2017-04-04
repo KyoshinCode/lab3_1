@@ -76,8 +76,6 @@ public class AddProductCommandHandlerTest {
 	
     @Test
      public void testReservationHandle() throws Exception {
-//    	when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
-    	when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
          for (int i=0; i<5; i++) {
         	 addProductCommandHandler.handle(addProductCommand);
          }
