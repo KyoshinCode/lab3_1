@@ -16,6 +16,7 @@ import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
@@ -57,7 +58,14 @@ public class AddProductCommandHandlerTest {
 		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
 		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
 		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
-		Product product = new Product(new Id("444"), new Money(10), "Chicken", ProductType.FOOD);
+		
+		ProductBuilder productBuilder = new ProductBuilder();
+		Product product = productBuilder
+			.withProductId(new Id("444"))
+			.withPrice(new Money(10))
+			.withName("Chicken")
+			.withType(ProductType.FOOD)
+			.build();
 		
 		when(mockedReservationRepository.load(dummyAddProductCommand.getOrderId()))
 			.thenReturn(reservation);
@@ -78,7 +86,14 @@ public class AddProductCommandHandlerTest {
 		ClientData dummyClientData = new ClientData(new Id("194972"), "Aleksander Kaczmarczyk");
 		Reservation reservation = new Reservation(new Id("333"), ReservationStatus.OPENED, dummyClientData, new Date());
 		AddProductCommand dummyAddProductCommand = new AddProductCommand(new Id("123"), new Id("456"), 1);
-		Product product = new Product(new Id("444"), new Money(10), "Chicken", ProductType.FOOD);
+
+		ProductBuilder productBuilder = new ProductBuilder();
+		Product product = productBuilder
+			.withProductId(new Id("444"))
+			.withPrice(new Money(10))
+			.withName("Chicken")
+			.withType(ProductType.FOOD)
+			.build();
 		
 		when(mockedReservationRepository.load(dummyAddProductCommand.getOrderId()))
 			.thenReturn(reservation);
