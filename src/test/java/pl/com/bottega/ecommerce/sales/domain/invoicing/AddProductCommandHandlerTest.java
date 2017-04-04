@@ -20,9 +20,12 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
@@ -46,13 +49,12 @@ public class AddProductCommandHandlerTest {
 		prodRep = mock(ProductRepository.class);
 		clientRep = mock(ClientRepository.class);
 		suggServ = mock(SuggestionService.class);
-		reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,
-				new ClientData(Id.generate(), "Ala Kota"), new Date());
-		product = new Product(Id.generate(), new Money(100), "ananas", ProductType.FOOD);
+		reservation = new ReservationBuilder().withClientData(new ClientData(Id.generate(), "Kuba")).open().build();
 		unavaiableProduct = new Product(Id.generate(), new Money(100), "lizak", ProductType.FOOD);
 		sysContext = new SystemContext();
 		testHandler = new AddProductCommandHandler();
 		testCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
+		product = new ProductBuilder().setId(testCommand.getProductId()).setName("banan").setType(ProductType.STANDARD).build();
 		when(reserRep.load(testCommand.getOrderId())).thenReturn(reservation);
 		Whitebox.setInternalState(testHandler, "reservationRepository", reserRep);
 		Whitebox.setInternalState(testHandler, "clientRepository", clientRep);
