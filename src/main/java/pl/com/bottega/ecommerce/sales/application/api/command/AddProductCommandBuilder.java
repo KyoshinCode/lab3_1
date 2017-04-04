@@ -10,4 +10,23 @@ public class AddProductCommandBuilder {
 	
 	public AddProductCommandBuilder() {
 	}
+	
+	public AddProductCommandBuilder withOrderId(Id orderId) {
+		this.orderId = orderId;
+		return this;
+	}
+	
+	public AddProductCommandBuilder withProductId(Id productId) {
+		this.productId = productId;
+		return this;
+	}
+	
+	public AddProductCommandBuilder withQuantity(int quantity) {
+		this.quantity = quantity;
+		return this;
+	}
+	
+	public AddProductCommand build() {
+		return new AddProductCommand(this.orderId, this.productId, this.quantity);
+	}
 }
