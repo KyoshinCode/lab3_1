@@ -15,6 +15,7 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
@@ -52,9 +53,9 @@ public class AddProductCommandHandlerTest {
 
         command = new AddProductCommand(Id.generate(),Id.generate(),5);
         reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "JAN"), new Date());
-        product = new Product(Id.generate(),new Money(50),"product", ProductType.FOOD);
+        product = new ProductBuilder().build();
 
-        Product equivalentProduct = new Product(Id.generate(),new Money(55),"equivalentProduct", ProductType.FOOD);
+        Product equivalentProduct = new ProductBuilder().id(Id.generate()).name("Zamiennik").price(new Money(10)).build();
         Client client = new Client();
 
         when(clientRepository.load(any(Id.class))).thenReturn(client);
