@@ -15,8 +15,8 @@ public class ProductBuilder  {
         return this;
     }
 
-    public ProductBuilder price(Double price) {
-        this.price = new Money(price);
+    public ProductBuilder price(Money price) {
+        this.price = price;
         return this;
     }
 
