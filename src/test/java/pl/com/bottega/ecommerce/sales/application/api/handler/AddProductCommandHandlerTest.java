@@ -19,6 +19,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
@@ -52,7 +53,7 @@ public class AddProductCommandHandlerTest {
         systemContext = new SystemContext();
 
         command = new AddProductCommand(Id.generate(),Id.generate(),5);
-        reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "JAN"), new Date());
+        reservation = new ReservationBuilder().status(Reservation.ReservationStatus.OPENED).createDate(new Date()).build();
         product = new ProductBuilder().build();
 
         Product equivalentProduct = new ProductBuilder().id(Id.generate()).name("Zamiennik").price(new Money(10)).build();
