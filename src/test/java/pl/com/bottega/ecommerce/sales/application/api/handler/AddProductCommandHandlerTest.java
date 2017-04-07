@@ -33,25 +33,27 @@ public class AddProductCommandHandlerTest {
     private AddProductCommand command;
     private Reservation reservation;
     private Product product;
+    private SuggestionService suggestionService;
+
 
     @Before
     public void setUp(){
         ProductRepository productRepository;
-        SuggestionService suggestionService;
         ClientRepository clientRepository;
         SystemContext systemContext;
-        
+
         handler = new AddProductCommandHandler();
 
         reservationRepository = mock(ReservationRepository.class);
         productRepository = mock(ProductRepository.class);
         suggestionService = mock(SuggestionService.class);
         clientRepository = mock(ClientRepository.class);
-        systemContext = mock(SystemContext.class);
+        systemContext = new SystemContext();
 
         command = new AddProductCommand(Id.generate(),Id.generate(),5);
         reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, new ClientData(Id.generate(), "JAN"), new Date());
         product = new Product(Id.generate(),new Money(50),"product", ProductType.FOOD);
+
         Product equivalentProduct = new Product(Id.generate(),new Money(55),"equivalentProduct", ProductType.FOOD);
         Client client = new Client();
 
@@ -88,9 +90,15 @@ public class AddProductCommandHandlerTest {
     }
 
     @Test
-    public void productRemoved(){
+    public void isAvailableRemovedProduct(){
         product.markAsRemoved();
         assertFalse(product.isAvailable());
+    }
+    @Test
+    public void isSuggestedEquivalent(){
+        product.markAsRemoved();
+        handler.handle(command);
+        verify(suggestionService).suggestEquivalent(any(Product.class), any(Client.class));
     }
 
 }
