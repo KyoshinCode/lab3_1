@@ -41,7 +41,7 @@ public class BookKeeperTests {
         InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
         TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
         when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item));
-        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
+        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new TaxBuilder().amount(new Money(20)).build());
 
         //when
         Invoice invoice = bookKeeper.issuance(mockInvoiceRequest,mockTaxPolicy);
@@ -57,7 +57,7 @@ public class BookKeeperTests {
         InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
         TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
         when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item,item));
-        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
+        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new TaxBuilder().build());
 
         //when
         bookKeeper.issuance(mockInvoiceRequest,mockTaxPolicy);
@@ -73,7 +73,7 @@ public class BookKeeperTests {
         InvoiceRequest mockInvoiceRequest = mock(InvoiceRequest.class);
         TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
         when(mockInvoiceRequest.getItems()).thenReturn(Arrays.asList(item));
-        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new Tax(new Money(5),"Desc"));
+        when(mockTaxPolicy.calculateTax(ProductType.FOOD, item.getTotalCost())).thenReturn(new TaxBuilder().description("new desc").build());
 
         //when
         bookKeeper.issuance(mockInvoiceRequest,mockTaxPolicy);
