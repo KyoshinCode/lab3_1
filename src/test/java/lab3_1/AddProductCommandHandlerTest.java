@@ -23,6 +23,7 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
@@ -61,7 +62,7 @@ public class AddProductCommandHandlerTest {
 
 		clientData = new ClientData(Id.generate(), "ClientName");
 		reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED, clientData, new Date());
-		product = new Product(Id.generate(), new Money(10),"ProductName",ProductType.STANDARD);
+		product = new ProductBuilder().build();
 
 		Mockito.when(reservationRepository.load(Mockito.any(Id.class))).thenReturn(reservation);
 		Mockito.when(productRepository.load(Mockito.any(Id.class))).thenReturn(product);
