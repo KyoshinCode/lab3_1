@@ -9,6 +9,8 @@ import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
 import pl.com.bottega.ecommerce.sales.application.api.handler.AddProductCommandHandler;
+import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
+import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
@@ -21,6 +23,7 @@ import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
+import java.rmi.server.LoaderHandler;
 import java.util.Date;
 
 public class AddProductCommandHandlerTest {
@@ -28,6 +31,7 @@ public class AddProductCommandHandlerTest {
 	
 	ReservationRepository mockedReservationRepository;
 	ProductRepository mockedProductRepository;
+	
 	AddProductCommand command;
 	AddProductCommandHandler commandHandler;
 	Reservation reservationOpen, reservationClosed;
@@ -38,6 +42,7 @@ public class AddProductCommandHandlerTest {
 	public void setUp() {
 		mockedReservationRepository = mock(ReservationRepository.class);
 		mockedProductRepository = mock(ProductRepository.class);
+		
 		commandHandler = new AddProductCommandHandler();
 		command = new AddProductCommand(Id.generate(), Id.generate(), 2);
 		client = new ClientData(Id.generate(), "John Doe");
@@ -47,8 +52,10 @@ public class AddProductCommandHandlerTest {
 		Whitebox.setInternalState(commandHandler, "reservationRepository", mockedReservationRepository);
 		Whitebox.setInternalState(commandHandler, "productRepository", mockedProductRepository);
 		
+		
 		when(mockedReservationRepository.load(command.getOrderId())).thenReturn(reservationOpen);
 		when(mockedProductRepository.load(command.getProductId())).thenReturn(product);
+		
 	}
 	
 	
@@ -75,6 +82,14 @@ public class AddProductCommandHandlerTest {
 		
 		reservationClosed.add(product, 1);
 		
+	}
+	
+	@Test
+	public void test() {
+		
+		
+		product.markAsRemoved();
+		Assert.assertThat(product.isAvailable(), is(false));
 	}
 	
 }
