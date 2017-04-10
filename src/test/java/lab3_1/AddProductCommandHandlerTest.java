@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs; 
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class AddProductCommandHandlerTest {
 	private ClientRepository clientRepository;
 	private SystemContext systemContext;
 	private AddProductCommandHandler addProductCommandHandler;
-	private AddProductCommand addProductCommand;
+	private AddProductCommand command;
 	private Reservation reservation;
 	private Product product;
 	
@@ -47,12 +46,12 @@ public class AddProductCommandHandlerTest {
 		clientRepository = mock(ClientRepository.class);
 		systemContext = mock(SystemContext.class);
 		addProductCommandHandler = new AddProductCommandHandler();
-		addProductCommand = new AddProductCommand(Id.generate(),Id.generate(),3);
+		command = new AddProductCommand(Id.generate(),Id.generate(),3);
 		reservation = new Reservation(Id.generate(),ReservationStatus.OPENED,new ClientData(Id.generate(),"Name"),new Date());
 		product = new Product(Id.generate(), new Money(10), "product", ProductType.STANDARD);
 		
-		when(reservationRepository.load(addProductCommand.getOrderId())).thenReturn(reservation);
-		when(productRepository.load(addProductCommand.getProductId())).thenReturn(product);
+		when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+		when(productRepository.load(command.getProductId())).thenReturn(product);
 		
 		Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
  		Whitebox.setInternalState(addProductCommandHandler, "clientRepository", clientRepository);
@@ -62,8 +61,8 @@ public class AddProductCommandHandlerTest {
 		
 	}
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void checkIfProductIsAvaibleShouldReturnTrue() {
+		addProductCommandHandler.handle(command);
+		assertThat(product.isAvailable(), is(equalTo(true)));
 	}
-
 }
