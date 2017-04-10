@@ -1,7 +1,7 @@
 package pl.com.bottega.ecommerce.sales.domain.reservation;
 
-import java.sql.Date;
-import java.util.List;
+import java.util.Date;
+
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
@@ -13,7 +13,7 @@ public class ReservationBuilder {
 	private Date date;
 	
 	
-	private ReservationBuilder(){
+	public ReservationBuilder(){
 		
 	}
 	

@@ -17,18 +17,19 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation.ReservationStatus;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
-import pl.com.bottega.ecommerce.system.application.SystemContext;
+
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.rmi.server.LoaderHandler;
+
 import java.util.Date;
 
-import javax.print.attribute.standard.PDLOverrideSupported;
+
 
 public class AddProductCommandHandlerTest {
 
@@ -43,11 +44,11 @@ public class AddProductCommandHandlerTest {
 	Product product;
 	ClientData clientData;
 	Client client;
-	
+	Date date;
+	ReservationBuilder resBuilder = new ReservationBuilder();
 	
 	@Before
 	public void setUp() {
-		SystemContext systemContext = new SystemContext();
 		mockedReservationRepository = mock(ReservationRepository.class);
 		mockedProductRepository = mock(ProductRepository.class);
 		mockedSuggestionService = mock(SuggestionService.class);
@@ -55,9 +56,11 @@ public class AddProductCommandHandlerTest {
 		commandHandler = new AddProductCommandHandler();
 		command = new AddProductCommand(Id.generate(), Id.generate(), 2);
 		client = new Client();
+		date = new Date();
 		clientData = new ClientData(Id.generate(), "John Doe");
-		reservationOpen = new Reservation(Id.generate(), ReservationStatus.OPENED, clientData , new Date());
-		reservationClosed = new Reservation(Id.generate(), ReservationStatus.CLOSED, clientData, new Date());
+		reservationOpen = resBuilder.withStatus(ReservationStatus.OPENED).withClientData(clientData).withDate(date).build();		
+		reservationClosed = resBuilder.withStatus(ReservationStatus.CLOSED).build();
+		
 		product = new Product(Id.generate(), new Money(40), "product" , ProductType.FOOD);
 		Whitebox.setInternalState(commandHandler, "reservationRepository", mockedReservationRepository);
 		Whitebox.setInternalState(commandHandler, "productRepository", mockedProductRepository);
