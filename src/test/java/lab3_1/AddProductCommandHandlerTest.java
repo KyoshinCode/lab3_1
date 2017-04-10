@@ -40,7 +40,6 @@ public class AddProductCommandHandlerTest {
 		command = new AddProductCommand(Id.generate(), Id.generate(), 2);
 		reservation = new Reservation(Id.generate(), ReservationStatus.OPENED, new ClientData(Id.generate(), "John Doe"), new Date());
 		product = new Product(Id.generate(), new Money(40), "product" , ProductType.FOOD);
-		
 		Whitebox.setInternalState(commandHandler, "reservationRepository", mockedReservationRepository);
 		Whitebox.setInternalState(commandHandler, "productRepository", mockedProductRepository);
 	}
@@ -55,7 +54,17 @@ public class AddProductCommandHandlerTest {
 		reservation.add(product, 1);
 		commandHandler.handle(command);
 		Assert.assertThat(product.isAvailable(), is(equalTo(true)));
-		  
+	}
+	
+	@Test
+	public void testIsReservationRepositorySaveMethodUsedOnce() {
+		
+		when(mockedReservationRepository.load(command.getOrderId())).thenReturn(reservation);
+		when(mockedProductRepository.load(command.getProductId())).thenReturn(product);
+		reservation.add(product, 1);
+		commandHandler.handle(command);
+		verify(mockedReservationRepository, times(1)).save(reservation);
 		
 	}
+	
 }
