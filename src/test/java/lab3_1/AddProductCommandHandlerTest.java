@@ -39,7 +39,7 @@ public class AddProductCommandHandlerTest {
 	private Product product;
 	
 	@Before
-	void initialize() {
+	public void initialize() {
 		reservationRepository = mock(ReservationRepository.class);
 		productRepository = mock(ProductRepository.class);
 		suggestionService = mock(SuggestionService.class);
