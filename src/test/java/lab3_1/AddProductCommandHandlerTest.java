@@ -13,6 +13,7 @@ import pl.com.bottega.ecommerce.sales.domain.client.Client;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
@@ -46,6 +47,7 @@ public class AddProductCommandHandlerTest {
 	Client client;
 	Date date;
 	ReservationBuilder resBuilder = new ReservationBuilder();
+	ProductBuilder proBuilder = new ProductBuilder();
 	
 	@Before
 	public void setUp() {
@@ -61,7 +63,7 @@ public class AddProductCommandHandlerTest {
 		reservationOpen = resBuilder.withStatus(ReservationStatus.OPENED).withClientData(clientData).withDate(date).build();		
 		reservationClosed = resBuilder.withStatus(ReservationStatus.CLOSED).build();
 		
-		product = new Product(Id.generate(), new Money(40), "product" , ProductType.FOOD);
+		product = proBuilder.withName("Kielbasa").withPrice(new Money(5)).withProductType(ProductType.FOOD).build();
 		Whitebox.setInternalState(commandHandler, "reservationRepository", mockedReservationRepository);
 		Whitebox.setInternalState(commandHandler, "productRepository", mockedProductRepository);
 		Whitebox.setInternalState(commandHandler, "clientRepository", mockedClientRepository);
