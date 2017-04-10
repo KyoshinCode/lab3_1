@@ -58,11 +58,21 @@ public class AddProductCommandHandlerTest {
  		Whitebox.setInternalState(addProductCommandHandler, "productRepository", productRepository);
  		Whitebox.setInternalState(addProductCommandHandler, "suggestionService", suggestionService);
  		Whitebox.setInternalState(addProductCommandHandler, "systemContext", systemContext);
-		
 	}
+	
 	@Test
 	public void checkIfProductIsAvaibleShouldReturnTrue() {
 		addProductCommandHandler.handle(command);
 		assertThat(product.isAvailable(), is(equalTo(true)));
 	}
+	
+	@Test
+	public void methodSaveShouldBeCalledOnes() {
+		final int testValue = 1;
+		
+		addProductCommandHandler.handle(command);
+		
+		verify(reservationRepository, times(testValue)).save(reservation);
+	}
+	
 }
