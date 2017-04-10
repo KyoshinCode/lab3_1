@@ -1,6 +1,7 @@
 package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
@@ -28,17 +29,26 @@ public class BookKeeperTest {
     final InvoiceRequest INVOICE_REQUEST = new InvoiceRequest(CLIENT_DATA);
     final Money MONEY = new Money(1);
     final RequestItem REQUEST_ITEM = new RequestItem(new ProductData(Id.generate(), MONEY, "name", ProductType.DRUG, new Date()),0 ,MONEY);
-    @Test
-    public void invoiceWithOneItem() throws Exception {
-        INVOICE_REQUEST_WITH_ONE_ELEMENT.add(REQUEST_ITEM);
-        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
+
+    private BookKeeper bookKeeper;
+    private InvoiceFactory mockInvoiceFactory;
+    private TaxPolicy mockTaxPolicy;
+
+    @Before
+    public void setUp() {
+        mockInvoiceFactory = mock(InvoiceFactory.class);
         when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
 
-        BookKeeper bookKeeper = new BookKeeper(mockInvoiceFactory);
-        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
+        bookKeeper = new BookKeeper(mockInvoiceFactory);
+        mockTaxPolicy = mock(TaxPolicy.class);
         Tax tax = new Tax(MONEY, "description");
 
         when(mockTaxPolicy.calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class))).thenReturn(tax);
+    }
+
+    @Test
+    public void invoiceWithOneItem() throws Exception {
+        INVOICE_REQUEST_WITH_ONE_ELEMENT.add(REQUEST_ITEM);
 
         Invoice resultInvoice = bookKeeper.issuance(INVOICE_REQUEST_WITH_ONE_ELEMENT,mockTaxPolicy);
 
@@ -49,13 +59,6 @@ public class BookKeeperTest {
     public void callCalculateTaxTwice() {
         INVOICE_REQUEST_WITH_TWO_ELEMENT.add(REQUEST_ITEM);
         INVOICE_REQUEST_WITH_TWO_ELEMENT.add(REQUEST_ITEM);
-        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
-        when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
-
-        BookKeeper bookKeeper = new BookKeeper(mockInvoiceFactory);
-        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
-        Tax tax = new Tax(MONEY, "description");
-        when(mockTaxPolicy.calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class))).thenReturn(tax);
 
         bookKeeper.issuance(INVOICE_REQUEST_WITH_TWO_ELEMENT,mockTaxPolicy);
 
@@ -64,14 +67,6 @@ public class BookKeeperTest {
 
     @Test
     public void callCreateFromInvoiceFactoryOnce() {
-        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
-        when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
-
-        BookKeeper bookKeeper = new BookKeeper(mockInvoiceFactory);
-        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
-        Tax tax = new Tax(MONEY, "description");
-        when(mockTaxPolicy.calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class))).thenReturn(tax);
-
         bookKeeper.issuance(INVOICE_REQUEST_WITH_TWO_ELEMENT,mockTaxPolicy);
 
         verify(mockInvoiceFactory,times(1)).create(CLIENT_DATA);
@@ -80,13 +75,6 @@ public class BookKeeperTest {
     @Test
     public void checkMoney() {
         INVOICE_REQUEST_WITH_ONE_ELEMENT.add(REQUEST_ITEM);
-        InvoiceFactory mockInvoiceFactory = mock(InvoiceFactory.class);
-        when(mockInvoiceFactory.create(CLIENT_DATA)).thenReturn(new Invoice(Id.generate(), CLIENT_DATA));
-
-        BookKeeper bookKeeper = new BookKeeper(mockInvoiceFactory);
-        TaxPolicy mockTaxPolicy = mock(TaxPolicy.class);
-        Tax tax = new Tax(MONEY, "description");
-        when(mockTaxPolicy.calculateTax(Mockito.any(ProductType.class),Mockito.any(Money.class))).thenReturn(tax);
 
        Invoice invoice =  bookKeeper.issuance(INVOICE_REQUEST_WITH_ONE_ELEMENT,mockTaxPolicy);
 
