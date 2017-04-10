@@ -22,6 +22,7 @@ import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.Tax;
 import pl.com.bottega.ecommerce.sales.domain.invoicing.TaxPolicy;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductDataBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
@@ -32,14 +33,16 @@ public class BookKeeperTest {
 	InvoiceRequest invoiceRequest;
 	ProductData productData;
 	ProductData productData2;
+	ProductDataBuilder proBuilder = new ProductDataBuilder();
+	
 	
 	@Before
 	public void setUp(){
 		bookKeeper = new BookKeeper(new InvoiceFactory());
 		mockedTaxPolicy = mock(TaxPolicy.class);
 		invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "John Doe"));
-		productData = new ProductData(Id.generate(), new Money(10), "item", ProductType.DRUG, new Date());
-		productData2 = new ProductData(Id.generate(), new Money(10), "item2", ProductType.FOOD, new Date());
+		productData = proBuilder.withName("item").withPrice(new Money(10)).withType(ProductType.DRUG).withSnapshotDate(new Date()).build();
+		productData2 = proBuilder.withName("item2").withType(ProductType.FOOD).withSnapshotDate(new Date()).build();
 	}
 
 	@Test
