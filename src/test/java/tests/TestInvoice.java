@@ -45,7 +45,6 @@ public class TestInvoice {
     @Before
     public void setUp() {
         policy = mock(TaxPolicy.class);
-        // factory = mock(InvoiceFactory.class);
         bookKeeper = new BookKeeper(factory);
     }
 
@@ -69,4 +68,23 @@ public class TestInvoice {
         inv = bookKeeper.issuance(request, policy);
         verify(policy, times(2)).calculateTax(Matchers.any(ProductType.class), Matchers.any(Money.class));
     }
+
+    @Test
+    public void testInvoiceShouldntContainItem() {
+        final RequestItem item = new RequestItem(product, 10, new Money(100));
+        when(policy.calculateTax(Matchers.any(ProductType.class), Matchers.any(Money.class)))
+                .thenReturn(new Tax(new Money(new BigDecimal(10)), "Def"));
+        inv = bookKeeper.issuance(request, policy);
+        Assert.assertThat(inv.getItems().size(), is(0));
+    }
+
+    @Test
+    public void testInvoiceShouldntCallTaxCalculation() {
+        final RequestItem item = new RequestItem(product, 10, new Money(100));
+        when(policy.calculateTax(Matchers.any(ProductType.class), Matchers.any(Money.class)))
+                .thenReturn(new Tax(new Money(new BigDecimal(10)), "Def"));
+        inv = bookKeeper.issuance(request, policy);
+        verify(policy, times(0)).calculateTax(Matchers.any(ProductType.class), Matchers.any(Money.class));
+    }
+
 }
