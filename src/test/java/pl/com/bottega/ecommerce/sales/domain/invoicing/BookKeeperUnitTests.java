@@ -51,4 +51,9 @@ public class BookKeeperUnitTests {
 	 	Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class),
  				Mockito.any(Money.class));
 	}
+	
+	@Test
+	public void invoiceFactoryReturnsCorrectType() {
+		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy), is(instanceOf(Invoice.class)));
+		}
 }
