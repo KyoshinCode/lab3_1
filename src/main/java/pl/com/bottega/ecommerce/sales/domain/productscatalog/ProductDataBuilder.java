@@ -3,8 +3,6 @@ package pl.com.bottega.ecommerce.sales.domain.productscatalog;
 import java.util.Date;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
-import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItem;
-import pl.com.bottega.ecommerce.sales.domain.invoicing.RequestItemBuilder;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 public class ProductDataBuilder {
@@ -15,29 +13,34 @@ public class ProductDataBuilder {
   	private Date snapshotDate = new Date();
   	private ProductType type = ProductType.STANDARD;
 	
-	private ProductData productData = new ProductDataBuilder().build();
-		private int quantity = 1;
-		private Money totalCost = new Money(1);
-	 	
-		public RequestItemBuilder() {}
-
-		public RequestItemBuilder withproductData(ProductData productData) {
-			this.productData = productData;
-			return this;
-		}
-		
-		public RequestItemBuilder withSnapshotDate(int quantity) {
-			this.quantity = quantity;
-			return this;
-		}
-		
-		public RequestItemBuilder withType(Money totalCost) {
-			this.totalCost = totalCost;
-			return this;
-		}
-		
-		public RequestItem build() {
-			return new RequestItem(productData, quantity, totalCost);
-		}
-
+  	public ProductDataBuilder() {}
+	
+	public ProductDataBuilder withId(Id productId) {
+		this.productId = productId;
+		return this;
+	}
+	
+	public ProductDataBuilder withPrice(Money price) {
+		this.price = price;
+		return this;
+	}
+	
+	public ProductDataBuilder withName(String name) {
+		this.name = name;
+		return this;
+	}
+	
+	public ProductDataBuilder withSnapshotDate(Date snapshotDate) {
+		this.snapshotDate = snapshotDate;
+		return this;
+	}
+	
+	public ProductDataBuilder withType(ProductType type) {
+		this.type = type;
+		return this;
+	}
+	
+	public ProductData build() {
+		return new ProductData(productId, price, name, type, snapshotDate);
+	}
 }
