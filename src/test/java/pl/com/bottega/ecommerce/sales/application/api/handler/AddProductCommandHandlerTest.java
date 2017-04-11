@@ -58,7 +58,7 @@ public class AddProductCommandHandlerTest {
 	@Before
 	public void setUp() throws Exception {
 
-		command = new AddProductCommand(Id.generate(), Id.generate(), 5);
+		command = new AddProductCommandBuilder().build();
 		reservation = new ReservationBuilder().withClientData(new ClientDataBuilder().withName("Arleta").build())
 				.build();
 		product = new ProductBuilder().build();
