@@ -38,8 +38,8 @@ public class ProductBuilder {
         return this;
     }
 
-    public ProductBuilder removed() {
-        removed = true;
+    public ProductBuilder removed(boolean value) {
+        this.removed = value;
 
         return this;
     }
