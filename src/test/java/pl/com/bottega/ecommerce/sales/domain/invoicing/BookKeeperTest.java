@@ -20,26 +20,35 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 public class BookKeeperTest {
 
+	ClientData clientData;
+	Invoice invoice;
+	InvoiceRequest invoiceRequest;
+	ProductData productData;
+	RequestItem requestItem;
+	InvoiceFactory invoiceFactory;
+	TaxPolicy taxPolicy;
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	@Before
 	public void setUp() throws Exception {
+
+		clientData = new ClientData(Id.generate(), "Arleta");
+		invoice = new Invoice(Id.generate(), clientData);
+		productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
+		requestItem = new RequestItem(productData, 0, new Money(2));
+
+		invoiceFactory = Mockito.mock(InvoiceFactory.class);
+		taxPolicy = Mockito.mock(TaxPolicy.class);
 	}
 
 	@Test
 	public void testState_invoiceWithOneItem_shouldBeOneItem() {
 
-		ClientData clientData = new ClientData(Id.generate(), "Arleta");
-		Invoice invoice = new Invoice(Id.generate(), clientData);
-		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
-		ProductData productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
-		RequestItem requestItem = new RequestItem(productData, 0, new Money(2));
+		invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem);
-
-		InvoiceFactory invoiceFactory = Mockito.mock(InvoiceFactory.class);
-		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
 
 		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
 		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
@@ -54,11 +63,7 @@ public class BookKeeperTest {
 	@Test
 	public void testBehavior_invoiceWithTwoItem_shouldBeRunTwoTimes() {
 
-		ClientData clientData = new ClientData(Id.generate(), "Arleta");
-		Invoice invoice = new Invoice(Id.generate(), clientData);
-		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
-		ProductData productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
-		RequestItem requestItem = new RequestItem(productData, 0, new Money(2));
+		invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem);
 		invoiceRequest.add(requestItem);
 
@@ -79,11 +84,7 @@ public class BookKeeperTest {
 	@Test
 	public void testState_clientName_shouldBeTheSame() {
 
-		ClientData clientData = new ClientData(Id.generate(), "Arleta");
-		Invoice invoice = new Invoice(Id.generate(), clientData);
-		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
-		ProductData productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
-		RequestItem requestItem = new RequestItem(productData, 0, new Money(2));
+		invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem);
 
 		InvoiceFactory invoiceFactory = Mockito.mock(InvoiceFactory.class);
@@ -101,11 +102,7 @@ public class BookKeeperTest {
 	@Test
 	public void testBehavior_createInvoice_shoudBeRunOneTime() {
 
-		ClientData clientData = new ClientData(Id.generate(), "Arleta");
-		Invoice invoice = new Invoice(Id.generate(), clientData);
-		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
-		ProductData productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
-		RequestItem requestItem = new RequestItem(productData, 0, new Money(2));
+		invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem);
 		invoiceRequest.add(requestItem);
 
