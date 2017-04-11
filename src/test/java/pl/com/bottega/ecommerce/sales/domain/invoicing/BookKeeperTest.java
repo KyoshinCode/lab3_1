@@ -35,7 +35,7 @@ public class BookKeeperTest {
 	public void setUp() throws Exception {
 
 		invoice = new InvoiceBuilder().withClient(new ClientDataBuilder().withName("Arleta").build()).build();
-		invoiceRequest = new InvoiceRequest(new ClientDataBuilder().withName("Arleta").build());
+		invoiceRequest = new InvoiceRequestBuilder().withClient(new ClientDataBuilder().withName("Arleta").build()).build();
 		invoiceRequest.add(new RequestItemBuilder().build());
 
 		invoiceFactory = Mockito.mock(InvoiceFactory.class);
