@@ -25,6 +25,8 @@ public class BookKeeperTest {
 	InvoiceRequest invoiceRequest;
 	ProductData productData;
 	RequestItem requestItem;
+	BookKeeper bookKeeper;
+
 	InvoiceFactory invoiceFactory;
 	TaxPolicy taxPolicy;
 
@@ -39,20 +41,22 @@ public class BookKeeperTest {
 		invoice = new Invoice(Id.generate(), clientData);
 		productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
 		requestItem = new RequestItem(productData, 0, new Money(2));
+		invoiceRequest = new InvoiceRequest(clientData);
+		invoiceRequest.add(requestItem);
 
 		invoiceFactory = Mockito.mock(InvoiceFactory.class);
 		taxPolicy = Mockito.mock(TaxPolicy.class);
+
+		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
+		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
+				.thenReturn(new Tax(new Money(2), "kanapka"));
+
+		bookKeeper = new BookKeeper(invoiceFactory);
 	}
 
 	@Test
 	public void testState_invoiceWithOneItem_shouldBeOneItem() {
 
-		invoiceRequest = new InvoiceRequest(clientData);
-		invoiceRequest.add(requestItem);
-
-		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
-		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
-				.thenReturn(new Tax(new Money(2), "kanapka"));
 		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
 		Invoice newInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
@@ -63,17 +67,7 @@ public class BookKeeperTest {
 	@Test
 	public void testBehavior_invoiceWithTwoItem_shouldBeRunTwoTimes() {
 
-		invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem);
-		invoiceRequest.add(requestItem);
-
-		InvoiceFactory invoiceFactory = Mockito.mock(InvoiceFactory.class);
-		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
-
-		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
-		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
-				.thenReturn(new Tax(new Money(2), "kanapka"));
-		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
 		Invoice newInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
 		Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class),
@@ -83,17 +77,7 @@ public class BookKeeperTest {
 
 	@Test
 	public void testState_clientName_shouldBeTheSame() {
-
-		invoiceRequest = new InvoiceRequest(clientData);
-		invoiceRequest.add(requestItem);
-
-		InvoiceFactory invoiceFactory = Mockito.mock(InvoiceFactory.class);
-		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
-
-		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
-		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
-				.thenReturn(new Tax(new Money(2), "kanapka"));
-		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+		
 		Invoice newInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
 		assertThat(newInvoice.getClient().getName(), is("Arleta"));
@@ -102,17 +86,9 @@ public class BookKeeperTest {
 	@Test
 	public void testBehavior_createInvoice_shoudBeRunOneTime() {
 
-		invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem);
 		invoiceRequest.add(requestItem);
 
-		InvoiceFactory invoiceFactory = Mockito.mock(InvoiceFactory.class);
-		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
-
-		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
-		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
-				.thenReturn(new Tax(new Money(2), "kanapka"));
-		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
 		Invoice newInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
 		Mockito.verify(invoiceFactory, Mockito.times(1)).create(invoiceRequest.getClientData());
