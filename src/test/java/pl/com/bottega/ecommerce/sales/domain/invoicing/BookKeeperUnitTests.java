@@ -41,4 +41,14 @@ public class BookKeeperUnitTests {
 	 	
 	 	assertThat(invoice.getItems().size(), is(equalTo(1)));
 	}	
+	
+	@Test
+ 	public void twoCalculationsTaxCalls() {
+	 	invoiceRequest.add(requestItem);
+	 	invoiceRequest.add(requestItem);
+	 	bookKeeper.issuance(invoiceRequest, taxPolicy);
+	 	
+	 	Mockito.verify(taxPolicy, Mockito.times(2)).calculateTax(Mockito.any(ProductType.class),
+ 				Mockito.any(Money.class));
+	}
 }
