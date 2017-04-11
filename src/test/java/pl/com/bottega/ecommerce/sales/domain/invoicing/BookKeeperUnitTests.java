@@ -63,5 +63,5 @@ public class BookKeeperUnitTests {
 	public void clientDataRetainsCorrectValues() {
 		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getAggregateId(), is(equalTo(clientData.getAggregateId())));
 		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getName(), is(equalTo(clientData.getName())));
-	}
+	}	
 }
