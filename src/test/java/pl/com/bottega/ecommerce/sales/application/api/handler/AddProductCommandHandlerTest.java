@@ -33,9 +33,7 @@ import pl.com.bottega.ecommerce.system.application.SystemContext;
 @RunWith(MockitoJUnitRunner.class)
 public class AddProductCommandHandlerTest {
 
-	Id id;
 	AddProductCommand command;
-	ClientData clientData;
 	Reservation reservation;
 	Product product;
 
@@ -60,23 +58,27 @@ public class AddProductCommandHandlerTest {
 	@Before
 	public void setUp() throws Exception {
 
-		id = Id.generate();
-		command = new AddProductCommand(id, id, 5);
-		clientData = new ClientData(id, "Arleta");
-		reservation = new Reservation(id, ReservationStatus.OPENED, clientData, new Date());
-		product = new Product(id, new Money(5), "sandwich", ProductType.FOOD);
+		command = new AddProductCommand(Id.generate(), Id.generate(), 5);
+		reservation = new Reservation(Id.generate(), ReservationStatus.OPENED, new ClientData(Id.generate(), "Arleta"),
+				new Date());
+		product = new Product(Id.generate(), new Money(5), "sandwich", ProductType.FOOD);
+
+		MockitoAnnotations.initMocks(addProductCommandHandler);
+		Mockito.when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+		Mockito.when(productRepository.load(command.getProductId())).thenReturn(product);
 
 	}
 
 	@Test
 	public void stateTest_addOneProduct_shouldContainsThatProduct() {
-		MockitoAnnotations.initMocks(addProductCommandHandler);
-		Mockito.when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
-		Mockito.when(productRepository.load(command.getProductId())).thenReturn(product);
-
 		addProductCommandHandler.handle(command);
 		assertThat(reservation.contains(product), is(true));
 
 	}
 
+	@Test
+	public void behaviorTest_reservationMethod_shouldBeRunOneTimes() {
+		addProductCommandHandler.handle(command);
+		Mockito.verify(reservationRepository, Mockito.times(1)).save(reservation);
+	}
 }
