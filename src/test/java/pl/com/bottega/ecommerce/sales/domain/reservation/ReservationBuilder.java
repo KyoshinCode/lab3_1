@@ -3,6 +3,7 @@ package pl.com.bottega.ecommerce.sales.domain.reservation;
 import pl.com.bottega.ddd.support.domain.BaseAggregateRoot;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,4 +20,18 @@ public class ReservationBuilder {
     private List<ReservationItem> items = new ArrayList<>();
     private ClientData clientData = new ClientData(Id.generate(), "Test");
     private Date createDate;
+
+    public ReservationBuilder withId(Id id) {
+        this.id = id;
+
+        return this;
+    }
+
+    public ReservationBuilder removed(boolean value) {
+        this.removed = value;
+
+        return this;
+    }
+
+
 }
