@@ -40,7 +40,7 @@ public class AddProductCommandHandlerUnitTests {
  	private Product product;
  	
  	@Before
- 	void initialize() {
+ 	public void initialize() {
  		reservationRepository = mock(ReservationRepository.class);
  		productRepository = mock(ProductRepository.class);
  		suggestionService = mock(SuggestionService.class);
@@ -68,5 +68,13 @@ public class AddProductCommandHandlerUnitTests {
   		assertThat(product.isAvailable(), is(equalTo(true)));
   	}
  	
+ 	@Test
+ 	public void methodSaveShouldBeCalledOnes() {
+ 		final int testValue = 1;
+ 		
+ 		addProductCommandHandler.handle(command);
+ 		
+ 		verify(reservationRepository, times(testValue)).save(reservation);
+ 	}
  	
   }
