@@ -14,6 +14,7 @@ import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationFactory;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
+import pl.com.bottega.ecommerce.sharedkernel.exceptions.DomainOperationException.DomainOperationException;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 
 import static org.hamcrest.Matchers.is;
@@ -70,5 +71,24 @@ public class AddProductCommandHandlerTest {
 
         // then
         Assert.assertThat(reservation.getReservedProducts().size(), is(1));
+    }
+
+    @Test(expected = DomainOperationException.class)
+    public void whenReservationClosedThrowException() {
+        // given
+        Reservation reservation = new ReservationFactory().createExampleReservation();
+        reservation.close();
+
+        Product product = mock(Product.class);
+        when(product.isAvailable()).thenReturn(true);
+        when(product.getPrice()).thenReturn(Money.ZERO);
+
+        when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
+        when(productRepository.load(any(Id.class))).thenReturn(product);
+
+        // when
+        addProductCommandHandler.handle(addProductCommand);
+        // then - throw DomainOperationException
+
     }
 }
