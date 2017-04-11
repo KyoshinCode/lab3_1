@@ -59,8 +59,8 @@ public class AddProductCommandHandlerTest {
 	public void setUp() throws Exception {
 
 		command = new AddProductCommand(Id.generate(), Id.generate(), 5);
-		reservation = new Reservation(Id.generate(), ReservationStatus.OPENED, new ClientData(Id.generate(), "Arleta"),
-				new Date());
+		reservation = new ReservationBuilder().withClientData(new ClientDataBuilder().withName("Arleta").build())
+				.build();
 		product = new ProductBuilder().build();
 
 		MockitoAnnotations.initMocks(addProductCommandHandler);
