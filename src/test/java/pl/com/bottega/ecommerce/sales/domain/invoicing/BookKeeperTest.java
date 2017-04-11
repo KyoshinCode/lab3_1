@@ -98,4 +98,27 @@ public class BookKeeperTest {
 		assertThat(newInvoice.getClient().getName(), is("Arleta"));
 	}
 
+	@Test
+	public void testBehavior_createInvoice_shoudBeRunOneTime() {
+
+		ClientData clientData = new ClientData(Id.generate(), "Arleta");
+		Invoice invoice = new Invoice(Id.generate(), clientData);
+		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+		ProductData productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
+		RequestItem requestItem = new RequestItem(productData, 0, new Money(2));
+		invoiceRequest.add(requestItem);
+		invoiceRequest.add(requestItem);
+
+		InvoiceFactory invoiceFactory = Mockito.mock(InvoiceFactory.class);
+		TaxPolicy taxPolicy = Mockito.mock(TaxPolicy.class);
+
+		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
+		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
+				.thenReturn(new Tax(new Money(2), "kanapka"));
+		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+		Invoice newInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+
+		Mockito.verify(invoiceFactory, Mockito.times(1)).create(invoiceRequest.getClientData());
+	}
+
 }
