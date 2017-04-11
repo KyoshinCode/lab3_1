@@ -62,5 +62,11 @@ public class AddProductCommandHandlerUnitTests {
 		
   	}
  	
+ 	@Test
+  	public void checkIfProductIsAvaibleShouldReturnTrue() {
+  		addProductCommandHandler.handle(command);
+  		assertThat(product.isAvailable(), is(equalTo(true)));
+  	}
+ 	
  	
   }
