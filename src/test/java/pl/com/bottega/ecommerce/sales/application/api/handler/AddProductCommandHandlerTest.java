@@ -12,6 +12,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationBuilder;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationFactory;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
@@ -57,7 +58,7 @@ public class AddProductCommandHandlerTest {
     @Test
     public void clientWithNoProductAfterAddHaveOneProduct() {
         // given
-        Reservation reservation = new ReservationFactory().createExampleReservation();
+        Reservation reservation = new ReservationBuilder().build();
         Assert.assertThat(reservation.getReservedProducts().size(), is(0));
 
         Product product = new ProductBuilder().build();
@@ -75,8 +76,9 @@ public class AddProductCommandHandlerTest {
     @Test(expected = DomainOperationException.class)
     public void whenReservationClosedThrowException() {
         // given
-        Reservation reservation = new ReservationFactory().createExampleReservation();
-        reservation.close();
+        Reservation reservation = new ReservationBuilder()
+                .withReservationStatus(Reservation.ReservationStatus.CLOSED)
+                .build();
 
         Product product = new ProductBuilder().build();
 
