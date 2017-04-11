@@ -34,8 +34,8 @@ public class BookKeeperTest {
 	@Before
 	public void setUp() throws Exception {
 
-		invoice = new Invoice(Id.generate(), new ClientDataBuilder().build());
-		invoiceRequest = new InvoiceRequest(new ClientDataBuilder().build());
+		invoice = new InvoiceBuilder().withClient(new ClientDataBuilder().withName("Arleta").build()).build();
+		invoiceRequest = new InvoiceRequest(new ClientDataBuilder().withName("Arleta").build());
 		invoiceRequest.add(new RequestItemBuilder().build());
 
 		invoiceFactory = Mockito.mock(InvoiceFactory.class);
@@ -74,7 +74,7 @@ public class BookKeeperTest {
 
 		Invoice newInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
-		assertThat(newInvoice.getClient().getName(), is("default"));
+		assertThat(newInvoice.getClient().getName(), is("Arleta"));
 	}
 
 	@Test
