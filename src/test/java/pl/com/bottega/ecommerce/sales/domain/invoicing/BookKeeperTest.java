@@ -22,7 +22,6 @@ public class BookKeeperTest {
 
 	Invoice invoice;
 	InvoiceRequest invoiceRequest;
-	ProductData productData;
 	RequestItem requestItem;
 	BookKeeper bookKeeper;
 
@@ -37,8 +36,7 @@ public class BookKeeperTest {
 	public void setUp() throws Exception {
 
 		invoice = new Invoice(Id.generate(), new ClientDataBuilder().build());
-		productData = new ProductData(Id.generate(), new Money(2), "kanapka", ProductType.FOOD, new Date());
-		requestItem = new RequestItem(productData, 0, new Money(2));
+		requestItem = new RequestItem(new ProductDataBuilder().build(), 0, new Money(1));
 		invoiceRequest = new InvoiceRequest(new ClientDataBuilder().build());
 		invoiceRequest.add(requestItem);
 
@@ -46,8 +44,8 @@ public class BookKeeperTest {
 		taxPolicy = Mockito.mock(TaxPolicy.class);
 
 		Mockito.when(invoiceFactory.create(invoiceRequest.getClientData())).thenReturn(invoice);
-		Mockito.when(taxPolicy.calculateTax(ProductType.FOOD, new Money(2)))
-				.thenReturn(new Tax(new Money(2), "kanapka"));
+		Mockito.when(taxPolicy.calculateTax(ProductType.STANDARD, new Money(1)))
+				.thenReturn(new Tax(new Money(1), "default"));
 
 		bookKeeper = new BookKeeper(invoiceFactory);
 	}
@@ -75,7 +73,7 @@ public class BookKeeperTest {
 
 	@Test
 	public void testState_clientName_shouldBeTheSame() {
-		
+
 		Invoice newInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
 
 		assertThat(newInvoice.getClient().getName(), is("default"));
