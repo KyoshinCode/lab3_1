@@ -23,6 +23,7 @@ public class BookKeeperUnitTests {
 	private RequestItem requestItem;
 	private BookKeeper bookKeeper;
 	private InvoiceRequest invoiceRequest;
+	private ClientData clientData;
 	
 	@Before
 	public void prepareToTest() {
@@ -31,7 +32,8 @@ public class BookKeeperUnitTests {
 		productData = new ProductData(Id.generate(), new Money(150.5), "Hamburger", ProductType.FOOD, new Date());
 		requestItem = new RequestItem(productData, 1, new Money(3.5));	
 		bookKeeper = new BookKeeper(new InvoiceFactory());
-		invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "Adam"));
+		clientData = new ClientData(Id.generate(), "Adam");
+		invoiceRequest = new InvoiceRequest(clientData);
 	}
 
 	@Test
@@ -55,5 +57,11 @@ public class BookKeeperUnitTests {
 	@Test
 	public void invoiceFactoryReturnsCorrectType() {
 		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy), is(instanceOf(Invoice.class)));
-		}
+	}
+	
+	@Test
+	public void clientDataRetainsCorrectValues() {
+		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getAggregateId(), is(equalTo(clientData.getAggregateId())));
+		assertThat(bookKeeper.issuance(invoiceRequest, taxPolicy).getClient().getName(), is(equalTo(clientData.getName())));
+	}
 }
