@@ -9,6 +9,7 @@ import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
 import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductBuilder;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationFactory;
@@ -59,9 +60,7 @@ public class AddProductCommandHandlerTest {
         Reservation reservation = new ReservationFactory().createExampleReservation();
         Assert.assertThat(reservation.getReservedProducts().size(), is(0));
 
-        Product product = mock(Product.class);
-        when(product.isAvailable()).thenReturn(true);
-        when(product.getPrice()).thenReturn(Money.ZERO);
+        Product product = new ProductBuilder().build();
 
         when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
         when(productRepository.load(any(Id.class))).thenReturn(product);
@@ -79,9 +78,7 @@ public class AddProductCommandHandlerTest {
         Reservation reservation = new ReservationFactory().createExampleReservation();
         reservation.close();
 
-        Product product = mock(Product.class);
-        when(product.isAvailable()).thenReturn(true);
-        when(product.getPrice()).thenReturn(Money.ZERO);
+        Product product = new ProductBuilder().build();
 
         when(reservationRepository.load(any(Id.class))).thenReturn(reservation);
         when(productRepository.load(any(Id.class))).thenReturn(product);
