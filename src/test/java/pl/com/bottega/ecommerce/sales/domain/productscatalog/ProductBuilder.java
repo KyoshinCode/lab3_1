@@ -12,6 +12,7 @@ public class ProductBuilder {
     private Money price = Money.ZERO;
     private String name = "Test";
     private ProductType productType = ProductType.STANDARD;
+    private boolean removed = false;
 
     public ProductBuilder withId(Id id) {
         this.id = id;
@@ -37,7 +38,18 @@ public class ProductBuilder {
         return this;
     }
 
+    public ProductBuilder removed() {
+        removed = true;
+
+        return this;
+    }
+
     public Product build() {
-        return new Product(id, price, name, productType);
+        Product product = new Product(id, price, name, productType);
+
+        if (removed) {
+            product.markAsRemoved();
+        }
+        return product;
     }
 }
