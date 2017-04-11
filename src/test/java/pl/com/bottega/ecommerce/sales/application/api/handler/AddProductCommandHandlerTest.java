@@ -61,7 +61,7 @@ public class AddProductCommandHandlerTest {
 		command = new AddProductCommand(Id.generate(), Id.generate(), 5);
 		reservation = new Reservation(Id.generate(), ReservationStatus.OPENED, new ClientData(Id.generate(), "Arleta"),
 				new Date());
-		product = new Product(Id.generate(), new Money(5), "sandwich", ProductType.FOOD);
+		product = new ProductBuilder().build();
 
 		MockitoAnnotations.initMocks(addProductCommandHandler);
 		Mockito.when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
