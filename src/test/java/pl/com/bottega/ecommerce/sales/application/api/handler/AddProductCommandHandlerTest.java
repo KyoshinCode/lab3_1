@@ -19,14 +19,46 @@ import org.junit.Test;
 import org.junit.Rule;
 import org.mockito.Mock;
 import org.mockito.junit.*;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import static org.mockito.Mockito.*;
 
 
 public class AddProductCommandHandlerTest {
 	private AddProductCommandHandler addProductCommandHandler;
 	
+	@Rule
+	public MockitoRule mockitoRule = MockitoJUnit.rule();
+	
+	@Mock
+	private ReservationRepository mockReservationRepositry;
+	
+	@Mock
+	private ProductRepository mockProductRepositry;
+	
+	@Mock
+	private ClientRepository mockClientRepository;
+	
+	@Mock
+	private SuggestionService mockSuggestionService;
+	
+	@Mock
+	private Reservation mockReservation;
+	
+	@Mock
+	private Product mockProduct;
+	
+	@Mock
+	private ClientRepository mockClientRepositry;
+	
 	@Test
-	public void test() {
+	public void test_DoNotCallClientLoadIfProductIsAvailable() {
 		addProductCommandHandler = new AddProductCommandHandler();
+		
+		when(mockReservationRepositry.load(any(Id.class))).thenReturn(mockReservation);
+		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
+		when(mockProduct.isAvailable()).thenReturn(true);
+		verify(mockClientRepositry, times(0)).load(any(Id.class));
 	}
 
 }
