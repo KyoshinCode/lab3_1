@@ -25,10 +25,19 @@ public class InvoiceFactoryTest {
 	@Mock
 	ClientData dummyClientData;
 	
+	@Mock
+	InvoiceFactory mockInvoiceFactory;
+	
 	@Test public void testCreateInvoiceShouldCreateInvoice() {
 		invoiceFactory = new InvoiceFactory();
 		Invoice invoice = invoiceFactory.create(dummyClientData);
 		assertThat(invoice, instanceOf(Invoice.class));
+	}
+	
+	@Test public void testCreateInvoiceShouldCallInvoiceConstructor() {
+		invoiceFactory = new InvoiceFactory();
+		Invoice invoice = mockInvoiceFactory.create(dummyClientData);
+		verify(mockInvoiceFactory, times(1)).create(dummyClientData);
 	}
 
 }
