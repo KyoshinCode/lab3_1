@@ -42,6 +42,10 @@ public class Reservation extends BaseAggregateRoot{
 		this.createDate = createDate;
 		this.items = new ArrayList<ReservationItem>();
 	}
+	
+	public List<ReservationItem> getItems() {
+		return items;
+	}
 
 	public void add(Product product, int quantity) {
 		if (isClosed())
