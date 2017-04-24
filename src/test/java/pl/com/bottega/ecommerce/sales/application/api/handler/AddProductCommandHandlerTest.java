@@ -8,6 +8,7 @@ import pl.com.bottega.ecommerce.sales.domain.client.ClientRepository;
 import pl.com.bottega.ecommerce.sales.domain.equivalent.SuggestionService;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
@@ -43,22 +44,50 @@ public class AddProductCommandHandlerTest {
 	private SuggestionService mockSuggestionService;
 	
 	@Mock
-	private Reservation mockReservation;
+	private SystemContext mockSystemContext;
 	
 	@Mock
-	private Product dummyProduct;
+	private Reservation dummyReservation;
+	
+	@Mock
+	private Product mockProduct;
+	
+	@Mock
+	private Product mockSimilarProduct;
 	
 	@Mock
 	private ClientRepository mockClientRepositry;
 	
+	@Mock
+	private Client dummyClient;
+	
+	@Mock
+	private SystemUser dummySystemUser;
+	
+	@Mock
+	private Reservation mockReservation;
+	
+	@Mock
+	private AddProductCommand mockCommand;
+	
 	@Test
-	public void test_DoNotCallClientLoadIfProductIsAvailable() {
-		addProductCommandHandler = new AddProductCommandHandler();
+	public void test_CallClientLoadOnceIfProductIsNotAvailable() {
+		addProductCommandHandler = new AddProductCommandHandler(
+				mockReservationRepositry,
+				mockProductRepositry,
+				mockSuggestionService,
+				mockClientRepository,
+				mockSystemContext);
 		
-		when(mockReservationRepositry.load(any(Id.class))).thenReturn(mockReservation);
-		when(mockProductRepositry.load(any(Id.class))).thenReturn(dummyProduct);
-		when(mockProduct.isAvailable()).thenReturn(true);
-		verify(mockClientRepository, times(0)).load(any(Id.class));
+		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
+		
+		when(mockReservationRepositry.load(any(Id.class))).thenReturn(dummyReservation);
+		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
+		when(mockProduct.isAvailable()).thenReturn(false);
+		when(mockClientRepository.load(any(Id.class))).thenReturn(dummyClient);
+		when(mockSystemContext.getSystemUser()).thenReturn(dummySystemUser);
+		addProductCommandHandler.handle(addProductCommand);
+		verify(mockClientRepository, times(1)).load(any(Id.class));
 	}
-
+	
 }
