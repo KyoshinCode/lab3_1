@@ -7,9 +7,16 @@ import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation.ReservationStatus;
 
 public class StubReservationRepositry implements ReservationRepository{
+	
+	private Reservation reservation;
+	
+	public Reservation getReservation() {
+		return reservation;
+	}
+	
 	@Override
 	public void save(Reservation reservation) {
-		
+		this.reservation = reservation;
 	}
 	
 	@Override
