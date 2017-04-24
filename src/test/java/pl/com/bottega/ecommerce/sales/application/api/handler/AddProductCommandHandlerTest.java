@@ -46,7 +46,7 @@ public class AddProductCommandHandlerTest {
 	private Reservation mockReservation;
 	
 	@Mock
-	private Product mockProduct;
+	private Product dummyProduct;
 	
 	@Mock
 	private ClientRepository mockClientRepositry;
@@ -56,9 +56,9 @@ public class AddProductCommandHandlerTest {
 		addProductCommandHandler = new AddProductCommandHandler();
 		
 		when(mockReservationRepositry.load(any(Id.class))).thenReturn(mockReservation);
-		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
+		when(mockProductRepositry.load(any(Id.class))).thenReturn(dummyProduct);
 		when(mockProduct.isAvailable()).thenReturn(true);
-		verify(mockClientRepositry, times(0)).load(any(Id.class));
+		verify(mockClientRepository, times(0)).load(any(Id.class));
 	}
 
 }
