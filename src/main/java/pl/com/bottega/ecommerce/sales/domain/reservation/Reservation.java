@@ -19,13 +19,13 @@ public class Reservation extends BaseAggregateRoot{
 		OPENED, CLOSED
 	}
 
-	
+
 	private ReservationStatus status;
 
-	
+
 	private List<ReservationItem> items;
 
-	
+
 	private ClientData clientData;
 
 	private Date createDate;
@@ -34,7 +34,7 @@ public class Reservation extends BaseAggregateRoot{
 	private Reservation() {
 	}
 
-	Reservation(Id aggregateId, ReservationStatus status,
+	public Reservation(Id aggregateId, ReservationStatus status,
 			ClientData clientData, Date createDate) {
 		this.id = aggregateId;
 		this.status = status;
@@ -60,7 +60,7 @@ public class Reservation extends BaseAggregateRoot{
 	 * Sample function closured by policy </br> Higher order function closured
 	 * by policy function</br> </br> Function loads current prices, and prepares
 	 * offer according to the current availability and given discount
-	 * 
+	 *
 	 * @param discountPolicy
 	 * @return
 	 */
