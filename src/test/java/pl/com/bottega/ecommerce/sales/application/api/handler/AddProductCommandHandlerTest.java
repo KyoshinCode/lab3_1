@@ -1,6 +1,5 @@
 package pl.com.bottega.ecommerce.sales.application.api.handler;
 
-import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.application.api.command.AddProductCommand;
 import pl.com.bottega.ecommerce.sales.domain.client.Client;
@@ -10,19 +9,24 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.Product;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductRepository;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
+import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationItem;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
+import pl.com.bottega.ecommerce.sales.domain.reservation.StubReservationRepositry;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 import pl.com.bottega.ecommerce.system.application.SystemUser;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 
 import org.junit.Test;
 import org.junit.Rule;
 import org.mockito.Mock;
-import org.mockito.junit.*;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import static org.mockito.Mockito.*;
+
+import java.util.List;
 
 
 public class AddProductCommandHandlerTest {
@@ -56,9 +60,6 @@ public class AddProductCommandHandlerTest {
 	private Product mockSimilarProduct;
 	
 	@Mock
-	private ClientRepository mockClientRepositry;
-	
-	@Mock
 	private Client dummyClient;
 	
 	@Mock
@@ -69,6 +70,9 @@ public class AddProductCommandHandlerTest {
 	
 	@Mock
 	private AddProductCommand mockCommand;
+	
+	@Mock
+	private Id dummyId;
 	
 	@Test
 	public void test_CallClientLoadOnceIfProductIsNotAvailable() {
@@ -88,6 +92,36 @@ public class AddProductCommandHandlerTest {
 		when(mockSystemContext.getSystemUser()).thenReturn(dummySystemUser);
 		addProductCommandHandler.handle(addProductCommand);
 		verify(mockClientRepository, times(1)).load(any(Id.class));
+	}
+	
+	@Test
+	public void test_IfProductNotAvailableSuggestStandard() {
+		final int QUANTITY = 5;
+		
+		StubReservationRepositry stubReservationRepositry = new StubReservationRepositry();
+		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), QUANTITY);
+		
+		addProductCommandHandler = new AddProductCommandHandler(
+				stubReservationRepositry,
+				mockProductRepositry,
+				mockSuggestionService,
+				mockClientRepository,
+				mockSystemContext);
+		
+		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
+		when(mockProduct.isAvailable()).thenReturn(false);
+		when(mockClientRepository.load(any(Id.class))).thenReturn(dummyClient);
+		when(mockSystemContext.getSystemUser()).thenReturn(dummySystemUser);
+		
+		when(mockSystemContext.getSystemUser()).thenReturn(dummySystemUser);
+		when(mockSuggestionService.suggestEquivalent(mockProduct, dummyClient)).thenReturn(mockSimilarProduct);
+		when(mockSimilarProduct.getProductType()).thenReturn(ProductType.STANDARD);
+		when(mockSimilarProduct.isAvailable()).thenReturn(true);
+		
+		addProductCommandHandler.handle(addProductCommand);
+		List<ReservationItem> items = stubReservationRepositry.getReservation().getItems();
+		assertThat(items.get(0).getProduct().getProductType(), is(equalTo(ProductType.STANDARD)));
+		assertThat(items.get(0).getQuantity(), is(equalTo(QUANTITY)));
 	}
 	
 }
