@@ -144,4 +144,27 @@ public class AddProductCommandHandlerTest {
 		verify(mockClientRepository, times(0)).load(any(Id.class));
 	}
 	
+	@Test
+	public void test_CheckIfProductIsSavedInRepository() {
+		final int QUANTITY = 5;
+		
+		StubReservationRepositry stubReservationRepositry = new StubReservationRepositry();
+		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), QUANTITY);
+		
+		addProductCommandHandler = new AddProductCommandHandler(
+				stubReservationRepositry,
+				mockProductRepositry,
+				mockSuggestionService,
+				mockClientRepository,
+				mockSystemContext);
+		
+		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
+		when(mockProduct.isAvailable()).thenReturn(true);
+		when(mockProduct.getProductType()).thenReturn(ProductType.STANDARD);
+		
+		addProductCommandHandler.handle(addProductCommand);
+		List<ReservationItem> items = stubReservationRepositry.getReservation().getItems();
+		assertThat(items.get(0).getProduct().getProductType(), is(equalTo(ProductType.STANDARD)));
+		assertThat(items.get(0).getQuantity(), is(equalTo(QUANTITY)));
+	}	
 }
