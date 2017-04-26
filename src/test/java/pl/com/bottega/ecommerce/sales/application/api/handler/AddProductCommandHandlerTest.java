@@ -125,7 +125,7 @@ public class AddProductCommandHandlerTest {
 	}
 	
 	@Test
-	public void test_DoNotCallClientLoadOnceIfProductIsAvailable() {
+	public void test_DoNotCallClientLoadIfProductIsAvailable() {
 		addProductCommandHandler = new AddProductCommandHandler(
 				mockReservationRepositry,
 				mockProductRepositry,
@@ -138,8 +138,6 @@ public class AddProductCommandHandlerTest {
 		when(mockReservationRepositry.load(any(Id.class))).thenReturn(dummyReservation);
 		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
 		when(mockProduct.isAvailable()).thenReturn(true);
-		when(mockClientRepository.load(any(Id.class))).thenReturn(dummyClient);
-		when(mockSystemContext.getSystemUser()).thenReturn(dummySystemUser);
 		addProductCommandHandler.handle(addProductCommand);
 		verify(mockClientRepository, times(0)).load(any(Id.class));
 	}
