@@ -124,4 +124,24 @@ public class AddProductCommandHandlerTest {
 		assertThat(items.get(0).getQuantity(), is(equalTo(QUANTITY)));
 	}
 	
+	@Test
+	public void test_DoNotCallClientLoadOnceIfProductIsAvailable() {
+		addProductCommandHandler = new AddProductCommandHandler(
+				mockReservationRepositry,
+				mockProductRepositry,
+				mockSuggestionService,
+				mockClientRepository,
+				mockSystemContext);
+		
+		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
+		
+		when(mockReservationRepositry.load(any(Id.class))).thenReturn(dummyReservation);
+		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
+		when(mockProduct.isAvailable()).thenReturn(true);
+		when(mockClientRepository.load(any(Id.class))).thenReturn(dummyClient);
+		when(mockSystemContext.getSystemUser()).thenReturn(dummySystemUser);
+		addProductCommandHandler.handle(addProductCommand);
+		verify(mockClientRepository, times(0)).load(any(Id.class));
+	}
+	
 }
