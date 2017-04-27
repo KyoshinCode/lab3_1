@@ -11,7 +11,7 @@ import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationItem;
 import pl.com.bottega.ecommerce.sales.domain.reservation.ReservationRepository;
-import pl.com.bottega.ecommerce.sales.domain.reservation.StubReservationRepositry;
+import pl.com.bottega.ecommerce.sales.domain.reservation.StubReservationRepository;
 import pl.com.bottega.ecommerce.system.application.SystemContext;
 import pl.com.bottega.ecommerce.system.application.SystemUser;
 
@@ -98,7 +98,7 @@ public class AddProductCommandHandlerTest {
 	public void test_IfProductNotAvailableSuggestStandard() {
 		final int QUANTITY = 5;
 		
-		StubReservationRepositry stubReservationRepositry = new StubReservationRepositry();
+		StubReservationRepository stubReservationRepositry = new StubReservationRepository();
 		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), QUANTITY);
 		
 		addProductCommandHandler = new AddProductCommandHandler(
@@ -146,7 +146,7 @@ public class AddProductCommandHandlerTest {
 	public void test_CheckIfProductIsSavedInRepository() {
 		final int QUANTITY = 5;
 		
-		StubReservationRepositry stubReservationRepositry = new StubReservationRepositry();
+		StubReservationRepository stubReservationRepositry = new StubReservationRepository();
 		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), QUANTITY);
 		
 		addProductCommandHandler = new AddProductCommandHandler(

@@ -6,7 +6,7 @@ import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.reservation.Reservation.ReservationStatus;
 
-public class StubReservationRepositry implements ReservationRepository{
+public class StubReservationRepository implements ReservationRepository{
 	
 	private Reservation reservation;
 	
