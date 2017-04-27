@@ -57,8 +57,10 @@ public class BookKeeperTest {
 	public void testIssuenceTwoPositonInvoice() {
 		Money dummyMoney = new Money(100);
 		
-		ProductData dummyProduct1 = new ProductData(Id.generate(), dummyMoney, "Product1", ProductType.STANDARD, new Date());
-		ProductData dummyProduct2 = new ProductData(Id.generate(), dummyMoney, "Product2", ProductType.STANDARD, new Date());
+		ProductDataBuilder productDataBuilder = new ProductDataBuilder();
+		
+		ProductData dummyProduct1 = productDataBuilder.withPrice(dummyMoney).withName("Product1").build();
+		ProductData dummyProduct2 = productDataBuilder.withPrice(dummyMoney).withName("Product2").build();
 		
 		when(taxPolicy.calculateTax(ProductType.STANDARD, dummyMoney)).thenReturn(new Tax(new Money(10), "dummy tax"));
 		InvoiceRequest invoiceRequest = new InvoiceRequest(new ClientData(Id.generate(), "John Doe"));
