@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
@@ -31,6 +32,7 @@ import java.util.List;
 
 public class AddProductCommandHandlerTest {
 	private AddProductCommandHandler addProductCommandHandler;
+	private AddProductCommandHandlerBuilder addProductCommandHandlerBuilder;
 	
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -74,14 +76,20 @@ public class AddProductCommandHandlerTest {
 	@Mock
 	private Id dummyId;
 	
+	@Before
+	public void setup() {
+		addProductCommandHandlerBuilder = new AddProductCommandHandlerBuilder();
+		addProductCommandHandler = addProductCommandHandlerBuilder.
+				withReservationRepository(mockReservationRepositry).
+				withProductRepository(mockProductRepositry).
+				withSuggestionService(mockSuggestionService).
+				withClientRepository(mockClientRepository).
+				withSystemContext(mockSystemContext).
+				build();
+	}
+	
 	@Test
 	public void test_CallClientLoadOnceIfProductIsNotAvailable() {
-		addProductCommandHandler = new AddProductCommandHandler(
-				mockReservationRepositry,
-				mockProductRepositry,
-				mockSuggestionService,
-				mockClientRepository,
-				mockSystemContext);
 		
 		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
 		
@@ -101,12 +109,13 @@ public class AddProductCommandHandlerTest {
 		StubReservationRepository stubReservationRepositry = new StubReservationRepository();
 		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), QUANTITY);
 		
-		addProductCommandHandler = new AddProductCommandHandler(
-				stubReservationRepositry,
-				mockProductRepositry,
-				mockSuggestionService,
-				mockClientRepository,
-				mockSystemContext);
+		addProductCommandHandler = addProductCommandHandlerBuilder.
+				withReservationRepository(stubReservationRepositry).
+				withProductRepository(mockProductRepositry).
+				withSuggestionService(mockSuggestionService).
+				withClientRepository(mockClientRepository).
+				withSystemContext(mockSystemContext).
+				build();
 		
 		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
 		when(mockProduct.isAvailable()).thenReturn(false);
@@ -126,12 +135,6 @@ public class AddProductCommandHandlerTest {
 	
 	@Test
 	public void test_DoNotCallClientLoadIfProductIsAvailable() {
-		addProductCommandHandler = new AddProductCommandHandler(
-				mockReservationRepositry,
-				mockProductRepositry,
-				mockSuggestionService,
-				mockClientRepository,
-				mockSystemContext);
 		
 		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), 1);
 		
@@ -149,12 +152,13 @@ public class AddProductCommandHandlerTest {
 		StubReservationRepository stubReservationRepositry = new StubReservationRepository();
 		AddProductCommand addProductCommand = new AddProductCommand(Id.generate(), Id.generate(), QUANTITY);
 		
-		addProductCommandHandler = new AddProductCommandHandler(
-				stubReservationRepositry,
-				mockProductRepositry,
-				mockSuggestionService,
-				mockClientRepository,
-				mockSystemContext);
+		addProductCommandHandler = addProductCommandHandlerBuilder.
+				withReservationRepository(stubReservationRepositry).
+				withProductRepository(mockProductRepositry).
+				withSuggestionService(mockSuggestionService).
+				withClientRepository(mockClientRepository).
+				withSystemContext(mockSystemContext).
+				build();
 		
 		when(mockProductRepositry.load(any(Id.class))).thenReturn(mockProduct);
 		when(mockProduct.isAvailable()).thenReturn(true);
