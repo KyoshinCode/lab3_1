@@ -39,7 +39,7 @@ public class Invoice  {
 
 	private Id id;
 
-	Invoice(Id invoiceId, ClientData client) {
+	public Invoice(Id invoiceId, ClientData client) {
 		this.id = invoiceId;
 		this.client = client;
 		this.items = new ArrayList<InvoiceLine>();
