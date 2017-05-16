@@ -63,7 +63,7 @@ public class AddProductCommandHandler implements CommandHandler<AddProductComman
 		return null;
 	}
 	
-	private Client loadClient() {
+	public Client loadClient() {
 		return clientRepository.load(systemContext.getSystemUser().getClientId());
 	}
 
