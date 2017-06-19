@@ -85,4 +85,20 @@ public class BookKeeperTest {
 
         assertThat(invoice.getItems().get(0).getTax(), is(equalTo(tax)));
     }
+
+    @Mock
+    private InvoiceFactory mockFactory;
+
+    @Test
+    public void testIssuanceWithMockFactory() throws Exception {
+        BookKeeper keeper = new BookKeeper(mockFactory);
+        ClientData data = new ClientData(Id.generate(), "Jim Jong Un");
+        InvoiceRequest request = new InvoiceRequest(data);
+
+        when(mockFactory.create(data)).thenReturn(new Invoice(Id.generate(), data));
+
+        keeper.issuance(request, policy);
+
+        verify(mockFactory, times(1)).create(data);
+    }
 }
