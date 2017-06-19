@@ -14,6 +14,7 @@ public class ProductBuilder {
     private Money price;
     private String name = "dummyProduct";
     private ProductType productType = ProductType.STANDARD;
+    boolean available = true;
 
     public ProductBuilder withAggregateId(Id aggregateId) {
         this.aggregateId = aggregateId;
@@ -35,7 +36,16 @@ public class ProductBuilder {
         return this;
     }
 
+    public ProductBuilder unavailable() {
+        available = false;
+        return this;
+    }
+
     public Product build() {
-        return new Product(aggregateId, price, name, productType);
+        Product product = new Product(aggregateId, price, name, productType);
+        if(!available) {
+            product.markAsRemoved();
+        }
+        return product;
     }
 }

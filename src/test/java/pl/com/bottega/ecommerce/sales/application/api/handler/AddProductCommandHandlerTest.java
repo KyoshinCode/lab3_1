@@ -67,4 +67,17 @@ public class AddProductCommandHandlerTest {
 
         verify(reservationRepository, times(1)).load(command.getOrderId());
     }
+
+    @Test
+    public void testHandleWithNoClientRepositoryWithProductAvailable() throws Exception {
+        Reservation reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "dummy")).opened().build();
+        Product product = new ProductBuilder().withAggregateId(command.getProductId()).build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        handler.handle(command);
+
+        verify(clientRepository, never()).load(reservation.getClientData().getAggregateId());
+    }
 }
