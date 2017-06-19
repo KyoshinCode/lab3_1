@@ -114,4 +114,24 @@ public class AddProductCommandHandlerTest {
 
         assertThat(reservation.contains(product), is(true));
     }
+
+    @Test
+    public void testHandleWithCheckSuggestedProduct() throws Exception {
+        Reservation reservation = new ReservationBuilder().withClient(new ClientData(Id.generate(), "dummy")).opened().build();
+        Product product = new ProductBuilder().withAggregateId(command.getProductId()).withName("stuff").unavailable().build();
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        Client client = new Client();
+        Product suggested = new ProductBuilder().withName("suggestedStuff").build();
+
+        when(clientRepository.load(systemContext.getSystemUser().getClientId())).thenReturn(client);
+        when(suggestionService.suggestEquivalent(product, client)).thenReturn(suggested);
+
+        handler.handle(command);
+
+        assertThat(reservation.contains(product), is(false));
+        assertThat(reservation.contains(suggested), is(true));
+    }
 }
